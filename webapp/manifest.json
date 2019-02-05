@@ -14,7 +14,6 @@
 			"version": "1.40.12"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -33,13 +32,11 @@
 		"supportedThemes": [
 			"sap_hcb",
 			"sap_belize"
-
 		]
 	},
-
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "pnp.hierarchyeditor.view.Hierarchy",
+			"viewName": "pnp.hierarchyeditor.view.App",
 			"type": "XML"
 		},
 		"dependencies": {
@@ -60,6 +57,10 @@
 				"settings": {
 					"bundleName": "pnp.hierarchyeditor.i18n.i18n"
 				}
+			},
+			"HierarchyModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/Hierarchy.json"
 			}
 		},
 		"resources": {
@@ -78,16 +79,22 @@
 				"clearControlAggregation": false
 			},
 			"routes": [{
-				"name": "RouteHierarchy",
-				"pattern": "RouteHierarchy",
-				"target": ["TargetHierarchy"]
+				"name": "HomeRoute",
+				"pattern": "",
+				"target": [
+					"Home"
+				]
 			}],
 			"targets": {
 				"TargetHierarchy": {
 					"viewType": "XML",
 					"transition": "slide",
 					"clearControlAggregation": false,
-					"viewName": "Hierarchy"
+					"viewName": "Home"
+				},
+				"Home": {
+					"viewType": "XML",
+					"viewName": "Home"
 				}
 			}
 		}
