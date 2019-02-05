@@ -6,7 +6,7 @@
 		<title>
 			<DynamicPageTitle>
 				<heading>
-					<sv:SmartVariantManagement id="__SVM04" persistencyKey="fiori.test.application2.view.S4" showShare="true" showExecuteOnSelection="true"/>
+					<sv:SmartVariantManagement id="__SVM05" persistencyKey="fiori.test.application2.view.S4" showShare="true" showExecuteOnSelection="true"/>
 				</heading>
 				<snappedContent>
 					<m:Text id="statusText"></m:Text>
