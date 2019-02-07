@@ -5,9 +5,7 @@
 	<DynamicPage id="pageHome">
 		<title>
 			<DynamicPageTitle>
-				<heading>
-					<sv:SmartVariantManagement id="__SVM05" persistencyKey="fiori.test.application2.view.S4" showShare="true" showExecuteOnSelection="true"/>
-				</heading>
+				<heading><m:Title text="Hierarchy editor"/></heading>
 				<snappedContent>
 					<m:Text id="statusText"></m:Text>
 				</snappedContent>
@@ -20,26 +18,32 @@
 		</header>
 		<content>
 			<table:TreeTable id="TreeTable"
-				rows="{ path :'HierarchyModel>/HierarchyNodes', parameters : { countMode: 'Inline', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'NodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState' } } }"
-				selectionMode="MultiToggle" enableSelectAll="false" ariaLabelledBy="title">
+				rows="{ path : 'HierarchyModel>/HierarchyNodes', parameters : { countMode: 'Inline', numberOfExpandedLevels: 0, useServersideApplicationFilters: 'true', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'HierarchyNodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState', hierarchyNodeDescendantCountFor : 'ChildCount' } } }"
+				selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title" busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0">
 				<table:extension>
 					<m:Toolbar>
-						<m:Title id="title" text="Service hierarchy"/>
 						<m:Button id="cut" text="Cut" icon="sap-icon://scissors" press="onCut"/>
 						<m:Button id="paste" text="Paste" icon="sap-icon://paste" press="onPaste" enabled="false"/>
+						<m:Button id="refresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh" enabled="true"/>
 						<m:ToolbarSpacer/>
 						<m:Button text="Collapse all" press="onCollapseAllNodes"/>
 						<m:Button text="Expand first level" press="onExpandFirstLevelNodes"/>
 					</m:Toolbar>
 				</table:extension>
 				<table:dragDropConfig>
-					<dnd:DragDropInfo sourceAggregation="rows" targetAggregation="rows" dragStart="onDragStart" drop="onDrop"/>
+					<dnd:DragDropInfo sourceAggregation="rows" targetAggregation=" rows" dragStart="onDragStart" drop="onDrop"/>
 				</table:dragDropConfig>
 				<table:columns>
-					<table:Column width="13rem">
-						<m:Label text="Categories"/>
+					<table:Column width="40%">
+						<m:Label text="Hierarchy"/>
 						<table:template>
-							<m:Text text="{HierarchyModel>Description}" wrapping="false"/>
+							<m:Text text="{HierarchyModel>NodeText}" wrapping="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="60%">
+						<m:Label text="Member"/>
+						<table:template>
+							<m:Text text="{HierarchyModel>MemberID}" wrapping="false"/>
 						</table:template>
 					</table:Column>
 				</table:columns>

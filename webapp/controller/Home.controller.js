@@ -44,8 +44,35 @@ sap.ui.define([
 
 		},
 
+		//on after rendering
+		onAfterRendering: function () {
+
+			//attach 'dataRequested' event handler
+			this.getView().byId("TreeTable").getBinding("rows").attachDataRequested(function () {
+				this.oViewModel.setProperty("/isHierarchyBusy", true);
+			}, this);
+
+			//attach 'dataReceived' event handler
+			this.getView().byId("TreeTable").getBinding("rows").attachDataReceived(function () {
+				this.oViewModel.setProperty("/isHierarchyBusy", false);
+			}, this);
+
+		},
+
 		//handle view display
 		onDisplay: function () {
+
+			//create object key
+			var sHierarchyPath = "/" + this.getModel("HierarchyModel").createKey("Hierarchies", {
+				HierarchyID: '1'
+			});
+
+			//read nodes of this hierarchy
+			this.getModel("HierarchyModel").read(sHierarchyPath + "/toNodes", {
+				success: function (oData) {
+
+				}
+			});
 
 		},
 
@@ -60,12 +87,67 @@ sap.ui.define([
 		},
 
 		//on drag start
-		onDragStart: function () {
+		onDragStart: function (oEvent) {
+
+			var oTreeTable = this.byId("TreeTable");
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDraggedRow = oEvent.getParameter("target");
+			var iDraggedRowIndex = oDraggedRow.getIndex();
+			var aSelectedIndices = oTreeTable.getSelectedIndices();
+			var aDraggedRowContexts = [];
+
+			if (aSelectedIndices.length > 0) {
+				// If rows are selected, do not allow to start dragging from a row which is not selected.
+				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
+					oEvent.preventDefault();
+				} else {
+					for (var i = 0; i < aSelectedIndices.length; i++) {
+						aDraggedRowContexts.push(oTreeTable.getContextByIndex(aSelectedIndices[i]));
+					}
+				}
+			} else {
+				aDraggedRowContexts.push(oTreeTable.getContextByIndex(iDraggedRowIndex));
+			}
+
+			oDragSession.setComplexData("hierarchymaintenance", {
+				draggedRowContexts: aDraggedRowContexts
+			});
 
 		},
 
 		//on drop
-		onDrop: function () {
+		onDrop: function (oEvent) {
+
+			var oTreeTable = this.byId("TreeTable");
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDroppedRow = oEvent.getParameter("droppedControl");
+			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+			var oNewParentContext = oTreeTable.getContextByIndex(oDroppedRow.getIndex());
+
+			if (aDraggedRowContexts.length === 0 || !oNewParentContext) {
+				return;
+			}
+
+			var oModel = oTreeTable.getBinding("rows").getModel();
+			var oNewParent = oNewParentContext.getProperty();
+
+			// In the JSON data of this example the children of a node are inside an array with the name "categories".
+			if (!oNewParent.categories) {
+				oNewParent.categories = []; // Initialize the children array.
+			}
+
+			for (var i = 0; i < aDraggedRowContexts.length; i++) {
+				if (oNewParentContext.getPath().indexOf(aDraggedRowContexts[i].getPath()) === 0) {
+					// Avoid moving a node into one of its child nodes.
+					continue;
+				}
+
+				// Copy the data to the new parent.
+				oNewParent.categories.push(aDraggedRowContexts[i].getProperty());
+
+				// Remove the data. The property is simply set to undefined to preserve the tree state (expand/collapse states of nodes).
+				oModel.setProperty(aDraggedRowContexts[i].getPath(), undefined, aDraggedRowContexts[i], true);
+			}
 
 		},
 
@@ -76,6 +158,13 @@ sap.ui.define([
 
 		//on paste
 		onPaste: function () {
+
+		},
+
+		//on refresh
+		onRefresh: function () {
+
+			this.getView().byId("TreeTable").getBinding("rows").refresh(true);
 
 		},
 

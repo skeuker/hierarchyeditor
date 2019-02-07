@@ -1,0 +1,61 @@
+<edmx:Edmx Version="1.0"
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:edmanno="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="pnp.hierarchyeditor" xml:lang="en">
+			<EntityType Name="HierarchyType">
+				<Key>
+					<PropertyRef  Name="HierarchyTypeID"/>
+				</Key>
+				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="HierarchyTypeText" Type="Edm.String" Nullable="true"></Property>
+			</EntityType>
+			<EntityType Name="NodeType">
+				<Key>
+					<PropertyRef  Name="NodeTypeID"/>
+				</Key>
+				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="NodeTypeText" Type="Edm.String" Nullable="true"></Property>
+			</EntityType>			
+			<EntityType Name="Hierarchy">
+				<Key>
+					<PropertyRef  Name="HierarchyID"/>
+				</Key>
+				<Property Name="HierarchyID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="true"></Property>
+				<NavigationProperty Name="toNodes" Relationship="pnp.hierarchyeditor.HierarchyToNodes" ToRole="Child" FromRole="Parent"></NavigationProperty>
+			</EntityType>
+			<Association Name="HierarchyToNodes">
+				<End Type="pnp.hierarchyeditor.Hierarchy" Role="Parent" Multiplicity="1"></End>
+				<End Type="pnp.hierarchyeditor.HierarchyNode" Role="Child" Multiplicity="*"></End>
+			</Association>
+			<EntityType Name="HierarchyNode">
+				<Key>
+					<PropertyRef Name="HierarchyID"/>
+					<PropertyRef Name="HierarchyNodeID" />
+				</Key>
+				<Property Name="HierarchyID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="HierarchyNodeID" Type="Edm.String" Nullable="false" edmanno:StoreGeneratedPattern="Identity" />
+				<Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="NodeText" Type="Edm.String" Nullable="false" Unicode="true" FixedLength="false" />
+				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="ParentNodeID" Type="Edm.String" Nullable="true" />
+				<Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+				<Property Name="ChildCount" Type="Edm.Int16" Nullable="true" />
+				<Property Name="MemberID" Type="Edm.String" Nullable="true" />
+			</EntityType>
+			<EntityContainer Name="HierarchyEntityContainer" edmanno:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="HierarchyTypes" EntityType="pnp.hierarchyeditor.HierarchyType"></EntitySet>
+				<EntitySet Name="NodeTypes" EntityType="pnp.hierarchyeditor.NodeType"></EntitySet>
+				<EntitySet Name="Hierarchies" EntityType="pnp.hierarchyeditor.Hierarchy"/>
+				<AssociationSet Name="HierarchiesToNodes" Association="pnp.hierarchyeditor.HierarchyToNodes">
+					<End Role="Parent" EntitySet="Hierarchies" ></End>
+					<End Role="Child"  EntitySet="HierarchyNodes"></End>
+				</AssociationSet>
+				<EntitySet Name="HierarchyNodes" EntityType="pnp.hierarchyeditor.HierarchyNode" />
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

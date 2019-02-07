@@ -18,6 +18,15 @@
         "entryPath": "/test-resources"
       },
       "description": "SAPUI5 Test Resources"
+    },
+    {
+      "path": "/sap/opu/odata",
+      "target": {
+        "type": "destination",
+        "name": "SMD100",
+        "entryPath": "/sap/opu/odata"
+      },
+      "description": "SMD100"
     }
   ],
   "sendWelcomeFileRedirect": true
