@@ -21,7 +21,7 @@
 				<table:TreeTable id="TreeTable"
 					rows="{ path : 'HierarchyModel>/HierarchyNodes', filters: [{path: 'HierarchyID', operator: 'EQ', value1: '1'}], parameters : { operationMode: 'Client', countMode: 'Inline', numberOfExpandedLevels: 0, useServersideApplicationFilters: 'true', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'HierarchyNodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState', hierarchyNodeDescendantCountFor : 'ChildCount' } } }"
 					selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title" busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0"
-					rowSelectionChange="onHierarchyRowSelectionChange">
+					rowSelectionChange="onHierarchyRowSelectionChange" cellClick="onHierarchyCellClick">
 					<table:extension>
 						<m:Toolbar>
 							<m:Button id="butAdd" text="Add" icon="sap-icon://add" press="onAddNode"/>

@@ -325,6 +325,19 @@ sap.ui.define([
 			//expand to requested level
 			oHierarchyTable.expandToLevel(this.iTreeExpandLevel);
 
+		},
+
+		//on click in cell
+		onHierarchyCellClick: function (oEvent) {
+
+			//get clicked cell content
+			var sNodeText = oEvent.getParameter("cellControl").getText();
+
+			//reset selected row index where row is empty
+			if (!sNodeText) {
+				this.getView().byId("TreeTable").setSelectedIndex(-1);
+			}
+
 		}
 
 	});
