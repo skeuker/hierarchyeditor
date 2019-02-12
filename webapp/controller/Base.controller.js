@@ -104,11 +104,11 @@ sap.ui.define([
 
 				//messages in item aggregation
 				items: {
-					path: "message>/",
+					path: "MessageModel>/",
 					template: new sap.m.MessagePopoverItem({
-						type: "{message>type}",
-						title: "{message>message}",
-						description: "{message>description}"
+						type: "{MessageModel>type}",
+						title: "{MessageModel>message}",
+						description: "{MessageModel>description}"
 					})
 				},
 
@@ -119,8 +119,8 @@ sap.ui.define([
 
 			});
 
-			//connect message model to message popover
-			oMessagePopover.setModel(this.oMessageManager.getMessageModel(), "message");
+			//connect message popover to message model
+			oMessagePopover.setModel(this.oMessageManager.getMessageModel(), "MessageModel");
 
 			//feedback to caller
 			return oMessagePopover;
@@ -199,9 +199,6 @@ sap.ui.define([
 				MessageText: sMessageText,
 				MessageType: "Error"
 			}]);
-
-			//set view to no longer busy
-			this.oViewModel.setProperty("/busy", false);
 
 		},
 

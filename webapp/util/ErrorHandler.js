@@ -18,18 +18,18 @@ sap.ui.define([
 			//set instance attributes
 			this.oResourceBundle = oComponent.getModel("i18n").getResourceBundle();
 			this.oComponent = oComponent;
-			this.oSurveyModel = oComponent.getModel("SurveyModel");
+			this.oHierarchyModel = oComponent.getModel("HierarchyModel");
 			this.bMessageBoxOpen = false;
 			this._sErrorText = this.oResourceBundle.getText("messageODataError");
 
 			//attach error handler for metadata load failure
-			this.oSurveyModel.attachMetadataFailed(function (oEvent) {
+			this.oHierarchyModel.attachMetadataFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
 				this.showServiceError(oParams.response);
 			}, this);
 
 			//attach error handler for unhandled OData service request errors
-			this.oSurveyModel.attachRequestFailed(function (oEvent) {
+			this.oHierarchyModel.attachRequestFailed(function (oEvent) {
 
 				//get service request failure event
 				var oParams = oEvent.getParameters();

@@ -37,10 +37,14 @@ sap.ui.define([
 			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 			this.oMessageManager = sap.ui.getCore().getMessageManager();
 			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
+			this.getView().setModel(this.oMessageManager.getMessageModel(), "MessageModel");
 
 			//keep track of Hierarchy JSON Model
 			this.oHierarchyModel = this.getOwnerComponent().getModel("HierarchyModel");
 			this.setModel(this.oHierarchyModel, "HierarchyModel");
+
+			//initialize tree expand level
+			this.iTreeExpandLevel = 0;
 
 		},
 
@@ -59,8 +63,22 @@ sap.ui.define([
 
 		},
 
+		//prepare view for next action
+		prepareViewForNextAction: function () {
+
+			//hide message strip 
+			this.oMessageStrip.setVisible(false);
+
+			//remove all messages from the message manager
+			this.oMessageManager.removeAllMessages();
+
+		},
+
 		//handle view display
 		onDisplay: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			//create object key
 			var sHierarchyPath = "/" + this.getModel("HierarchyModel").createKey("Hierarchies", {
@@ -76,19 +94,10 @@ sap.ui.define([
 
 		},
 
-		//collapse all nodes
-		onCollapseAllNodes: function () {
-
-		},
-
-		//expand first level nodes
-		onExpandFirstLevelNodes: function () {
-
-		},
-
 		//on drag start
 		onDragStart: function (oEvent) {
 
+			//local data declaration
 			var oTreeTable = this.byId("TreeTable");
 			var oDragSession = oEvent.getParameter("dragSession");
 			var oDraggedRow = oEvent.getParameter("target");
@@ -96,6 +105,10 @@ sap.ui.define([
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
 			var aDraggedRowContexts = [];
 
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//compose context of dragged row(s)
 			if (aSelectedIndices.length > 0) {
 				// If rows are selected, do not allow to start dragging from a row which is not selected.
 				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
@@ -109,6 +122,7 @@ sap.ui.define([
 				aDraggedRowContexts.push(oTreeTable.getContextByIndex(iDraggedRowIndex));
 			}
 
+			//set dragged row to drag session instance
 			oDragSession.setComplexData("hierarchymaintenance", {
 				draggedRowContexts: aDraggedRowContexts
 			});
@@ -118,11 +132,15 @@ sap.ui.define([
 		//on drop
 		onDrop: function (oEvent) {
 
+			//local data declaration
 			var oTreeTable = this.byId("TreeTable");
 			var oDragSession = oEvent.getParameter("dragSession");
 			var oDroppedRow = oEvent.getParameter("droppedControl");
 			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
 			var oNewParentContext = oTreeTable.getContextByIndex(oDroppedRow.getIndex());
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			if (aDraggedRowContexts.length === 0 || !oNewParentContext) {
 				return;
@@ -151,25 +169,161 @@ sap.ui.define([
 
 		},
 
-		//on cut
-		onCut: function () {
+		//on add node
+		onAddNode: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get node instance being deleted
+			var oHierarchyTree = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
+
+			//message handling: no row selected
+			if (iSelectedIndex === -1) {
+
+				//message handling: select a row
+				this.sendStripMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+
+			}
+
+			//get binding context of selected row
+			var sNodePath = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getPath();
+
+			/*remove this node from the backend
+			this.getModel("HierarchyModel").remove(sNodePath, {
+
+				//success handler for delete
+				success: function () {
+
+					//message handling: successfully updated
+					this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
+
+				}.bind(this),
+
+				//error handler for delete
+				error: function (oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});*/
 
 		},
 
-		//on paste
-		onPaste: function () {
+		//on delete node
+		onDeleteNode: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get node instance being deleted
+			var oHierarchyTree = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
+
+			//message handling: no row selected
+			if (iSelectedIndex === -1) {
+
+				//message handling: select a row
+				this.sendStripMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+
+			}
+
+			//get binding context of selected row
+			var sNodePath = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getPath();
+
+			//remove this node from the backend
+			this.getModel("HierarchyModel").remove(sNodePath, {
+
+				//success handler for delete
+				success: function () {
+
+					//message handling: successfully updated
+					this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
+
+				}.bind(this),
+
+				//error handler for delete
+				error: function (oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});
 
 		},
 
 		//on refresh
 		onRefresh: function () {
 
-			this.getView().byId("TreeTable").getBinding("rows").refresh(true);
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get access to treetable instance
+			var oHierarchyTable = this.getView().byId("TreeTable");
+
+			//refresh binding of 'rows' aggregation
+			oHierarchyTable.getBinding("rows").refresh(true);
+
+			//expand to requested level
+			oHierarchyTable.expandToLevel(this.iTreeExpandLevel);
 
 		},
 
 		//on assigned filters changed
 		onAssignedFiltersChanged: function () {
+
+		},
+
+		//on hierarchy row selection change
+		onHierarchyRowSelectionChange: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+		},
+
+		//on collapse of all levels
+		onCollapseAllNodes: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get access to hieararchy table
+			var oHierarchyTable = this.byId("TreeTable");
+
+			//collapse all nodes
+			oHierarchyTable.collapseAll();
+
+			//keep track of expand level
+			this.iTreeExpandLevel = 0;
+
+		},
+
+		//on expand first level nodes
+		onExpandAllNodesToLevel: function () {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get access to hieararchy table
+			var oHierarchyTable = this.byId("TreeTable");
+
+			//keep track of expand level
+			this.iTreeExpandLevel = this.iTreeExpandLevel + 1;
+
+			//expand to requested level
+			oHierarchyTable.expandToLevel(this.iTreeExpandLevel);
 
 		}
 

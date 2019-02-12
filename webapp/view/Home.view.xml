@@ -2,13 +2,12 @@
 	xmlns:dnd="sap.ui.core.dnd" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable"
 	xmlns:sv="sap.ui.comp.smartvariants" xmlns:u="sap.ui.unified" controllerName="pnp.hierarchyeditor.controller.Home"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-	<DynamicPage id="pageHome">
+	<DynamicPage id="pageHome" showFooter="true">
 		<title>
 			<DynamicPageTitle>
-				<heading><m:Title text="Hierarchy editor"/></heading>
-				<snappedContent>
-					<m:Text id="statusText"></m:Text>
-				</snappedContent>
+				<heading width="100%">
+					<m:Title text="Hierarchy editor"/>
+				</heading>
 			</DynamicPageTitle>
 		</title>
 		<header>
@@ -17,37 +16,48 @@
 			</DynamicPageHeader>
 		</header>
 		<content>
-			<table:TreeTable id="TreeTable"
-				rows="{ path : 'HierarchyModel>/HierarchyNodes', filters: [{path: 'HierarchyID', operator: 'EQ', value1: '1'}], parameters : { operationMode: 'Client', countMode: 'Inline', numberOfExpandedLevels: 0, useServersideApplicationFilters: 'true', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'HierarchyNodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState', hierarchyNodeDescendantCountFor : 'ChildCount' } } }"
-				selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title" busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0">
-				<table:extension>
-					<m:Toolbar>
-						<m:Button id="cut" text="Cut" icon="sap-icon://scissors" press="onCut"/>
-						<m:Button id="paste" text="Paste" icon="sap-icon://paste" press="onPaste" enabled="false"/>
-						<m:Button id="refresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh" enabled="true"/>
-						<m:ToolbarSpacer/>
-						<m:Button text="Collapse all" press="onCollapseAllNodes"/>
-						<m:Button text="Expand first level" press="onExpandFirstLevelNodes"/>
-					</m:Toolbar>
-				</table:extension>
-				<table:dragDropConfig>
-					<dnd:DragDropInfo sourceAggregation="rows" targetAggregation=" rows" dragStart="onDragStart" drop="onDrop"/>
-				</table:dragDropConfig>
-				<table:columns>
-					<table:Column width="40%">
-						<m:Label text="Hierarchy"/>
-						<table:template>
-							<m:Text text="{HierarchyModel>NodeText}" wrapping="false"/>
-						</table:template>
-					</table:Column>
-					<table:Column width="60%">
-						<m:Label text="Member"/>
-						<table:template>
-							<m:Text text="{HierarchyModel>MemberID}" wrapping="false"/>
-						</table:template>
-					</table:Column>
-				</table:columns>
-			</table:TreeTable>
+			<m:VBox>
+				<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text="" class="sapUiSmallMarginBottom"/>
+				<table:TreeTable id="TreeTable"
+					rows="{ path : 'HierarchyModel>/HierarchyNodes', filters: [{path: 'HierarchyID', operator: 'EQ', value1: '1'}], parameters : { operationMode: 'Client', countMode: 'Inline', numberOfExpandedLevels: 0, useServersideApplicationFilters: 'true', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'HierarchyNodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState', hierarchyNodeDescendantCountFor : 'ChildCount' } } }"
+					selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title" busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0"
+					rowSelectionChange="onHierarchyRowSelectionChange">
+					<table:extension>
+						<m:Toolbar>
+							<m:Button id="butAdd" text="Add" icon="sap-icon://add" press="onAddNode"/>
+							<m:Button id="butDelete" text="Delete" icon="sap-icon://delete" press="onDeleteNode"/>
+							<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh" enabled="true"/>
+							<m:ToolbarSpacer/>
+							<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes"/>
+							<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel"/>
+						</m:Toolbar>
+					</table:extension>
+					<table:dragDropConfig>
+						<dnd:DragDropInfo sourceAggregation="rows" targetAggregation=" rows" dragStart="onDragStart" drop="onDrop"/>
+					</table:dragDropConfig>
+					<table:columns>
+						<table:Column width="40%">
+							<m:Label text="Hierarchy"/>
+							<table:template>
+								<m:Text text="{HierarchyModel>NodeText}" wrapping="false"/>
+							</table:template>
+						</table:Column>
+						<table:Column width="60%">
+							<m:Label text="Member"/>
+							<table:template>
+								<m:Text text="{HierarchyModel>MemberID}" wrapping="false"/>
+							</table:template>
+						</table:Column>
+					</table:columns>
+				</table:TreeTable>
+			</m:VBox>
 		</content>
+		<footer>
+			<m:Toolbar>
+				<m:Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" press="onMessagesButtonPress"
+					text="{=${MessageModel>/}.length}" visible="{=!!${MessageModel>/}.length}"/>
+				<m:ToolbarSpacer/>
+			</m:Toolbar>
+		</footer>
 	</DynamicPage>
 </mvc:View>
