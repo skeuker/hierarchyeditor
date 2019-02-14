@@ -11,25 +11,67 @@
 				</Key>
 				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false"></Property>
 				<Property Name="HierarchyTypeText" Type="Edm.String" Nullable="true"></Property>
+				<NavigationProperty Name="toNodeDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeDefinitions" ToRole="Child" FromRole="Parent"></NavigationProperty>
+				<NavigationProperty Name="toNodeMemberDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeMemberDefinitions" ToRole="Child" FromRole="Parent"></NavigationProperty>				
 			</EntityType>
-			<EntityType Name="NodeType">
+			<EntityType Name="HierarchyNodeType">
 				<Key>
 					<PropertyRef  Name="NodeTypeID"/>
 				</Key>
 				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
 				<Property Name="NodeTypeText" Type="Edm.String" Nullable="true"></Property>
-			</EntityType>			
+			</EntityType>
+			<EntityType Name="HierarchyMemberType">
+				<Key>
+					<PropertyRef  Name="MemberTypeID"/>
+				</Key>
+				<Property Name="MemberTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="MemberTypeText" Type="Edm.String" Nullable="true"></Property>
+			</EntityType>
+			<EntityType Name="HierarchyNodeDefinition">
+				<Key>
+					<PropertyRef  Name="HierarchyTypeID"/>
+					<PropertyRef Name="HierarchyLevel"/>
+				</Key>
+				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="HierarchyLevel" Type="Edm.Int16" Nullable="false"></Property>
+				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
+			</EntityType>
+			<EntityType Name="HierarchyNodeMemberDefinition">
+				<Key>
+					<PropertyRef  Name="HierarchyTypeID"/>
+					<PropertyRef Name="NodeTypeID"/>
+					<PropertyRef Name="MemberTypeID"/>
+				</Key>
+				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
+				<Property Name="MemberTypeID" Type="Edm.String" Nullable="false"></Property>				
+			</EntityType>
 			<EntityType Name="Hierarchy">
 				<Key>
 					<PropertyRef  Name="HierarchyID"/>
 				</Key>
 				<Property Name="HierarchyID" Type="Edm.String" Nullable="false"></Property>
 				<Property Name="HierarchyTypeID" Type="Edm.String" Nullable="true"></Property>
+				<Property Name="HierarchyText" Type="Edm.String" Nullable="true"></Property>
 				<NavigationProperty Name="toNodes" Relationship="pnp.hierarchyeditor.HierarchyToNodes" ToRole="Child" FromRole="Parent"></NavigationProperty>
+				<NavigationProperty Name="toMetadata" Relationship="pnp.hierarchyeditor.HierarchyTypeToMetadata" ToRole="Child" FromRole="Parent"></NavigationProperty>
 			</EntityType>
 			<Association Name="HierarchyToNodes">
 				<End Type="pnp.hierarchyeditor.Hierarchy" Role="Parent" Multiplicity="1"></End>
 				<End Type="pnp.hierarchyeditor.HierarchyNode" Role="Child" Multiplicity="*"></End>
+			</Association>
+			<Association Name="HierarchyTypeToNodeDefinitions">
+				<End Type="pnp.hierarchyeditor.HierarchyType" Role="Parent" Multiplicity="1"></End>
+				<End Type="pnp.hierarchyeditor.HierarchyNodeDefinition" Role="Child" Multiplicity="*"></End>
+			</Association>
+			<Association Name="HierarchyTypeToNodeMemberDefinitions">
+				<End Type="pnp.hierarchyeditor.HierarchyType" Role="Parent" Multiplicity="1"></End>
+				<End Type="pnp.hierarchyeditor.HierarchyNodeMemberDefinition" Role="Child" Multiplicity="*"></End>
+			</Association>
+			<Association Name="HierarchyTypeToMetadata">
+				<End Type="pnp.hierarchyeditor.Hierarchy" Role="Parent" Multiplicity="1"></End>
+				<End Type="pnp.hierarchyeditor.HierarchyType" Role="Child" Multiplicity="1"></End>
 			</Association>
 			<EntityType Name="HierarchyNode">
 				<Key>
@@ -48,12 +90,11 @@
 			</EntityType>
 			<EntityContainer Name="HierarchyEntityContainer" edmanno:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true">
 				<EntitySet Name="HierarchyTypes" EntityType="pnp.hierarchyeditor.HierarchyType"></EntitySet>
-				<EntitySet Name="NodeTypes" EntityType="pnp.hierarchyeditor.NodeType"></EntitySet>
+				<EntitySet Name="HierarchyNodeTypes" EntityType="pnp.hierarchyeditor.HierarchyNodeType"></EntitySet>
+				<EntitySet Name="HierarchyMemberTypes" EntityType="pnp.hierarchyeditor.HierarchyMemberType"></EntitySet>
+				<EntitySet Name="HierarchyNodeDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeDefinition"></EntitySet>
+				<EntitySet Name="HierarchyNodeMemberDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeMemberDefinition"></EntitySet>
 				<EntitySet Name="Hierarchies" EntityType="pnp.hierarchyeditor.Hierarchy"/>
-				<AssociationSet Name="HierarchiesToNodes" Association="pnp.hierarchyeditor.HierarchyToNodes">
-					<End Role="Parent" EntitySet="Hierarchies" ></End>
-					<End Role="Child"  EntitySet="HierarchyNodes"></End>
-				</AssociationSet>
 				<EntitySet Name="HierarchyNodes" EntityType="pnp.hierarchyeditor.HierarchyNode" />
 			</EntityContainer>
 		</Schema>
