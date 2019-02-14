@@ -27,6 +27,18 @@
 							</form:FormElement>
 							<form:FormElement>
 								<form:label>
+									<Label required="true" text="{i18n>lblNewHierarchyItemTypeID}"/>
+								</form:label>
+								<form:fields>
+									<Select forceSelection="true" selectedKey="{ViewModel>/sNewHierarchyItemTypeID}" items="{ path: 'OptionsModel>/HierarchyItemTypes' }"
+										width="160px">
+										<core:ListItem key="{OptionsModel>HierarchyItemTypeId}" text="{OptionsModel>HierarchyItemTypeText}"
+											icon="{OptionsModel>HierarchyItemTypeIcon}"/>
+									</Select>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement>
+								<form:label>
 									<Label required="true" text="{i18n>lblAddNewHierarchyItemWithRelationship}"/>
 								</form:label>
 								<form:fields>

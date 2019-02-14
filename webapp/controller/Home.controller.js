@@ -231,8 +231,9 @@ sap.ui.define([
 			var oSelectedHierarchyItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
 
 			//get parameters for hierarchy item insert
-			var sNewHierarchyItemText = this.getModel("ViewModel").getProperty("/sNewHierarchyItemText");
-			var sNewItemRelationshipTypeID = this.getModel("ViewModel").getProperty("/sNewItemRelationshipTypeID");
+			var sHierarchyItemText = this.getModel("ViewModel").getProperty("/sNewHierarchyItemText");
+			var sItemRelationshipTypeID = this.getModel("ViewModel").getProperty("/sNewItemRelationshipTypeID");
+			var sItemHierarchyTypeID = this.getModel("ViewModel").getProperty("/sNewItemHierarchyTypeID");
 
 			//verify that adding new hierarchy item on the selected node is possible
 
