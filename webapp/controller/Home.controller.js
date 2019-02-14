@@ -170,7 +170,7 @@ sap.ui.define([
 		},
 
 		//on add node
-		onAddNode: function () {
+		onAddHierarchyItem: function () {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -190,8 +190,54 @@ sap.ui.define([
 
 			}
 
-			//get binding context of selected row
-			var sNodePath = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getPath();
+			//create popover to add new hiearchy item
+			var oHierarchyItemAddPopover = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyItemAdd", this);
+			oHierarchyItemAddPopover.attachAfterClose(function () {
+				oHierarchyItemAddPopover.destroy();
+			});
+			this.getView().addDependent(oHierarchyItemAddPopover);
+
+			//get hiearchy item corresponding to selected row
+			var oHierarchyItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
+
+			//set ViewModel attributes that are bound on popover
+			this.oViewModel.setProperty("/sSelectedNodeText", oHierarchyItem.NodeText);
+			sap.ui.getCore().byId("popHierarchyItemAdd").setModel("ViewModel", this.oViewModel);
+
+			// delay because addDependent will do a async rerendering 
+			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
+			jQuery.sap.delayedCall(0, this, function () {
+				oHierarchyItemAddPopover.openBy(oButtonHierarchyItemAdd);
+			});
+
+		},
+
+		//on closing the hierarchy item add popover
+		onCloseHierarchyItemAddPopover: function () {
+
+			//close hierarchy item add popover
+			sap.ui.getCore().byId("popHierarchyItemAdd").close();
+
+		},
+
+		//on insert of a new hierarchy item
+		onInsertHierarchItem: function () {
+
+			//get selected node instance
+			var oHierarchyTree = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
+
+			//get hiearchy item corresponding to selected row
+			var oSelectedHierarchyItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
+
+			//get parameters for hierarchy item insert
+			var sNewHierarchyItemText = this.getModel("ViewModel").getProperty("/sNewHierarchyItemText");
+			var sNewItemRelationshipTypeID = this.getModel("ViewModel").getProperty("/sNewItemRelationshipTypeID");
+
+			//verify that adding new hierarchy item on the selected node is possible
+
+			//close hierarchy item add popover
+			sap.ui.getCore().byId("popHierarchyItemAdd").close();
 
 			/*remove this node from the backend
 			this.getModel("HierarchyModel").remove(sNodePath, {
@@ -217,7 +263,7 @@ sap.ui.define([
 		},
 
 		//on delete node
-		onDeleteNode: function () {
+		onDeleteHierarchyItem: function () {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();

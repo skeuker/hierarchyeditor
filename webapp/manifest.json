@@ -77,6 +77,10 @@
 				},
 				"dataSource": "CA_HIERARCHY_EDITOR_SRV",
 				"preload": true
+			},
+			"OptionsModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/OptionsModel.json"
 			}
 		},
 		"resources": {

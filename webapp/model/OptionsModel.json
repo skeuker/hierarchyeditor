@@ -1,0 +1,11 @@
+{
+	"RelationshipTypes": [{
+		"RelationshipTypeID": "1",
+		"RelationshipTypeText": "Sibling",
+		"RelationshipTypeIcon": "sap-icon://arrow-right"
+	}, {
+		"RelationshipTypeID": "2",
+		"RelationshipTypeText": "Child",
+		"RelationshipTypeIcon": "sap-icon://arrow-bottom"
+	}]
+}

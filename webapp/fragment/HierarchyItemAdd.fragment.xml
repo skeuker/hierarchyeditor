@@ -1,0 +1,51 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<ResponsivePopover id="popHierarchyItemAdd" title="{i18n>titleAddNewHierarchyItem}" class="sapUiPopupWithPadding" placement="Bottom"
+		initialFocus="inputNewHierarchyItemText">
+		<content>
+			<form:Form id="formCardAction" class="sapUiMediumMarginBottom" editable="true" width="450px">
+				<form:layout>
+					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="true" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+				</form:layout>
+				<form:formContainers>
+					<form:FormContainer>
+						<form:formElements>
+							<form:FormElement>
+								<form:label>
+									<Label required="true" text="{i18n>lblSelectedNodeText}"/>
+								</form:label>
+								<form:fields>
+									<Input id="inputSelectedNodeText" value="{ViewModel>/sSelectedNodeText}" width="230px" enabled="false"/>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement>
+								<form:label>
+									<Label required="true" text="{i18n>lblNewHierarchyItemText}"/>
+								</form:label>
+								<form:fields>
+									<Input id="inputNewHierarchyItemText" value="{ViewModel>/sNewHierarchyItemText}" width="230px"/>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement>
+								<form:label>
+									<Label required="true" text="{i18n>lblAddNewHierarchyItemWithRelationship}"/>
+								</form:label>
+								<form:fields>
+									<Select forceSelection="true" selectedKey="{ViewModel>/sNewItemRelationshipTypeID}" items="{ path: 'OptionsModel>/RelationshipTypes' }"
+										width="160px">
+										<core:ListItem key="{OptionsModel>RelationshipTypeId}" text="{OptionsModel>RelationshipTypeText}" icon="{OptionsModel>RelationshipTypeIcon}"/>
+									</Select>
+								</form:fields>
+							</form:FormElement>
+						</form:formElements>
+					</form:FormContainer>
+				</form:formContainers>
+			</form:Form>
+		</content>
+		<beginButton>
+			<Button text="Cancel" press="onCloseHierarchyItemAddPopover"/>
+		</beginButton>
+		<endButton>
+			<Button text="Insert" press="onInsertHierarchItem"/>
+		</endButton>
+	</ResponsivePopover>
+</core:FragmentDefinition>

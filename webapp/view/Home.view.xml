@@ -24,9 +24,9 @@
 					rowSelectionChange="onHierarchyRowSelectionChange" cellClick="onHierarchyCellClick">
 					<table:extension>
 						<m:Toolbar>
-							<m:Button id="butAdd" text="Add" icon="sap-icon://add" press="onAddNode"/>
-							<m:Button id="butDelete" text="Delete" icon="sap-icon://delete" press="onDeleteNode"/>
 							<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh" enabled="true"/>
+							<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"/>
+							<m:Button id="butHierarchyItemDelete" text="Delete" icon="sap-icon://delete" press="onDeleteHierarchyItem"/>
 							<m:ToolbarSpacer/>
 							<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes"/>
 							<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel"/>
