@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
-	"pnp/hierarchyeditor/util/ErrorHandler"
-], function (Controller, History, ErrorHandler) {
+	"pnp/hierarchyeditor/util/ErrorHandler",
+	"pnp/hierarchyeditor/util/uuid"
+], function (Controller, History, ErrorHandler, uuid) {
 	"use strict";
 
 	return Controller.extend("pnp.blockandreplace.controller.Base", {
@@ -60,6 +61,32 @@ sap.ui.define([
 			} else {
 				this.getRouter().navTo("master", {}, true);
 			}
+		},
+		
+		/**
+		 * Gets a UUID as a unique ID at runtime formatted
+		 * in such way that it is acceptable as SAP GUID
+		 * @public
+		 */
+		getGUID: function() {
+
+			/*return version1 UUID, removing formatting hyphens, 
+			converting to upper case to match a SAP GUID*/
+			return window.uuid.v1().replace(/-/g, "").toUpperCase();
+
+		},
+
+		/**
+		 * Gets a UUID as a unique ID at runtime formatted
+		 * in such way that it is acceptable as SAP GUID
+		 * @public
+		 */
+		getUUID: function() {
+
+			/*return version1 UUID, removing formatting hyphens, 
+			converting to upper case to match a SAP GUID*/
+			return window.uuid.v1().replace(/-/g, "").toUpperCase();
+
 		},
 
 		/**

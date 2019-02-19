@@ -8,13 +8,13 @@
 		"RelationshipTypeText": "Child",
 		"RelationshipTypeIcon": "sap-icon://arrow-bottom"
 	}],
-	"HierarchyItemTypes": [{
-		"HierarchyItemTypeID": "1",
-		"HierarchyItemTypeText": "Node",
-		"HierarchyItemTypeIcon": "sap-icon://org-chart"
+	"NodeCategories": [{
+		"NodeCategoryID": "1",
+		"NodeCategoryText": "Node",
+		"NodeCategoryIcon": "sap-icon://org-chart"
 	}, {
-		"HierarchyItemTypeID": "2",
-		"HierarchyItemTypeText": "Member",
-		"HierarchyItemTypeIcon": "sap-icon://tags"
+		"NodeCategoryID": "2",
+		"NodeCategoryText": "Member",
+		"NodeCategoryIcon": "sap-icon://tags"
 	}]
 }

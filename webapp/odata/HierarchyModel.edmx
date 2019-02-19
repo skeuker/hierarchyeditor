@@ -80,13 +80,15 @@
 				</Key>
 				<Property Name="HierarchyID" Type="Edm.String" Nullable="false"></Property>
 				<Property Name="HierarchyNodeID" Type="Edm.String" Nullable="false" edmanno:StoreGeneratedPattern="Identity" />
+				<Property Name="NodeCategoryID" Type="Edm.String" Nullable="false"/>
 				<Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false"/>
 				<Property Name="NodeText" Type="Edm.String" Nullable="false" Unicode="true" FixedLength="false" />
 				<Property Name="NodeTypeID" Type="Edm.String" Nullable="false"></Property>
 				<Property Name="ParentNodeID" Type="Edm.String" Nullable="true" />
 				<Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
 				<Property Name="ChildCount" Type="Edm.Int16" Nullable="true" />
-				<Property Name="MemberID" Type="Edm.String" Nullable="true" />
+				<Property Name="HierarchyMembID" Type="Edm.String" Nullable="true" />
+				<Property Name="MemberTypeID" Type="Edm.String" Nullable="true" />
 			</EntityType>
 			<EntityContainer Name="HierarchyEntityContainer" edmanno:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true">
 				<EntitySet Name="HierarchyTypes" EntityType="pnp.hierarchyeditor.HierarchyType"></EntitySet>

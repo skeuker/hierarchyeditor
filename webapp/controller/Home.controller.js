@@ -2,7 +2,7 @@ sap.ui.define([
 	"pnp/hierarchyeditor/controller/Base.controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter"
-], function (BaseController, JSONModel, Filter) {
+], function(BaseController, JSONModel, Filter) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Home", {
@@ -12,11 +12,12 @@ sap.ui.define([
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 * @memberOf pnp.hierarchyeditor.view.Home
 		 */
-		onInit: function () {
+		onInit: function() {
 
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHomeView"),
+				sNewItemNodeCategoryID: null,
 				busyDelay: 0,
 				busy: false
 			});
@@ -50,12 +51,12 @@ sap.ui.define([
 		},
 
 		//on after rendering
-		onAfterRendering: function () {
+		onAfterRendering: function() {
 
 		},
 
 		//prepare view for next action
-		prepareViewForNextAction: function () {
+		prepareViewForNextAction: function() {
 
 			//hide message strip 
 			this.oMessageStrip.setVisible(false);
@@ -66,7 +67,7 @@ sap.ui.define([
 		},
 
 		//handle view display
-		onDisplay: function () {
+		onDisplay: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -85,7 +86,7 @@ sap.ui.define([
 				},
 
 				//success handler
-				success: function (oData) {
+				success: function(oData) {
 
 					//build HierarchyMetadataModel
 					if (true) {
@@ -129,10 +130,10 @@ sap.ui.define([
 
 				//event handlers
 				events: {
-					"dataRequested": function () {
+					"dataRequested": function() {
 						this.oViewModel.setProperty("/isHierarchyBusy", true);
 					}.bind(this),
-					"dataReceived": function () {
+					"dataReceived": function() {
 						this.oViewModel.setProperty("/isHierarchyBusy", false);
 					}.bind(this)
 				}
@@ -142,7 +143,7 @@ sap.ui.define([
 		},
 
 		//on drag start
-		onDragStart: function (oEvent) {
+		onDragStart: function(oEvent) {
 
 			//local data declaration
 			var oTreeTable = this.byId("TreeTable");
@@ -177,7 +178,7 @@ sap.ui.define([
 		},
 
 		//on drop
-		onDrop: function (oEvent) {
+		onDrop: function(oEvent) {
 
 			//local data declaration
 			var oTreeTable = this.byId("TreeTable");
@@ -217,7 +218,7 @@ sap.ui.define([
 		},
 
 		//on add node
-		onAddHierarchyItem: function () {
+		onAddHierarchyItem: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -239,7 +240,7 @@ sap.ui.define([
 
 			//create popover to add new hiearchy item
 			var oHierarchyItemAddPopover = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyItemAdd", this);
-			oHierarchyItemAddPopover.attachAfterClose(function () {
+			oHierarchyItemAddPopover.attachAfterClose(function() {
 				oHierarchyItemAddPopover.destroy();
 			});
 			this.getView().addDependent(oHierarchyItemAddPopover);
@@ -250,17 +251,32 @@ sap.ui.define([
 			//set ViewModel attributes that are bound on popover
 			this.oViewModel.setProperty("/sSelectedNodeText", oHierarchyItem.NodeText);
 			sap.ui.getCore().byId("popHierarchyItemAdd").setModel("ViewModel", this.oViewModel);
-
+			
+			//set an initial new item instance for binding
+			this.oViewModel.setProperty("/NewItem", {
+				"NodeText": "",
+				"NodeCategoryID": "1",
+				"NodeTypeID": null,
+				"MemberTypeID": null,
+				"RelationshipTypeID": null
+			});
+			
+			//bind popover to view model instance 
+			oHierarchyItemAddPopover.bindElement({
+				model: "ViewModel",
+				path: "/NewItem"
+			});
+			
 			// delay because addDependent will do a async rerendering 
 			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
-			jQuery.sap.delayedCall(0, this, function () {
+			jQuery.sap.delayedCall(0, this, function() {
 				oHierarchyItemAddPopover.openBy(oButtonHierarchyItemAdd);
 			});
 
 		},
 
 		//on closing the hierarchy item add popover
-		onCloseHierarchyItemAddPopover: function () {
+		onCloseHierarchyItemAddPopover: function() {
 
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
@@ -268,7 +284,7 @@ sap.ui.define([
 		},
 
 		//on insert of a new hierarchy item
-		onInsertHierarchItem: function () {
+		onInsertHierarchItem: function() {
 
 			//get selected node instance
 			var oHierarchyTree = this.getView().byId("TreeTable");
@@ -277,25 +293,37 @@ sap.ui.define([
 			//get hiearchy item corresponding to selected row
 			var oSelectedHierarchyItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
 
-			//get parameters for hierarchy item insert
-			var sHierarchyItemText = this.getModel("ViewModel").getProperty("/sNewHierarchyItemText");
-			var sItemRelationshipTypeID = this.getModel("ViewModel").getProperty("/sNewItemRelationshipTypeID");
-			var sItemHierarchyTypeID = this.getModel("ViewModel").getProperty("/sNewItemHierarchyTypeID");
+			//retrieve new item for hierarchy insert
+			var oNewItem = this.getModel("ViewModel").getProperty("/NewItem");
+			oNewItem.HierarchyID = oSelectedHierarchyItem.HierarchyID;
+			oNewItem.HierarchyNodeID = this.getGUID();
+			
+			//create a sibling or child
+			switch (oNewItem.RelationshipTypeID) {
+				case "2":
+					oNewItem.ParentNodeID = oSelectedHierarchyItem.NodeID;
+					break;
+			}
 
-			//verify that adding new hierarchy item on the selected node is possible
-
+			//build member attributes where applicable
+			switch (oNewItem.NodeCategoryID) {
+				case "2":
+					oNewItem.HierarchyMembID = this.getGUID();
+					break;
+			}
+			
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
 
-			/*remove this node from the backend
-			this.getModel("HierarchyModel").remove(sNodePath, {
-
+			//create this node on the backend
+			this.getModel("HierarchyModel").create("/HierarchyNodes", oNewItem, {
+				
 				//success handler for delete
-				success: function () {
-
-					//message handling: successfully updated
-					this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
-
+				success: function (oData) {
+					
+					//message handling: successfully created
+					this.sendStripMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"), "Success");
+					
 				}.bind(this),
 
 				//error handler for delete
@@ -306,12 +334,12 @@ sap.ui.define([
 
 				}.bind(this)
 
-			});*/
+			});
 
 		},
 
 		//on delete node
-		onDeleteHierarchyItem: function () {
+		onDeleteHierarchyItem: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -338,7 +366,7 @@ sap.ui.define([
 			this.getModel("HierarchyModel").remove(sNodePath, {
 
 				//success handler for delete
-				success: function () {
+				success: function() {
 
 					//message handling: successfully updated
 					this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
@@ -346,7 +374,7 @@ sap.ui.define([
 				}.bind(this),
 
 				//error handler for delete
-				error: function (oError) {
+				error: function(oError) {
 
 					//render OData error response
 					this.renderODataErrorResponseToMessagePopoverButton(oError);
@@ -358,7 +386,7 @@ sap.ui.define([
 		},
 
 		//on refresh
-		onRefresh: function () {
+		onRefresh: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -375,12 +403,12 @@ sap.ui.define([
 		},
 
 		//on assigned filters changed
-		onAssignedFiltersChanged: function () {
+		onAssignedFiltersChanged: function() {
 
 		},
 
 		//on hierarchy row selection change
-		onHierarchyRowSelectionChange: function () {
+		onHierarchyRowSelectionChange: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -388,7 +416,7 @@ sap.ui.define([
 		},
 
 		//on collapse of all levels
-		onCollapseAllNodes: function () {
+		onCollapseAllNodes: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -405,7 +433,7 @@ sap.ui.define([
 		},
 
 		//on expand first level nodes
-		onExpandAllNodesToLevel: function () {
+		onExpandAllNodesToLevel: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -422,7 +450,7 @@ sap.ui.define([
 		},
 
 		//on click in cell
-		onHierarchyCellClick: function (oEvent) {
+		onHierarchyCellClick: function(oEvent) {
 
 			//get clicked cell content
 			var sNodeText = oEvent.getParameter("cellControl").getText();
