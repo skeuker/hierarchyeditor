@@ -1,7 +1,8 @@
 sap.ui.define([
 	"pnp/hierarchyeditor/controller/Base.controller",
-	"sap/ui/model/json/JSONModel"
-], function (BaseController, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter"
+], function (BaseController, JSONModel, Filter) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Home", {
@@ -51,16 +52,6 @@ sap.ui.define([
 		//on after rendering
 		onAfterRendering: function () {
 
-			//attach 'dataRequested' event handler
-			this.getView().byId("TreeTable").getBinding("rows").attachDataRequested(function () {
-				this.oViewModel.setProperty("/isHierarchyBusy", true);
-			}, this);
-
-			//attach 'dataReceived' event handler
-			this.getView().byId("TreeTable").getBinding("rows").attachDataReceived(function () {
-				this.oViewModel.setProperty("/isHierarchyBusy", false);
-			}, this);
-
 		},
 
 		//prepare view for next action
@@ -80,16 +71,72 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
-			//create object key
-			var sHierarchyPath = "/" + this.getModel("HierarchyModel").createKey("Hierarchies", {
-				HierarchyID: '1'
+			//construct hierarchy key
+			var sHierarchyPath = this.getModel("HierarchyModel").createKey("Hierarchies", {
+				HierarchyID: "1"
 			});
 
-			//read nodes of this hierarchy
-			this.getModel("HierarchyModel").read(sHierarchyPath + "/toNodes", {
+			//read hierarchy metadata (without expanding to hierarchy nodes)
+			this.getModel("HierarchyModel").read("/" + sHierarchyPath, {
+
+				//url parameters
+				urlParameters: {
+					"$expand": "toMetadata,toMetadata/toNodeDefinitions,toMetadata/toNodeMemberDefinitions"
+				},
+
+				//success handler
 				success: function (oData) {
 
+					//build HierarchyMetadataModel
+					if (true) {
+
+					}
+
 				}
+
+			});
+
+			//get access to hierarchy tree table instance
+			var oHierarchyTable = this.getView().byId("TreeTable");
+
+			//do bind of aggregations 'rows' of treetable
+			oHierarchyTable.bindRows({
+
+				//oData binding path
+				path: "HierarchyModel>/HierarchyNodes",
+
+				//filters
+				filters: [new Filter({
+					path: "HierarchyID",
+					operator: "EQ",
+					value1: "1"
+				})],
+
+				//other binding parameters
+				parameters: {
+					countMode: "Inline",
+					operationMode: "Client",
+					numberOfExpandedLevels: 0,
+					useServersideApplicationFilters: "true",
+					treeAnnotationProperties: {
+						hierarchyLevelFor: "HierarchyLevel",
+						hierarchyNodeFor: "HierarchyNodeID",
+						hierarchyParentNodeFor: "ParentNodeID",
+						hierarchyDrillStateFor: "DrillState",
+						hierarchyNodeDescendantCountFor: "ChildCount"
+					}
+				},
+
+				//event handlers
+				events: {
+					"dataRequested": function () {
+						this.oViewModel.setProperty("/isHierarchyBusy", true);
+					}.bind(this),
+					"dataReceived": function () {
+						this.oViewModel.setProperty("/isHierarchyBusy", false);
+					}.bind(this)
+				}
+
 			});
 
 		},

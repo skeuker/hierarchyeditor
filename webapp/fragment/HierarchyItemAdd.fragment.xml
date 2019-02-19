@@ -39,6 +39,28 @@
 							</form:FormElement>
 							<form:FormElement>
 								<form:label>
+									<Label required="true" text="{i18n>lblNewHierarchyItemNodeTypeID}"/>
+								</form:label>
+								<form:fields>
+									<Select forceSelection="true" selectedKey="{ViewModel>/sNewHierarchyItemNodeTypeID}" items="{ path: 'HierarchyModel>/HierarchyNodeTypes' }"
+										width="230px">
+										<core:ListItem key="{HierarchyModel>NodeTypeId}" text="{HierarchyModel>NodeTypeText}"/>
+									</Select>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement>
+								<form:label>
+									<Label required="true" text="{i18n>lblNewHierarchyItemMemberTypeID}"/>
+								</form:label>
+								<form:fields>
+									<Select forceSelection="true" selectedKey="{ViewModel>/sNewHierarchyItemMemberTypeID}"
+										items="{ path: 'HierarchyModel>/HierarchyMemberTypes' }" width="230px">
+										<core:ListItem key="{HierarchyModel>MemberTypeId}" text="{HierarchyModel>MemberTypeText}"/>
+									</Select>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement>
+								<form:label>
 									<Label required="true" text="{i18n>lblAddNewHierarchyItemWithRelationship}"/>
 								</form:label>
 								<form:fields>

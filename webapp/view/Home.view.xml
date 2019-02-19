@@ -18,10 +18,9 @@
 		<content>
 			<m:VBox>
 				<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text="" class="sapUiSmallMarginBottom"/>
-				<table:TreeTable id="TreeTable"
-					rows="{ path : 'HierarchyModel>/HierarchyNodes', filters: [{path: 'HierarchyID', operator: 'EQ', value1: '1'}], parameters : { operationMode: 'Client', countMode: 'Inline', numberOfExpandedLevels: 0, useServersideApplicationFilters: 'true', treeAnnotationProperties : { hierarchyLevelFor : 'HierarchyLevel', hierarchyNodeFor : 'HierarchyNodeID', hierarchyParentNodeFor : 'ParentNodeID', hierarchyDrillStateFor : 'DrillState', hierarchyNodeDescendantCountFor : 'ChildCount' } } }"
-					selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title" busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0"
-					rowSelectionChange="onHierarchyRowSelectionChange" cellClick="onHierarchyCellClick">
+				<table:TreeTable id="TreeTable" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
+					busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0" rowSelectionChange="onHierarchyRowSelectionChange"
+					cellClick="onHierarchyCellClick">
 					<table:extension>
 						<m:Toolbar>
 							<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh" enabled="true"/>
