@@ -22,7 +22,7 @@
 									<Label required="true" text="{i18n>lblNewItemText}"/>
 								</form:label>
 								<form:fields>
-									<Input id="inputNewItemText" value="{ViewModel>/sNewItemText}" width="230px"/>
+									<Input id="inputNewItemText" value="{ViewModel>NodeText}" width="230px"/>
 								</form:fields>
 							</form:FormElement>
 							<form:FormElement>
@@ -30,39 +30,39 @@
 									<Label required="true" text="{i18n>lblNewNodeCategoryID}"/>
 								</form:label>
 								<form:fields>
-									<Select forceSelection="false" selectedKey="{ViewModel>NodeCategoryID}" items="{ path: 'OptionsModel>/NodeCategories' }" width="160px">
-										<core:ListItem key="{OptionsModel>NodeCategoryId}" text="{OptionsModel>NodeCategoryText}" icon="{OptionsModel>NodeCategoryIcon}"/>
+									<Select id="inputNodeCategoryID" forceSelection="false" selectedKey="{ViewModel>NodeCategoryID}" items="{ path: 'OptionsModel>/NodeCategories' }" width="160px" change="onNodeCategoryChange">
+										<core:ListItem key="{OptionsModel>NodeCategoryID}" text="{OptionsModel>NodeCategoryText}" icon="{OptionsModel>NodeCategoryIcon}"/>
 									</Select>
 								</form:fields>
 							</form:FormElement>
-							<form:FormElement>
+							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '1' }">
 								<form:label>
 									<Label required="true" text="{i18n>lblNewItemNodeTypeID}"/>
 								</form:label>
 								<form:fields>
-									<Select forceSelection="false" selectedKey="{ViewModel>NodeTypeID}" items="{ path: 'HierarchyModel>/HierarchyNodeTypes' }" width="230px">
-										<core:ListItem key="{HierarchyModel>NodeTypeId}" text="{HierarchyModel>NodeTypeText}"/>
+									<Select id="inputNodeTypeID" forceSelection="false" selectedKey="{ViewModel>NodeTypeID}" items="{ path: 'HierarchyMetaDataModel>/NodeTypes' }" width="230px">
+										<core:ListItem key="{HierarchyMetaDataModel>NodeTypeID}" text="{HierarchyMetaDataModel>NodeTypeText}"/>
 									</Select>
 								</form:fields>
 							</form:FormElement>
-							<form:FormElement>
+							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '2' }">
 								<form:label>
 									<Label required="true" text="{i18n>lblNewItemMemberTypeID}"/>
 								</form:label>
 								<form:fields>
-									<Select forceSelection="false" selectedKey="{ViewModel>MemberTypeID}" items="{ path: 'HierarchyModel>/HierarchyMemberTypes' }" width="230px">
-										<core:ListItem key="{HierarchyModel>MemberTypeId}" text="{HierarchyModel>MemberTypeText}"/>
+									<Select id="inputMemberTypeID" forceSelection="false" selectedKey="{ViewModel>MemberTypeID}" items="{ path: 'HierarchyMetaDataModel>/MemberTypes' }" width="230px">
+										<core:ListItem key="{HierarchyMetaDataModel>MemberTypeID}" text="{HierarchyMetaDataModel>MemberTypeText}"/>
 									</Select>
 								</form:fields>
 							</form:FormElement>
-							<form:FormElement>
+							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '1' }">
 								<form:label>
 									<Label required="true" text="{i18n>lblAddNewItemWithRelationship}"/>
 								</form:label>
 								<form:fields>
-									<Select forceSelection="false" selectedKey="{ViewModel>RelationshipTypeID}" items="{ path: 'OptionsModel>/RelationshipTypes' }"
+									<Select id="inputRelationshipTypeID" forceSelection="false" selectedKey="{ViewModel>RelationshipTypeID}" items="{ path: 'OptionsModel>/RelationshipTypes' }"
 										width="160px">
-										<core:ListItem key="{OptionsModel>RelationshipTypeId}" text="{OptionsModel>RelationshipTypeText}" icon="{OptionsModel>RelationshipTypeIcon}"/>
+										<core:ListItem key="{OptionsModel>RelationshipTypeID}" text="{OptionsModel>RelationshipTypeText}" icon="{OptionsModel>RelationshipTypeIcon}"/>
 									</Select>
 								</form:fields>
 							</form:FormElement>

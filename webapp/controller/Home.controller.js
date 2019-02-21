@@ -17,7 +17,6 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHomeView"),
-				sNewItemNodeCategoryID: null,
 				busyDelay: 0,
 				busy: false
 			});
@@ -76,31 +75,43 @@ sap.ui.define([
 			var sHierarchyPath = this.getModel("HierarchyModel").createKey("Hierarchies", {
 				HierarchyID: "1"
 			});
+			
+			//set view to busy
+			this.getModel("ViewModel").setProperty("/isViewBusy", true);
 
 			//read hierarchy metadata (without expanding to hierarchy nodes)
 			this.getModel("HierarchyModel").read("/" + sHierarchyPath, {
 
 				//url parameters
 				urlParameters: {
-					"$expand": "toMetadata,toMetadata/toNodeDefinitions,toMetadata/toNodeMemberDefinitions"
+					"$expand": "toMetadata,toMetadata/toNodeDefinitions,toMetadata/toNodeMemberDefinitions,toMetadata/toNodeTypes,toMetadata/toMemberTypes"
 				},
 
 				//success handler
 				success: function(oData) {
 
-					//build HierarchyMetadataModel
-					if (true) {
+					//create object carrying hierarchy metadata about node and member types
+					var oHierarchyMetaData = {};
+					oHierarchyMetaData.NodeTypes = oData.toMetadata.toNodeTypes.results;
+					oHierarchyMetaData.MemberTypes = oData.toMetadata.toMemberTypes.results;
 
-					}
+					//create JSON model carrying object containing hierarchy meta data model
+					var oHierarchyMetaDataModel = new JSONModel(oHierarchyMetaData);
 
-				}
+					//bind hierarchy metadata model to view
+					this.getView().setModel(oHierarchyMetaDataModel, "HierarchyMetaDataModel");
+					
+					//set view to busy
+					this.getModel("ViewModel").setProperty("/isViewBusy", false);
+
+				}.bind(this)
 
 			});
 
 			//get access to hierarchy tree table instance
 			var oHierarchyTable = this.getView().byId("TreeTable");
 
-			//do bind of aggregations 'rows' of treetable
+			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
 			oHierarchyTable.bindRows({
 
 				//oData binding path
@@ -217,6 +228,24 @@ sap.ui.define([
 
 		},
 
+		//on change of node category
+		onNodeCategoryChange: function() {
+
+			//HierarchyMetaDataModel>/NodeTypes
+			//HierarchyMetaDataModel>/MemberTypes
+
+			//this.HierarchyMetaData
+			//.toNodeDefinitions.results[]
+			//HierarchyTypeID
+			//HierarchyLevel
+			//NodeTypeID
+			//.toNodeMemberDefinitions.results[]
+			//HierarchyTypeID
+			//MemberTypeID
+			//NodeTypeID
+
+		},
+
 		//on add node
 		onAddHierarchyItem: function() {
 
@@ -250,8 +279,7 @@ sap.ui.define([
 
 			//set ViewModel attributes that are bound on popover
 			this.oViewModel.setProperty("/sSelectedNodeText", oHierarchyItem.NodeText);
-			sap.ui.getCore().byId("popHierarchyItemAdd").setModel("ViewModel", this.oViewModel);
-			
+
 			//set an initial new item instance for binding
 			this.oViewModel.setProperty("/NewItem", {
 				"NodeText": "",
@@ -260,13 +288,13 @@ sap.ui.define([
 				"MemberTypeID": null,
 				"RelationshipTypeID": null
 			});
-			
+
 			//bind popover to view model instance 
 			oHierarchyItemAddPopover.bindElement({
 				model: "ViewModel",
 				path: "/NewItem"
 			});
-			
+
 			// delay because addDependent will do a async rerendering 
 			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
 			jQuery.sap.delayedCall(0, this, function() {
@@ -297,37 +325,49 @@ sap.ui.define([
 			var oNewItem = this.getModel("ViewModel").getProperty("/NewItem");
 			oNewItem.HierarchyID = oSelectedHierarchyItem.HierarchyID;
 			oNewItem.HierarchyNodeID = this.getGUID();
-			
+
 			//create a sibling or child
 			switch (oNewItem.RelationshipTypeID) {
 				case "2":
-					oNewItem.ParentNodeID = oSelectedHierarchyItem.NodeID;
+					oNewItem.ParentNodeID = oSelectedHierarchyItem.HierarchyNodeID;
+					oNewItem.HierarchyLevel = oSelectedHierarchyItem.HierarchyLevel + 1;
 					break;
 			}
 
 			//build member attributes where applicable
 			switch (oNewItem.NodeCategoryID) {
+
+				//node of type root or inner node
+				case "1":
+					delete oNewItem.HierarchyMembID;
+					delete oNewItem.MemberTypeID;
+					break;
+
+					//node of type leaf
 				case "2":
 					oNewItem.HierarchyMembID = this.getGUID();
 					break;
 			}
-			
+
+			//remove new item property that does not exist in backend
+			delete oNewItem.RelationshipTypeID;
+
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
 
 			//create this node on the backend
 			this.getModel("HierarchyModel").create("/HierarchyNodes", oNewItem, {
-				
+
 				//success handler for delete
-				success: function (oData) {
-					
+				success: function(oData) {
+
 					//message handling: successfully created
 					this.sendStripMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"), "Success");
-					
+
 				}.bind(this),
 
 				//error handler for delete
-				error: function (oError) {
+				error: function(oError) {
 
 					//render OData error response
 					this.renderODataErrorResponseToMessagePopoverButton(oError);
