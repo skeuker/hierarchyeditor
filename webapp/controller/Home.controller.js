@@ -75,7 +75,7 @@ sap.ui.define([
 			var sHierarchyPath = this.getModel("HierarchyModel").createKey("Hierarchies", {
 				HierarchyID: "1"
 			});
-			
+
 			//set view to busy
 			this.getModel("ViewModel").setProperty("/isViewBusy", true);
 
@@ -94,13 +94,15 @@ sap.ui.define([
 					var oHierarchyMetaData = {};
 					oHierarchyMetaData.NodeTypes = oData.toMetadata.toNodeTypes.results;
 					oHierarchyMetaData.MemberTypes = oData.toMetadata.toMemberTypes.results;
+					oHierarchyMetaData.NodeDefinitions = oData.toMetadata.toNodeDefinitions.results;
+					oHierarchyMetaData.NodeMemberDefinitions = oData.toMetadata.toNodeMemberDefinitions.results;
 
 					//create JSON model carrying object containing hierarchy meta data model
 					var oHierarchyMetaDataModel = new JSONModel(oHierarchyMetaData);
 
 					//bind hierarchy metadata model to view
 					this.getView().setModel(oHierarchyMetaDataModel, "HierarchyMetaDataModel");
-					
+
 					//set view to busy
 					this.getModel("ViewModel").setProperty("/isViewBusy", false);
 
@@ -246,6 +248,56 @@ sap.ui.define([
 
 		},
 
+		//set applicable hierarchy metadata filters
+		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem) {
+
+			//local data declaration
+			var aNodeTypeFilters = [];
+			var aApplicableNodeTypes = [];
+
+			//get hierarchy metadata
+			var oHierarchyMetaData = this.getModel("HierarchyMetaDataModel").getProperty("/");
+
+			//derive all node types applicable for this hierarchy level as child
+			var iChildHierarchyLevel = oHierarchyItem.HierarchyLevel + 1;
+			oHierarchyMetaData.NodeDefinitions.forEach(function(oNodeDefinition) {
+
+				//keep track of this node type as applicable sibling node type
+				if (oHierarchyItem.HierarchyLevel === oNodeDefinition.HierarchyLevel
+					&& oHierarchyItem.RelationshipTypeID === "2") {  //Sibling
+					aApplicableNodeTypes.push(oNodeDefinition.NodeTypeID);
+				}
+
+				//keep track of this node type as applicable child node type
+				if (iChildHierarchyLevel === oNodeDefinition.HierarchyLevel
+					&& oHierarchyItem.RelationshipTypeID === "1") {  //Child
+					aApplicableNodeTypes.push(oNodeDefinition.NodeTypeID);
+				}
+
+			});
+
+			//get access to node type select ui control
+			var oNodeTypesBindingContext = sap.ui.getCore().byId("inputNodeTypeID").getBindingContext("items");
+
+			//build filter array of applicable node types			
+			aApplicableNodeTypes.forEach(function(oNodeType) {
+				aNodeTypeFilters.push(new Filter({
+					path: "NodeTypeID",
+					operator: "EQ",
+					value1: oNodeType.NodeTypeID
+				}));
+			});
+			
+			//apply filter to aggregation binding
+			oNodeTypesBindingContext.filter(aNodeTypeFilters);
+
+		},
+
+		//is allowable node drop location
+		isAllowableNodeDropLocation: function(oAnchorNode, oNode) {
+
+		},
+
 		//on add node
 		onAddHierarchyItem: function() {
 
@@ -283,10 +335,10 @@ sap.ui.define([
 			//set an initial new item instance for binding
 			this.oViewModel.setProperty("/NewItem", {
 				"NodeText": "",
-				"NodeCategoryID": "1",
+				"NodeCategoryID": "1", //Node
 				"NodeTypeID": null,
 				"MemberTypeID": null,
-				"RelationshipTypeID": null
+				"RelationshipTypeID": "2" //Child
 			});
 
 			//bind popover to view model instance 
@@ -294,6 +346,9 @@ sap.ui.define([
 				model: "ViewModel",
 				path: "/NewItem"
 			});
+			
+			//set applicable hierarchy metadata filters
+			this.setApplicableHierarchyMetaDataFilter();
 
 			// delay because addDependent will do a async rerendering 
 			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
