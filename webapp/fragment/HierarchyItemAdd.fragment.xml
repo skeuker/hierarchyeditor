@@ -61,7 +61,7 @@
 								</form:label>
 								<form:fields>
 									<Select id="inputRelationshipTypeID" forceSelection="false" selectedKey="{ViewModel>RelationshipTypeID}" items="{ path: 'OptionsModel>/RelationshipTypes' }"
-										width="160px">
+										width="160px" change="onNodeRelationshipTypeChange">
 										<core:ListItem key="{OptionsModel>RelationshipTypeID}" text="{OptionsModel>RelationshipTypeText}" icon="{OptionsModel>RelationshipTypeIcon}"/>
 									</Select>
 								</form:fields>

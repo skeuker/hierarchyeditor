@@ -166,20 +166,32 @@ sap.ui.define([
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
 			var aDraggedRowContexts = [];
 
+			//no further processing where applicable
+			if (!iDraggedRowIndex && aSelectedIndices.length === 0) {
+				return;
+			}
+
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
-			//compose context of dragged row(s)
+			//keep track of contexts of dragged row(s) where several are being dragged
 			if (aSelectedIndices.length > 0) {
-				// If rows are selected, do not allow to start dragging from a row which is not selected.
+
+				//do not allow to start dragging from a row which is not selected
 				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
 					oEvent.preventDefault();
-				} else {
-					for (var i = 0; i < aSelectedIndices.length; i++) {
-						aDraggedRowContexts.push(oTreeTable.getContextByIndex(aSelectedIndices[i]));
-					}
+					return;
 				}
-			} else {
+
+				//keep track of context of raws being dragged
+				aSelectedIndices.forEach(function(iSelectedIndex) {
+					aDraggedRowContexts.push(oTreeTable.getContextByIndex(iSelectedIndex));
+				});
+
+			}
+
+			//keep track of context of the one dragged row
+			if (iDraggedRowIndex) {
 				aDraggedRowContexts.push(oTreeTable.getContextByIndex(iDraggedRowIndex));
 			}
 
@@ -203,55 +215,71 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
+			//no further process as no dragged row contexts identified
 			if (aDraggedRowContexts.length === 0 || !oNewParentContext) {
 				return;
 			}
 
-			var oModel = oTreeTable.getBinding("rows").getModel();
+			//get new parent where node is to be dropped
 			var oNewParent = oNewParentContext.getProperty();
 
-			// In the JSON data of this example the children of a node are inside an array with the name "categories".
-			if (!oNewParent.categories) {
-				oNewParent.categories = []; // Initialize the children array.
-			}
+			//for each node being dragged
+			aDraggedRowContexts.forEach(function(oDraggedRowContext) {
 
-			for (var i = 0; i < aDraggedRowContexts.length; i++) {
-				if (oNewParentContext.getPath().indexOf(aDraggedRowContexts[i].getPath()) === 0) {
-					// Avoid moving a node into one of its child nodes.
-					continue;
-				}
+				//Set new parent ID property
+				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParent.HierarchyNodeID);
 
-				// Copy the data to the new parent.
-				oNewParent.categories.push(aDraggedRowContexts[i].getProperty());
+			}.bind(this));
 
-				// Remove the data. The property is simply set to undefined to preserve the tree state (expand/collapse states of nodes).
-				oModel.setProperty(aDraggedRowContexts[i].getPath(), undefined, aDraggedRowContexts[i], true);
-			}
+			//submit changes
+			this.getModel("HierarchyModel").submitChanges({
+
+				//success callback function
+				success: function(oData) {
+
+					//inspect batchResponses for errors and visualize
+					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
+						return;
+					}
+
+				}.bind(this),
+
+				//success callback function
+				error: function(oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});
 
 		},
 
 		//on change of node category
 		onNodeCategoryChange: function() {
 
-			//HierarchyMetaDataModel>/NodeTypes
-			//HierarchyMetaDataModel>/MemberTypes
+		},
 
-			//this.HierarchyMetaData
-			//.toNodeDefinitions.results[]
-			//HierarchyTypeID
-			//HierarchyLevel
-			//NodeTypeID
-			//.toNodeMemberDefinitions.results[]
-			//HierarchyTypeID
-			//MemberTypeID
-			//NodeTypeID
+		//on change of node relationship
+		onNodeRelationshipTypeChange: function(oEvent) {
+
+			//get access to hierarchy tree UI control
+			var oHierarchyTree = this.getView().byId("TreeTable");
+
+			//get hiearchy item corresponding to selected row
+			var oHierarchyItem = oHierarchyTree.getRows()[oHierarchyTree.getSelectedIndex()].getBindingContext("HierarchyModel").getObject();
+
+			//set applicable hierarchy metadata filters
+			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, oEvent.getSource().getSelectedKey());
 
 		},
 
 		//set applicable hierarchy metadata filters
-		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem) {
+		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem, sRelationshipTypeID) {
 
 			//local data declaration
+			var bApplicableNodeType;
 			var aNodeTypeFilters = [];
 			var aApplicableNodeTypes = [];
 
@@ -262,22 +290,35 @@ sap.ui.define([
 			var iChildHierarchyLevel = oHierarchyItem.HierarchyLevel + 1;
 			oHierarchyMetaData.NodeDefinitions.forEach(function(oNodeDefinition) {
 
+				//prepare for next loop pass
+				bApplicableNodeType = false;
+
 				//keep track of this node type as applicable sibling node type
-				if (oHierarchyItem.HierarchyLevel === oNodeDefinition.HierarchyLevel
-					&& oHierarchyItem.RelationshipTypeID === "2") {  //Sibling
-					aApplicableNodeTypes.push(oNodeDefinition.NodeTypeID);
+				if (oHierarchyItem.HierarchyLevel === oNodeDefinition.HierarchyLevel && sRelationshipTypeID === "1") { //Sibling
+					bApplicableNodeType = true;
 				}
 
 				//keep track of this node type as applicable child node type
-				if (iChildHierarchyLevel === oNodeDefinition.HierarchyLevel
-					&& oHierarchyItem.RelationshipTypeID === "1") {  //Child
-					aApplicableNodeTypes.push(oNodeDefinition.NodeTypeID);
+				if (iChildHierarchyLevel === oNodeDefinition.HierarchyLevel && sRelationshipTypeID === "2") { //Child
+					bApplicableNodeType = true;
+				}
+
+				//include applicable node type
+				if (bApplicableNodeType) {
+					oHierarchyMetaData.NodeTypes.forEach(function(oNodeType) {
+						if (oNodeType.NodeTypeID === oNodeDefinition.NodeTypeID) {
+							aApplicableNodeTypes.push({
+								NodeTypeID: oNodeDefinition.NodeTypeID,
+								NodeText: oNodeType.NodeText
+							});
+						}
+					});
 				}
 
 			});
 
 			//get access to node type select ui control
-			var oNodeTypesBindingContext = sap.ui.getCore().byId("inputNodeTypeID").getBindingContext("items");
+			var oNodeTypesBinding = sap.ui.getCore().byId("inputNodeTypeID").getBinding("items");
 
 			//build filter array of applicable node types			
 			aApplicableNodeTypes.forEach(function(oNodeType) {
@@ -287,9 +328,18 @@ sap.ui.define([
 					value1: oNodeType.NodeTypeID
 				}));
 			});
-			
+
+			//cater for the situation where no node type applicable
+			if (aNodeTypeFilters.length === 0) {
+				aNodeTypeFilters.push(new Filter({
+					path: "NodeTypeID",
+					operator: "EQ",
+					value1: "XX"
+				}));
+			}
+
 			//apply filter to aggregation binding
-			oNodeTypesBindingContext.filter(aNodeTypeFilters);
+			oNodeTypesBinding.filter(aNodeTypeFilters);
 
 		},
 
@@ -304,7 +354,7 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
-			//get node instance being deleted
+			//get node instance on which to add
 			var oHierarchyTree = this.getView().byId("TreeTable");
 			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
 
@@ -346,9 +396,9 @@ sap.ui.define([
 				model: "ViewModel",
 				path: "/NewItem"
 			});
-			
+
 			//set applicable hierarchy metadata filters
-			this.setApplicableHierarchyMetaDataFilter();
+			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "2"); //to add as child
 
 			// delay because addDependent will do a async rerendering 
 			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
@@ -369,12 +419,15 @@ sap.ui.define([
 		//on insert of a new hierarchy item
 		onInsertHierarchItem: function() {
 
+			//local data declaration
+			var aNodeState = [];
+
 			//get selected node instance
-			var oHierarchyTree = this.getView().byId("TreeTable");
-			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
+			var oHierarchyTable = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTable.getSelectedIndex();
 
 			//get hiearchy item corresponding to selected row
-			var oSelectedHierarchyItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
+			var oSelectedHierarchyItem = oHierarchyTable.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
 
 			//retrieve new item for hierarchy insert
 			var oNewItem = this.getModel("ViewModel").getProperty("/NewItem");
@@ -410,6 +463,24 @@ sap.ui.define([
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
 
+			//get rows currently in hierarchy
+			var aHierarchyTableRows = oHierarchyTable.getRows();
+
+			//keep track of row drill state
+			aHierarchyTableRows.forEach(function(oRow) {
+				if (oRow._oNodeState) {
+					aNodeState.push({
+						RowIndex: oRow.getIndex(),
+						expanded: oRow._oNodeState.expanded
+					});
+				} else {
+					aNodeState.push({
+						RowIndex: oRow.getIndex(),
+						expanded: false
+					});
+				}
+			});
+
 			//create this node on the backend
 			this.getModel("HierarchyModel").create("/HierarchyNodes", oNewItem, {
 
@@ -418,6 +489,13 @@ sap.ui.define([
 
 					//message handling: successfully created
 					this.sendStripMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"), "Success");
+
+					//reapply node state
+					aNodeState.forEach(function(oNodeState) {
+						if (oNodeState.expanded) {
+							oHierarchyTable.expand(oNodeState.RowIndex);
+						}
+					}.bind(this));
 
 				}.bind(this),
 
@@ -491,9 +569,6 @@ sap.ui.define([
 
 			//refresh binding of 'rows' aggregation
 			oHierarchyTable.getBinding("rows").refresh(true);
-
-			//expand to requested level
-			oHierarchyTable.expandToLevel(this.iTreeExpandLevel);
 
 		},
 

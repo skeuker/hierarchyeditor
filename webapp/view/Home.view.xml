@@ -32,7 +32,7 @@
 						</m:Toolbar>
 					</table:extension>
 					<table:dragDropConfig>
-						<dnd:DragDropInfo sourceAggregation="rows" targetAggregation=" rows" dragStart="onDragStart" drop="onDrop"/>
+						<dnd:DragDropInfo enabled="true" sourceAggregation="rows" targetAggregation="rows" dragStart="onDragStart" drop="onDrop" DropEffect="Move" DropPosition="Between"/>
 					</table:dragDropConfig>
 					<table:columns>
 						<table:Column width="40%">
