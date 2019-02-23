@@ -65,8 +65,8 @@ sap.ui.define([
 
 		},
 
-		//handle view display
-		onDisplay: function() {
+		//prepare for display
+		prepareViewForDisplay: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -155,6 +155,25 @@ sap.ui.define([
 
 		},
 
+		//handle view display
+		onDisplay: function() {
+
+			//get OData model for Hierarchy
+			var oHierarchyModel = this.getModel("HierarchyModel");
+
+			//where metadata is already loaded
+			if (oHierarchyModel.oMetadata && oHierarchyModel.oMetadata.bLoaded) {
+				this.prepareViewForDisplay();
+				return;
+			}
+
+			//metadata is not yet loaded register event handler
+			oHierarchyModel.metadataLoaded().then(function() {
+				this.prepareViewForDisplay();
+			}.bind(this));
+
+		},
+
 		//on drag start
 		onDragStart: function(oEvent) {
 
@@ -167,7 +186,7 @@ sap.ui.define([
 			var aDraggedRowContexts = [];
 
 			//no further processing where applicable
-			if (!iDraggedRowIndex && aSelectedIndices.length === 0) {
+			if (iDraggedRowIndex === -1 && aSelectedIndices.length === 0) {
 				return;
 			}
 
@@ -191,7 +210,7 @@ sap.ui.define([
 			}
 
 			//keep track of context of the one dragged row
-			if (iDraggedRowIndex) {
+			if (iDraggedRowIndex >= 0) {
 				aDraggedRowContexts.push(oTreeTable.getContextByIndex(iDraggedRowIndex));
 			}
 
@@ -209,25 +228,41 @@ sap.ui.define([
 			var oTreeTable = this.byId("TreeTable");
 			var oDragSession = oEvent.getParameter("dragSession");
 			var oDroppedRow = oEvent.getParameter("droppedControl");
-			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+			var oHierarchyMaintenanceData = oDragSession.getComplexData("hierarchymaintenance");
+			var aDraggedRowContexts = oHierarchyMaintenanceData.draggedRowContexts;
 			var oNewParentContext = oTreeTable.getContextByIndex(oDroppedRow.getIndex());
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
 			//no further process as no dragged row contexts identified
-			if (aDraggedRowContexts.length === 0 || !oNewParentContext) {
+			if (!aDraggedRowContexts || aDraggedRowContexts.length === 0 ||
+				!oNewParentContext) {
 				return;
 			}
 
 			//get new parent where node is to be dropped
-			var oNewParent = oNewParentContext.getProperty();
+			var oNewParentNode = oNewParentContext.getProperty();
 
 			//for each node being dragged
 			aDraggedRowContexts.forEach(function(oDraggedRowContext) {
 
+				//get access to attributes of dragged node	
+				var oDraggedNode = oDraggedRowContext.getProperty();
+
+				//verify whether this node is an allowable drop location
+				if (!this.isAllowableNodeDropLocation(oDraggedNode, oNewParentNode)) {
+
+					//message handling: not an allowable drop location
+					this.sendStripMessage(this.getResourceBundle().getText("msgNotAnAllowableDropLocation"), sap.ui.core.MessageType.Error);
+
+					//no further processing
+					return;
+
+				}
+
 				//Set new parent ID property
-				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParent.HierarchyNodeID);
+				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
 
 			}.bind(this));
 
@@ -275,8 +310,8 @@ sap.ui.define([
 
 		},
 
-		//set applicable hierarchy metadata filters
-		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem, sRelationshipTypeID) {
+		//get node types that are applicable to enter into a relationship with the specified hierarchy item
+		getApplicableNodeTypes: function(oHierarchyItem, sRelationshipTypeID) {
 
 			//local data declaration
 			var bApplicableNodeType;
@@ -317,6 +352,20 @@ sap.ui.define([
 
 			});
 
+			//feedback to caller
+			return aApplicableNodeTypes;
+
+		},
+
+		//set applicable hierarchy metadata filters
+		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem, sRelationshipTypeID) {
+
+			//local data declaration
+			var aNodeTypeFilters = [];
+
+			//get applicable node types
+			var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem, sRelationshipTypeID);
+
 			//get access to node type select ui control
 			var oNodeTypesBinding = sap.ui.getCore().byId("inputNodeTypeID").getBinding("items");
 
@@ -344,7 +393,23 @@ sap.ui.define([
 		},
 
 		//is allowable node drop location
-		isAllowableNodeDropLocation: function(oAnchorNode, oNode) {
+		isAllowableNodeDropLocation: function(oNode, oTargetNode) {
+			
+			//local data declaration
+			var bIsAllowable = false;
+
+			//get applicable node types allowed for children of this target node
+			var aApplicableNodeTypes = this.getApplicableNodeTypes(oTargetNode, "2");
+
+			//verify whether incoming node meets node type requirements
+			aApplicableNodeTypes.forEach(function(oApplicableNodeType) {
+				if (oApplicableNodeType.NodeTypeID === oNode.NodeTypeID) {
+					bIsAllowable = true;
+				}
+			});
+
+			//reaching this point means not an allowable drop location
+			return bIsAllowable;
 
 		},
 
