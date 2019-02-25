@@ -294,10 +294,16 @@ sap.ui.define([
 		//on change of node category
 		onNodeCategoryChange: function() {
 
+			//take cognisance of change of input
+			this.onHierarchyItemAddInputChange();
+
 		},
 
 		//on change of node relationship
 		onNodeRelationshipTypeChange: function(oEvent) {
+
+			//take cognisance of change of input
+			this.onHierarchyItemAddInputChange();
 
 			//get access to hierarchy tree UI control
 			var oHierarchyTree = this.getView().byId("TreeTable");
@@ -315,7 +321,6 @@ sap.ui.define([
 
 			//local data declaration
 			var bApplicableNodeType;
-			var aNodeTypeFilters = [];
 			var aApplicableNodeTypes = [];
 
 			//get hierarchy metadata
@@ -344,7 +349,7 @@ sap.ui.define([
 						if (oNodeType.NodeTypeID === oNodeDefinition.NodeTypeID) {
 							aApplicableNodeTypes.push({
 								NodeTypeID: oNodeDefinition.NodeTypeID,
-								NodeText: oNodeType.NodeText
+								NodeText: oNodeType.NodeTypeText
 							});
 						}
 					});
@@ -357,44 +362,143 @@ sap.ui.define([
 
 		},
 
+		//get member types that are applicable to enter into a relationship with the specified hierarchy item
+		getApplicableMemberTypes: function(oHierarchyItem) {
+
+			//local data declaration
+			var bApplicableMemberType;
+			var aApplicableMemberTypes = [];
+
+			//get hierarchy metadata
+			var oHierarchyMetaData = this.getModel("HierarchyMetaDataModel").getProperty("/");
+
+			//derive all member types applicable for this hierarchy level as child
+			oHierarchyMetaData.NodeMemberDefinitions.forEach(function(oNodeMemberDefinition) {
+
+				//prepare for next loop pass
+				bApplicableMemberType = false;
+
+				//keep track of this node type as applicable member type
+				if (oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) { //Sibling
+					bApplicableMemberType = true;
+				}
+
+				//include applicable node type
+				if (bApplicableMemberType) {
+					oHierarchyMetaData.MemberTypes.forEach(function(oMemberType) {
+						if (oMemberType.MemberTypeID === oNodeMemberDefinition.MemberTypeID) {
+							aApplicableMemberTypes.push({
+								MemberTypeID: oNodeMemberDefinition.NodeTypeID,
+								MemberTypeText: oMemberType.MemberTypeText
+							});
+						}
+					});
+				}
+
+			});
+
+			//feedback to caller
+			return aApplicableMemberTypes;
+
+		},
+
 		//set applicable hierarchy metadata filters
 		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem, sRelationshipTypeID) {
 
 			//local data declaration
 			var aNodeTypeFilters = [];
+			var aMemberTypeFilters = [];
+			var bInputNodeTypeIDVisible = true;
 
-			//get applicable node types
-			var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem, sRelationshipTypeID);
+			//processing by node category
+			switch (oHierarchyItem.NodeCategoryID) {
 
-			//get access to node type select ui control
-			var oNodeTypesBinding = sap.ui.getCore().byId("inputNodeTypeID").getBinding("items");
+				//node is root or inner node
+				case "0":
+				case "1":
 
-			//build filter array of applicable node types			
-			aApplicableNodeTypes.forEach(function(oNodeType) {
-				aNodeTypeFilters.push(new Filter({
-					path: "NodeTypeID",
-					operator: "EQ",
-					value1: oNodeType.NodeTypeID
-				}));
-			});
+					//get applicable node types
+					var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem, sRelationshipTypeID);
 
-			//cater for the situation where no node type applicable
-			if (aNodeTypeFilters.length === 0) {
-				aNodeTypeFilters.push(new Filter({
-					path: "NodeTypeID",
-					operator: "EQ",
-					value1: "XX"
-				}));
+					//get access to node type select ui control
+					var oNodeTypesBinding = sap.ui.getCore().byId("inputNodeTypeID").getBinding("items");
+
+					//build filter array of applicable node types			
+					aApplicableNodeTypes.forEach(function(oNodeType) {
+						aNodeTypeFilters.push(new Filter({
+							path: "NodeTypeID",
+							operator: "EQ",
+							value1: oNodeType.NodeTypeID
+						}));
+					});
+
+					//default node type in UI where only one applicable node type 
+					if (aNodeTypeFilters.length === 1) {
+
+						//default selected key to the one applicable node type
+						sap.ui.getCore().byId("inputNodeTypeID").setSelectedKey(aNodeTypeFilters[0].oValue1);
+
+					}
+
+					//cater for the situation where no node type applicable
+					if (aNodeTypeFilters.length === 0) {
+
+						//switch node category to member
+						sap.ui.getCore().byId("inputNodeCategoryID").setSelectedKey("2");
+
+						//indicate that node type ID entry should not be displayed
+						bInputNodeTypeIDVisible = false;
+
+					}
+
+					//set visibility of node type input UI control 
+					sap.ui.getCore().byId("inputNodeTypeID").setVisible(bInputNodeTypeIDVisible);
+
+					//apply filter to select items aggregation binding
+					oNodeTypesBinding.filter(aNodeTypeFilters);
+
+					//no further processing here
+					break;
+
+					//node is leaf node (member)
+				case "2":
+
+					//get applicable member types
+					var aApplicableMemberTypes = this.getApplicableMemberTypes(oHierarchyItem);
+
+					//get access to member type select ui control
+					var oMemberTypesBinding = sap.ui.getCore().byId("inputMemberTypeID").getBinding("items");
+
+					//build filter array of applicable member types			
+					aApplicableMemberTypes.forEach(function(oMemberType) {
+						aMemberTypeFilters.push(new Filter({
+							path: "MemberTypeID",
+							operator: "EQ",
+							value1: oMemberType.MemberTypeID
+						}));
+					});
+
+					//cater for the situation where no member type applicable
+					if (aMemberTypeFilters.length === 0) {
+						aMemberTypeFilters.push(new Filter({
+							path: "MemberTypeID",
+							operator: "EQ",
+							value1: "XX"
+						}));
+					}
+
+					//apply filter to aggregation binding
+					oMemberTypesBinding.filter(aMemberTypeFilters);
+
+					//no further processing
+					break;
 			}
-
-			//apply filter to aggregation binding
-			oNodeTypesBinding.filter(aNodeTypeFilters);
 
 		},
 
 		//is allowable node drop location
 		isAllowableNodeDropLocation: function(oNode, oTargetNode) {
-			
+
 			//local data declaration
 			var bIsAllowable = false;
 
@@ -473,6 +577,22 @@ sap.ui.define([
 
 		},
 
+		//on live change of adding hierarchy item
+		onHierarchyItemAddInputChange: function(oEvent) {
+
+			//get UI control that triggered the input
+			var oUiControl = oEvent.getSource();
+
+			//reset value state to 'None'
+			if (!oUiControl.getValue()) {
+				oUiControl.setValueState(sap.ui.core.ValueState.None);
+			}
+
+			//hide popover message strip
+			sap.ui.getCore().byId("msHierarchyAddPopOverMessageStrip").setVisible(false);
+
+		},
+
 		//on closing the hierarchy item add popover
 		onCloseHierarchyItemAddPopover: function() {
 
@@ -482,10 +602,22 @@ sap.ui.define([
 		},
 
 		//on insert of a new hierarchy item
-		onInsertHierarchItem: function() {
+		onInsertHierarchyItem: function() {
 
 			//local data declaration
 			var aNodeState = [];
+
+			//message handling: invalid form input where applicable
+			if (this.hasMissingInput([sap.ui.getCore().byId("formHierarchyItemAdd")])) {
+
+				//message handling: incomplete form input detected
+				this.sendStripMessage(this.getResourceBundle().getText("messageInputCheckedWithErrors"),
+					sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msHierarchyAddPopOverMessageStrip"));
+
+				//no further processing at this point
+				return;
+
+			}
 
 			//get selected node instance
 			var oHierarchyTable = this.getView().byId("TreeTable");

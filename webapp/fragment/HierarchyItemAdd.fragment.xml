@@ -2,7 +2,8 @@
 	<ResponsivePopover id="popHierarchyItemAdd" title="{i18n>titleAddNewItem}" class="sapUiPopupWithPadding" placement="Bottom"
 		initialFocus="inputNewItemText">
 		<content>
-			<form:Form id="formCardAction" class="sapUiMediumMarginBottom" editable="true" width="450px">
+			<MessageStrip id="msHierarchyAddPopOverMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
+			<form:Form id="formHierarchyItemAdd" class="sapUiMediumMarginBottom" editable="true" width="450px">
 				<form:layout>
 					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="true" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
 				</form:layout>
@@ -22,7 +23,7 @@
 									<Label required="true" text="{i18n>lblNewItemText}"/>
 								</form:label>
 								<form:fields>
-									<Input id="inputNewItemText" value="{ViewModel>NodeText}" width="230px"/>
+									<Input id="inputNewItemText" value="{ViewModel>NodeText}" width="230px" liveChange="onHierarchyItemAddInputChange"/>
 								</form:fields>
 							</form:FormElement>
 							<form:FormElement>
@@ -40,7 +41,7 @@
 									<Label required="true" text="{i18n>lblNewItemNodeTypeID}"/>
 								</form:label>
 								<form:fields>
-									<Select id="inputNodeTypeID" forceSelection="false" selectedKey="{ViewModel>NodeTypeID}" items="{ path: 'HierarchyMetaDataModel>/NodeTypes' }" width="230px">
+									<Select id="inputNodeTypeID" forceSelection="false" selectedKey="{ViewModel>NodeTypeID}" items="{ path: 'HierarchyMetaDataModel>/NodeTypes' }" width="240px" change="onHierarchyItemAddInputChange">
 										<core:ListItem key="{HierarchyMetaDataModel>NodeTypeID}" text="{HierarchyMetaDataModel>NodeTypeText}"/>
 									</Select>
 								</form:fields>
@@ -50,7 +51,7 @@
 									<Label required="true" text="{i18n>lblNewItemMemberTypeID}"/>
 								</form:label>
 								<form:fields>
-									<Select id="inputMemberTypeID" forceSelection="false" selectedKey="{ViewModel>MemberTypeID}" items="{ path: 'HierarchyMetaDataModel>/MemberTypes' }" width="230px">
+									<Select id="inputMemberTypeID" forceSelection="false" selectedKey="{ViewModel>MemberTypeID}" items="{ path: 'HierarchyMetaDataModel>/MemberTypes' }" width="230px" change="onHierarchyItemAddInputChange">
 										<core:ListItem key="{HierarchyMetaDataModel>MemberTypeID}" text="{HierarchyMetaDataModel>MemberTypeText}"/>
 									</Select>
 								</form:fields>
@@ -75,7 +76,7 @@
 			<Button text="Cancel" press="onCloseHierarchyItemAddPopover"/>
 		</beginButton>
 		<endButton>
-			<Button text="Insert" press="onInsertHierarchItem"/>
+			<Button text="Insert" press="onInsertHierarchyItem"/>
 		</endButton>
 	</ResponsivePopover>
 </core:FragmentDefinition>

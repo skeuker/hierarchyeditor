@@ -18,7 +18,7 @@
 		<content>
 			<m:VBox>
 				<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text="" class="sapUiSmallMarginBottom"/>
-				<table:TreeTable id="TreeTable" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
+				<table:TreeTable id="TreeTable" selectionMode="Single" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
 					busy="{ViewModel>/isHierarchyBusy}" busyIndicatorDelay="0" rowSelectionChange="onHierarchyRowSelectionChange"
 					cellClick="onHierarchyCellClick">
 					<table:extension>

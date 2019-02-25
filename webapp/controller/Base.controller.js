@@ -93,12 +93,17 @@ sap.ui.define([
 		 * Send message using message strip
 		 * @private
 		 */
-		sendStripMessage: function (sText, sType) {
-
-			//message handling
-			this.oMessageStrip.setText(sText);
-			this.oMessageStrip.setType(sType);
-			this.oMessageStrip.setVisible(true);
+		sendStripMessage: function (sText, sType, oMessageStrip) {
+			
+			//adopt message strip for issuing message
+			if(!oMessageStrip){
+				oMessageStrip = this.oMessageStrip;
+			}
+			
+			//message handling: send message
+			oMessageStrip.setText(sText);
+			oMessageStrip.setType(sType);
+			oMessageStrip.setVisible(true);
 
 		},
 
