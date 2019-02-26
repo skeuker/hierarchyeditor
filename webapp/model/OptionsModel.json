@@ -1,5 +1,9 @@
 {
 	"RelationshipTypes": [{
+		"RelationshipTypeID": "0",
+		"RelationshipTypeText": "Unrelated",
+		"RelationshipTypeIcon": "sap-icon://arrow-right"
+	},{
 		"RelationshipTypeID": "1",
 		"RelationshipTypeText": "Sibling",
 		"RelationshipTypeIcon": "sap-icon://arrow-right"
@@ -9,8 +13,12 @@
 		"RelationshipTypeIcon": "sap-icon://arrow-bottom"
 	}],
 	"NodeCategories": [{
+		"NodeCategoryID": "0",
+		"NodeCategoryText": "Root",
+		"NodeCategoryIcon": "sap-icon://org-chart"
+	}, {
 		"NodeCategoryID": "1",
-		"NodeCategoryText": "Node",
+		"NodeCategoryText": "Branch",
 		"NodeCategoryIcon": "sap-icon://org-chart"
 	}, {
 		"NodeCategoryID": "2",

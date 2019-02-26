@@ -10,7 +10,7 @@
 				<form:formContainers>
 					<form:FormContainer>
 						<form:formElements>
-							<form:FormElement>
+							<form:FormElement visible="{ViewModel>/bSelectedNodeTextVisible}">
 								<form:label>
 									<Label required="true" text="{i18n>lblSelectedNodeText}"/>
 								</form:label>
@@ -31,12 +31,12 @@
 									<Label required="true" text="{i18n>lblNewNodeCategoryID}"/>
 								</form:label>
 								<form:fields>
-									<Select id="inputNodeCategoryID" forceSelection="false" selectedKey="{ViewModel>NodeCategoryID}" items="{ path: 'OptionsModel>/NodeCategories' }" width="160px" change="onNodeCategoryChange">
+									<Select id="inputNodeCategoryID" enabled="{ViewModel>/bNodeCategoryEnabled}" forceSelection="false" selectedKey="{ViewModel>NodeCategoryID}" items="{ path: 'OptionsModel>/NodeCategories' }" width="160px" change="onNodeCategoryChange">
 										<core:ListItem key="{OptionsModel>NodeCategoryID}" text="{OptionsModel>NodeCategoryText}" icon="{OptionsModel>NodeCategoryIcon}"/>
 									</Select>
 								</form:fields>
 							</form:FormElement>
-							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '1' }">
+							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '0' || ${ViewModel>NodeCategoryID} === '1' }">
 								<form:label>
 									<Label required="true" text="{i18n>lblNewItemNodeTypeID}"/>
 								</form:label>
@@ -56,7 +56,7 @@
 									</Select>
 								</form:fields>
 							</form:FormElement>
-							<form:FormElement visible="{= ${ViewModel>NodeCategoryID} === '1' }">
+							<form:FormElement visible="{ViewModel>/bRelationshipTypeVisible}">
 								<form:label>
 									<Label required="true" text="{i18n>lblAddNewItemWithRelationship}"/>
 								</form:label>
