@@ -321,7 +321,7 @@ sap.ui.define([
 			var oHierarchyItem = this.getModel("ViewModel").getProperty("/NewItem");
 
 			//set applicable hierarchy metadata filters 
-			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem);
+			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "NodeCategoryID");
 
 		},
 
@@ -344,7 +344,7 @@ sap.ui.define([
 			oHierarchyItem.HierarchyLevel = oHierarchyItem.HierarchyLevel + iRelationshipDelta;
 
 			//set applicable hierarchy metadata filters 
-			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem);
+			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "RelationshipTypeID");
 
 		},
 
@@ -358,6 +358,24 @@ sap.ui.define([
 
 			//get all node categories
 			var aNodeCategories = this.getModel("OptionsModel").getProperty("/NodeCategories");
+
+			//adopt node category of incoming hierarchy item
+			if (oHierarchyItem.aStable.indexOf("NodeCategoryID") >= 0) {
+
+				//filter existing node categories keeping the one on the hierarchy item
+				aApplicableNodeCategories = aNodeCategories.filter(function(oNodeCategory) {
+					if (oHierarchyItem.NodeCategoryID === oNodeCategory.NodeCategoryID) {
+						aApplicableNodeCategories.push({
+							NodeCategoryID: oNodeCategory.NodeCategoryID,
+							NodeCategoryText: oNodeCategory.NodeCategoryText
+						});
+					}
+				});
+
+				//no further analysis of existing node categories
+				return aApplicableNodeCategories;
+
+			}
 
 			//derive all node categories applicable for this hierarchy item
 			aNodeCategories.forEach(function(oNodeCategory) {
@@ -414,8 +432,29 @@ sap.ui.define([
 			var bApplicableRelationshipType;
 			var aApplicableRelationshipTypes = [];
 
+			//get max hierarchy level
+			var iMaxHierarchyLevel = this.getModel("HierarchyMetaDataModel").getProperty("/MaxHierarchyLevel");
+
 			//get all relationship types
 			var aRelationshipTypes = this.getModel("OptionsModel").getProperty("/RelationshipTypes");
+
+			//adopt relationship type ID of incoming hierarchy item
+			if (oHierarchyItem.aStable.indexOf("RelationshipTypeID") >= 0) {
+
+				//filter existing relationship types keeping the one on the hierarchy item
+				aApplicableRelationshipTypes = aRelationshipTypes.filter(function(oRelationshipType) {
+					if (oHierarchyItem.RelationshipTypeID === oRelationshipType.RelationshipTypeID) {
+						aApplicableRelationshipTypes.push({
+							RelationshipTypeID: oRelationshipType.RelationshipTypeID,
+							RelationshipTypeText: oRelationshipType.RelationshipTypeText
+						});
+					}
+				});
+
+				//no further analysis of existing node categories
+				return aApplicableRelationshipTypes;
+
+			}
 
 			//derive all relationship types applicable for this hierarchy item
 			aRelationshipTypes.forEach(function(oRelationshipType) {
@@ -428,18 +467,21 @@ sap.ui.define([
 					bApplicableRelationshipType = true;
 				}
 
-				//sibling where node or member types available
+				//detect applicable node and member types
 				var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem);
 				var aApplicableMemberTypes = this.getApplicableMemberTypes(oHierarchyItem);
+
+				//sibling where node or member types available
 				if ((aApplicableNodeTypes.length > 0 || aApplicableMemberTypes.length > 0) &&
 					oRelationshipType.RelationshipTypeID === "1" &&
 					oHierarchyItem.HierarchyLevel !== 0) {
 					bApplicableRelationshipType = true;
 				}
 
-				//children where node types available
+				//child nodes or members where not already on max hierarchy level
 				if ((aApplicableNodeTypes.length > 0 || aApplicableMemberTypes.length > 0) &&
-					oRelationshipType.RelationshipTypeID === "2") {
+					oRelationshipType.RelationshipTypeID === "2" &&
+					oHierarchyItem.HierarchyLevel !== iMaxHierarchyLevel) {
 					bApplicableRelationshipType = true;
 				}
 
@@ -581,6 +623,11 @@ sap.ui.define([
 			var aMemberTypeFilters = [];
 			var bInputMemberTypeIDEnabled = true;
 
+			//no further processing where applicable
+			if (oHierarchyItem.NodeCategoryID !== "2") {
+				return;
+			}
+
 			//get access to member type select ui control
 			var oMemberTypesBinding = sap.ui.getCore().byId("inputMemberTypeID").getBinding("items");
 
@@ -675,6 +722,9 @@ sap.ui.define([
 				}));
 			});
 
+			//apply filter to select items aggregation binding
+			oRelationshipTypesBinding.filter(aRelationshipTypeFilters);
+
 			//default relationship type in UI where only one applicable
 			if (aRelationshipTypeFilters.length === 1) {
 
@@ -682,9 +732,6 @@ sap.ui.define([
 				sap.ui.getCore().byId("inputRelationshipTypeID").setSelectedKey(aRelationshipTypeFilters[0].oValue1);
 
 			}
-
-			//apply filter to select items aggregation binding
-			oRelationshipTypesBinding.filter(aRelationshipTypeFilters);
 
 		},
 
@@ -694,6 +741,11 @@ sap.ui.define([
 			//local data declaration
 			var aNodeTypeFilters = [];
 			var bInputNodeTypeIDEnabled = true;
+
+			//no further processing where applicable
+			if (oHierarchyItem.NodeCategoryID === "2") {
+				return;
+			}
 
 			//get applicable node types
 			var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem);
@@ -741,37 +793,17 @@ sap.ui.define([
 		},
 
 		//set applicable hierarchy metadata filters
-		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem) {
+		setApplicableHierarchyMetaDataFilter: function(oHierarchyItem, sAnchorAttribute) {
 
-			//set applicable node categories
+			//keep track of stable hierarchy item attribute
+			oHierarchyItem.aStable = [];
+			oHierarchyItem.aStable.push(sAnchorAttribute);
+
+			//do hierarchy item attribute value derivation
 			this.setApplicableNodeCategories(oHierarchyItem);
-
-			//set applicable node and member types
-			switch (oHierarchyItem.NodeCategoryID) {
-
-				//node is root or inner node
-				case "0":
-				case "1":
-
-					//set applicable node types
-					this.setApplicableNodeTypes(oHierarchyItem);
-
-					//no further processing here
-					break;
-
-					//node is leaf node (member)
-				case "2":
-
-					//set applicable member types
-					this.setApplicableMemberTypes(oHierarchyItem);
-
-					//no further processing
-					break;
-
-			}
-
-			//set applicable relationship types
 			this.setApplicableRelationshipTypes(oHierarchyItem);
+			this.setApplicableMemberTypes(oHierarchyItem);
+			this.setApplicableNodeTypes(oHierarchyItem);
 
 		},
 
@@ -886,7 +918,7 @@ sap.ui.define([
 			this.getModel("ViewModel").setProperty("/bNodeCategoryEnabled", bNodeCategoryEnabled);
 
 			//set applicable hierarchy metadata filters
-			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem);
+			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "HierarchyLevel");
 
 			// delay because addDependent will do a async rerendering 
 			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
@@ -980,6 +1012,7 @@ sap.ui.define([
 			delete oNewHierarchyItem.PreviousRelationshipTypeID;
 			delete oNewHierarchyItem.RelationshipTypeID;
 			delete oNewHierarchyItem.oRelatedItem;
+			delete oNewHierarchyItem.aStable;
 
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
