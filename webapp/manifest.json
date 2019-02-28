@@ -94,27 +94,43 @@
 				"viewType": "XML",
 				"async": true,
 				"viewPath": "pnp.hierarchyeditor.view",
-				"controlAggregation": "pages",
-				"controlId": "idAppControl",
+				"controlId": "layout",
+				"controlAggregation": "beginColumnPages",
+				"bypassed": {
+					"target": "notFound"
+				},
 				"clearControlAggregation": false
 			},
 			"routes": [{
-				"name": "HomeRoute",
 				"pattern": "",
+				"name": "App",
 				"target": [
-					"Home"
+					"Selector",
+					"Hierarchy",
+					"Attributes"
 				]
 			}],
 			"targets": {
-				"TargetHierarchy": {
+				"Selector": {
+					"viewLevel": 1,
 					"viewType": "XML",
-					"transition": "slide",
-					"clearControlAggregation": false,
-					"viewName": "Home"
+					"viewId": "Selector",
+					"viewName": "Selector",
+					"controlAggregation": "beginColumnPages"
 				},
-				"Home": {
+				"Hierarchy": {
+					"viewLevel": 1,
 					"viewType": "XML",
-					"viewName": "Home"
+					"viewId": "Home",
+					"viewName": "Home",
+					"controlAggregation": "midColumnPages"
+				},
+				"Attributes": {
+					"viewLevel": 1,
+					"viewType": "XML",
+					"viewId": "Attributes",
+					"viewName": "Attributes",
+					"controlAggregation": "endColumnPages"
 				}
 			}
 		}

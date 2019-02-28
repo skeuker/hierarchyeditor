@@ -1,8 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"pnp/hierarchyeditor/model/models"
-], function (UIComponent, Device, models) {
+	"pnp/hierarchyeditor/model/models",
+	"pnp/hierarchyeditor/util/ListSelector",
+	"pnp/hierarchyeditor/util/ErrorHandler"
+], function (UIComponent, Device, models, ListSelector, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("pnp.hierarchyeditor.Component", {
@@ -17,6 +19,11 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
+			
+			//initialize component attributes
+			this.oListSelector = new ListSelector();
+			this.oErrorHandler = new ErrorHandler(this);
+			
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 

@@ -184,7 +184,7 @@ sap.ui.define([
 			this.oViewModel.setProperty("/busy", false);
 
 			// set the layout property of flexible column layout control to show two columns
-			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+			this.getModel("AppViewModel").setProperty("/layout", "TwoColumnsMidExpanded");
 
 			//clear master list selection state
 			this.getOwnerComponent().oListSelector.clearMasterListSelection();

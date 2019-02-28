@@ -32,7 +32,7 @@ sap.ui.define([
 			}
 
 			//attach to display event for survey detail
-			this.getRouter().getTarget("Home").attachDisplay(this.onDisplay, this);
+			this.getRouter().getTarget("Hierarchy").attachDisplay(this.onDisplay, this);
 
 			//initiate interaction with message manager	
 			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
