@@ -359,24 +359,6 @@ sap.ui.define([
 			//get all node categories
 			var aNodeCategories = this.getModel("OptionsModel").getProperty("/NodeCategories");
 
-			//adopt node category of incoming hierarchy item
-			if (oHierarchyItem.aStable.indexOf("NodeCategoryID") >= 0) {
-
-				//filter existing node categories keeping the one on the hierarchy item
-				aApplicableNodeCategories = aNodeCategories.filter(function(oNodeCategory) {
-					if (oHierarchyItem.NodeCategoryID === oNodeCategory.NodeCategoryID) {
-						aApplicableNodeCategories.push({
-							NodeCategoryID: oNodeCategory.NodeCategoryID,
-							NodeCategoryText: oNodeCategory.NodeCategoryText
-						});
-					}
-				});
-
-				//no further analysis of existing node categories
-				return aApplicableNodeCategories;
-
-			}
-
 			//derive all node categories applicable for this hierarchy item
 			aNodeCategories.forEach(function(oNodeCategory) {
 
@@ -438,24 +420,6 @@ sap.ui.define([
 			//get all relationship types
 			var aRelationshipTypes = this.getModel("OptionsModel").getProperty("/RelationshipTypes");
 
-			//adopt relationship type ID of incoming hierarchy item
-			if (oHierarchyItem.aStable.indexOf("RelationshipTypeID") >= 0) {
-
-				//filter existing relationship types keeping the one on the hierarchy item
-				aApplicableRelationshipTypes = aRelationshipTypes.filter(function(oRelationshipType) {
-					if (oHierarchyItem.RelationshipTypeID === oRelationshipType.RelationshipTypeID) {
-						aApplicableRelationshipTypes.push({
-							RelationshipTypeID: oRelationshipType.RelationshipTypeID,
-							RelationshipTypeText: oRelationshipType.RelationshipTypeText
-						});
-					}
-				});
-
-				//no further analysis of existing node categories
-				return aApplicableRelationshipTypes;
-
-			}
-
 			//derive all relationship types applicable for this hierarchy item
 			aRelationshipTypes.forEach(function(oRelationshipType) {
 
@@ -481,7 +445,7 @@ sap.ui.define([
 				//child nodes or members where not already on max hierarchy level
 				if ((aApplicableNodeTypes.length > 0 || aApplicableMemberTypes.length > 0) &&
 					oRelationshipType.RelationshipTypeID === "2" &&
-					oHierarchyItem.HierarchyLevel !== iMaxHierarchyLevel) {
+					oHierarchyItem.HierarchyLevel <= iMaxHierarchyLevel) {
 					bApplicableRelationshipType = true;
 				}
 
@@ -696,6 +660,26 @@ sap.ui.define([
 
 			}
 
+			//where node category was input
+			if (oHierarchyItem.aStable.indexOf("NodeCategoryID") >= 0) {
+
+				//set correct node category for chosen node category
+				switch (oHierarchyItem.NodeCategoryID) {
+
+					//default 'sibling' relationship type
+					case "1":
+						sap.ui.getCore().byId("inputRelationshipTypeID").setSelectedKey("1");
+						break;
+
+						//default 'child' relationship type
+					case "2":
+						sap.ui.getCore().byId("inputRelationshipTypeID").setSelectedKey("2");
+						break;
+
+				}
+
+			}
+
 			//apply filter to select items aggregation binding
 			oNodeCategoriesBinding.filter(aNodeCategoryFilters);
 
@@ -733,6 +717,40 @@ sap.ui.define([
 
 			}
 
+			//where relationship type was input
+			if (oHierarchyItem.aStable.indexOf("RelationshipTypeID") >= 0) {
+
+				//set correct node category for chosen relationship type
+				switch (oHierarchyItem.RelationshipTypeID) {
+
+					//default 'branch' node category
+					case "1":
+
+						//get applicable node types
+						var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem);
+
+						//default branch node category
+						if (aApplicableNodeTypes.length > 0) {
+							sap.ui.getCore().byId("inputNodeCategoryID").setSelectedKey("1");
+						}
+						break;
+
+						//default 'member' node category
+					case "2":
+
+						//get applicable member types
+						var aApplicableMemberTypes = this.getApplicableMemberTypes(oHierarchyItem);
+
+						//default member node category
+						if (aApplicableMemberTypes.length > 0) {
+							sap.ui.getCore().byId("inputNodeCategoryID").setSelectedKey("2");
+						}
+						break;
+
+				}
+
+			}
+
 		},
 
 		//set applicable node types
@@ -741,11 +759,6 @@ sap.ui.define([
 			//local data declaration
 			var aNodeTypeFilters = [];
 			var bInputNodeTypeIDEnabled = true;
-
-			//no further processing where applicable
-			if (oHierarchyItem.NodeCategoryID === "2") {
-				return;
-			}
 
 			//get applicable node types
 			var aApplicableNodeTypes = this.getApplicableNodeTypes(oHierarchyItem);
