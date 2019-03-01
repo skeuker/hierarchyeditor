@@ -8,8 +8,10 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/Device",
 	"pnp/hierarchyeditor/util/Formatter",
-	"sap/m/StandardListItem"
-], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem) {
+	"sap/m/StandardListItem",
+	"pnp/hierarchyeditor/util/ErrorHandler"
+], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem,
+	ErrorHandler) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Selector", {
@@ -35,6 +37,9 @@ sap.ui.define([
 				aFilter: [],
 				aSearch: []
 			};
+			
+			//get resource bundle
+			this.oResourceBundle = this.getResourceBundle();
 
 			//create view model	
 			this.oViewModel = this.createSelectorViewModel();
@@ -47,6 +52,9 @@ sap.ui.define([
 
 			//set view model to view
 			this.setModel(this.oViewModel, "SelectorViewModel");
+
+			//register this view model on component
+			this.getOwnerComponent().setModel(this.oViewModel, "SelectorViewModel");
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
@@ -65,15 +73,18 @@ sap.ui.define([
 				}.bind(this)
 			});
 
+			//initiate interaction with message manager	
+			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			this.oMessageManager = sap.ui.getCore().getMessageManager();
+			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
+			this.getView().setModel(this.oMessageManager.getMessageModel(), "MessageModel");
+
 			//keep track of OData model
 			this.oHierarchyModel = this.getOwnerComponent().getModel("HierarchyModel");
 
 			//register event handler for view display
 			this.getRouter().getTarget("Selector").attachDisplay(this.onDisplay, this);
 			this.getRouter().attachBypassed(this.onBypassed, this);
-
-			//keep track that for now master controller is leading view controller
-			this.getOwnerComponent().oLeadingViewController = this;
 
 		},
 
@@ -122,18 +133,22 @@ sap.ui.define([
 			//hide message strip 
 			this.oMessageStrip.setVisible(false);
 
+			//remove all messages from the message manager
+			this.oMessageManager.removeAllMessages();
+
+			//set this view as leading view in the application
+			this.setAsLeadingView();
+
 		},
 
-		/**
-		 * Send message using message strip
-		 * @private
-		 */
-		sendStripMessage: function(sText, sType) {
+		//set current view als leading view in this application
+		setAsLeadingView: function() {
 
-			//message handling: send message
-			this.oMessageStrip.setText(sText);
-			this.oMessageStrip.setType(sType);
-			this.oMessageStrip.setVisible(true);
+			//set this view as leading view
+			this.getOwnerComponent().getModel("SelectorViewModel").setProperty("/isLeadingView", true);
+
+			//demote other views in this application
+			this.getOwnerComponent().getModel("HierarchyViewModel").setProperty("/isLeadingView", false);
 
 		},
 
@@ -143,7 +158,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onSelectionChange: function(oEvent) {
-			
+
 			//prepare view for next action			
 			this.prepareViewForNextAction();
 
@@ -214,10 +229,10 @@ sap.ui.define([
 
 			//prepare view for next action			
 			this.prepareViewForNextAction();
-			
+
 			//refresh selector list
 			this.oSelectorList.getBinding("items").refresh();
-			
+
 		},
 
 		/**
@@ -307,15 +322,18 @@ sap.ui.define([
 
 		//create view model to control UI behaviour
 		createSelectorViewModel: function() {
+
+			//create JSON model with attributes for controlling view behaviour
 			return new JSONModel({
 				filterBarLabel: "",
-				listMode: "SingleSelect",
+				listMode: "None",
 				isFilterBarVisible: false,
 				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
 				sortBy: "HierarchyText",
 				groupBy: "None",
 				delay: 0
 			});
+
 		},
 
 		/**
@@ -356,9 +374,12 @@ sap.ui.define([
 		 * @private
 		 */
 		applyFilterSearch: function() {
+
+			//apply filters to selector list
 			var aFilters = this.oSelectorListFilterState.aSearch.concat(this.oSelectorListFilterState.aFilter),
 				oViewModel = this.getModel("masterView");
 			this.oSelectorList.getBinding("items").filter(aFilters, "Application");
+
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
 				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
@@ -366,6 +387,7 @@ sap.ui.define([
 				// only reset the no data text to default when no new search was triggered
 				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 			}
+
 		},
 
 		/**
@@ -387,16 +409,186 @@ sap.ui.define([
 
 		},
 
-		//switch selector list to delete mode
-		onSwitchToDeleteModeButtonPress: function() {
+		//toggle selector list into and out of delete mode
+		onToggleDeleteModeButtonPress: function() {
 
-			//get selector list instance
-			this.getView().byId("SelectorList").setMode("Delete");
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
-			//message handling: incomplete form input detected
-			this.sendStripMessage(this.getResourceBundle().getText("messageListSwitchedToDeleteMode"),
-				sap.ui.core.MessageType.Warning);
+			//get current list mode
+			var sListMode = this.getView().byId("SelectorList").getMode();
 
+			//depending on current list mode
+			switch (sListMode) {
+
+				//currently in 'delete'
+				case "Delete":
+
+					//set selector list mode to 'delete'
+					this.getView().byId("SelectorList").setMode("None");
+
+					//set toggle button icon
+					this.getView().byId("butToggleDeleteMode").setIcon("");
+
+					//prepare view for next action
+					this.prepareViewForNextAction();
+
+					//no further processing here
+					break;
+
+					//currently in 'single select'
+				case "None":
+
+					//set selector list mode to 'delete'
+					this.getView().byId("SelectorList").setMode("Delete");
+
+					//set toggle button icon
+					this.getView().byId("butToggleDeleteMode").setIcon("sap-icon://alert");
+
+					//message handling: incomplete form input detected
+					this.sendStripMessage(this.getResourceBundle().getText("messageListSwitchedToDeleteMode"),
+						sap.ui.core.MessageType.Warning);
+
+					//no further processing here
+					break;
+
+			}
+
+		},
+
+		//on hierarchy deletion
+		onHierarchyDelete: function(oEvent) {
+
+			//local data declaration
+			var sConfirmationText;
+
+			//get context pointing to hierarchy for deletion
+			var oContext = oEvent.getParameter("listItem").getBindingContext("HierarchyModel");
+
+			//get hierarchy attributes
+			var oHierarchy = this.getModel("HierarchyModel").getObject(oContext.getPath());
+
+			//build confirmation text for hierarchy deletion
+			sConfirmationText = "Delete hierarchy " + "'" + oHierarchy.HierarchyText + "'?";
+
+			//confirmation dialog to delete this hierarchy
+			sap.m.MessageBox.confirm(sConfirmationText, {
+				actions: [
+					sap.m.MessageBox.Action.YES,
+					sap.m.MessageBox.Action.CANCEL
+				],
+
+				//on confirmation dialog close
+				onClose: (function(oAction) {
+
+					//user choice: proceed with deletion
+					if (oAction === sap.m.MessageBox.Action.YES) {
+
+						//delete service from backend
+						this.getModel("HierarchyModel").remove(oContext.getPath(), {
+
+							//hierarchy entity deleted successfully
+							success: function() {
+
+								//message handling
+								this.sendStripMessage(this.getResourceBundle().getText("messageDeletedHierarchySuccessfully"));
+
+								//post processing after successful updating in the backend
+								this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
+
+							}.bind(this),
+
+							//error handler callback function
+							error: function(oError) {
+
+								//render error in OData response 
+								this.renderODataErrorResponse(oError, "messageAnErrorOccured");
+
+							}.bind(this)
+
+						});
+
+					}
+
+				}).bind(this)
+
+			});
+
+		},
+
+		//on press hierarchy add button
+		onHierarchyAddButtonPress: function() {
+			
+			//prepare view for next action
+			this.prepareViewForNextAction();
+			
+			//create popover to create new hierarchy
+			this.oHierarchyAddDialog = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyAdd", this);
+			this.oHierarchyAddDialog.attachAfterClose(function() {
+				this.oHierarchyAddDialog.destroy();
+			}.bind(this));
+			this.getView().addDependent(this.oHierarchyAddDialog);
+			
+			//instantiate new hierarchy with default attributes
+			var oHierarchy = {
+				"HierarchyText": "",
+				"HierarchyTypeID": null
+			};
+			
+			//make available new hierarchy item for binding
+			this.getModel("SelectorViewModel").setProperty("/NewHierarchy", oHierarchy);
+
+			//bind dialog to view model instance 
+			this.oHierarchyAddDialog.bindElement({
+				model: "SelectorViewModel",
+				path: "/NewHierarchy"
+			});
+
+			//initialize input fields
+			this.resetFormInput(sap.ui.getCore().byId("formAddHierarchy"));
+
+			//delay because addDependent will do a async rerendering 
+			this.oHierarchyAddDialog.open();
+
+		},
+
+		//cancel hierarchy addition
+		onPressHierarchyAddCancelButton: function() {
+
+			//close dialog
+			this.oHierarchyAddDialog.close();
+
+		},
+
+		//confirm hierarchy addition
+		onPressHierarchyAddConfirmButton: function() {
+
+			//Check for missing or invalid input
+			if (this.hasIncorrectInput([sap.ui.getCore().byId("formAddHierarchy")])) {
+
+				//message handling: incomplete form input detected
+				this.sendStripMessage(this.getResourceBundle().getText("messageInputCheckedWithErrors"),
+					sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msHierarchyAddDialogMessageStrip"));
+
+				//no further processing at this point
+				return;
+
+			}
+			
+			//close dialog
+			this.oHierarchyAddDialog.close();
+
+		},
+		
+		//on change of input on hierarchy add dialog
+		onHierarchyAddInputChange: function(){
+			
+			//validate input
+			this.hasIncorrectInput([sap.ui.getCore().byId("formAddHierarchy")]);
+			
+			//hide message strip in case it was visible
+			sap.ui.getCore().byId("msHierarchyAddDialogMessageStrip").setVisible(false);
+			
 		}
 
 	});

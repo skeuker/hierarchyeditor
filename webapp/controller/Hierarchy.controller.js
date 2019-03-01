@@ -17,10 +17,14 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
+				isLeadingController: false,
 				busyDelay: 0,
 				busy: false
 			});
 			this.setModel(this.oViewModel, "HierarchyViewModel");
+
+			//register this view model on component
+			this.getOwnerComponent().setModel(this.oViewModel, "HierarchyViewModel");
 
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
@@ -63,6 +67,20 @@ sap.ui.define([
 			//remove all messages from the message manager
 			this.oMessageManager.removeAllMessages();
 
+			//set current view as leading view
+			this.setAsLeadingView();
+
+		},
+
+		//set this view as leading view
+		setAsLeadingView: function() {
+
+			//set this view as leading view
+			this.getOwnerComponent().getModel("HierarchyViewModel").setProperty("/isLeadingView", true);
+
+			//demote other views in this application
+			this.getOwnerComponent().getModel("SelectorViewModel").setProperty("/isLeadingView", false);
+
 		},
 
 		//prepare for display
@@ -75,7 +93,7 @@ sap.ui.define([
 			var oNavData = oEvent.getParameter("data");
 
 			//no further processing where no HierarchyID selected yet
-			if (!oNavData.HierarchyID) {
+			if (!oNavData || !oNavData.HierarchyID) {
 				return;
 			}
 
@@ -103,7 +121,7 @@ sap.ui.define([
 						model: "HierarchyModel",
 						path: sHierarchyPath
 					});
-					
+
 					//set view title
 					var oHierarchy = this.getModel("HierarchyModel").getProperty(sHierarchyPath);
 					this.getModel("HierarchyViewModel").setProperty("/viewTitle", oHierarchy.HierarchyText);

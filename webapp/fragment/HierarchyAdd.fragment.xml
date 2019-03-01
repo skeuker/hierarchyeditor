@@ -1,0 +1,41 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<Dialog id="dialogHierarchyAdd" title="{i18n>titleAddHierarchyDialog}" class="sapUiContentPadding">
+		<content>
+			<MessageStrip id="msHierarchyAddDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
+			<form:Form id="formAddHierarchy" editable="true" width="450px" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
+				<form:layout>
+					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="false" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+				</form:layout>
+				<form:formContainers>
+					<form:FormContainer>
+						<form:FormElement>
+							<form:label>
+								<Label required="true" text="Hierarchy text" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Input id="inputHierarchyText" liveChange="onHierarchyAddInputChange"/>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement>
+							<form:label>
+								<Label required="true" text="Hierarchy type" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Select id="inputHierarchyTypeID" enabled="true" forceSelection="false" selectedKey="{SelectorViewModel>HierarchyTypeID}"
+									items="{ path: 'HierarchyModel>/HierarchyTypes' }" change="onHierarchyAddInputChange">
+									<core:ListItem key="{HierarchyModel>HierarchyTypeID}" text="{HierarchyModel>HierarchyTypeText}"/>
+								</Select>
+							</form:fields>
+						</form:FormElement>
+					</form:FormContainer>
+				</form:formContainers>
+			</form:Form>
+		</content>
+		<beginButton>
+			<Button text="Cancel" press="onPressHierarchyAddCancelButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="Confirm" type="Emphasized" press="onPressHierarchyAddConfirmButton"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

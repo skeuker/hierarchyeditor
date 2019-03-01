@@ -24,14 +24,14 @@
 						<table:extension>
 							<m:Toolbar>
 								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 								<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 								<m:Button id="butHierarchyItemDelete" text="Delete" icon="sap-icon://delete" press="onDeleteHierarchyItem"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 								<m:ToolbarSpacer/>
-								<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes"/>
-								<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel"/>
+								<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes" type="Transparent"/>
+								<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel" type="Transparent"/>
 							</m:Toolbar>
 						</table:extension>
 						<table:dragDropConfig>
@@ -53,7 +53,7 @@
 		<footer>
 			<m:Toolbar>
 				<m:Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" press="onMessagesButtonPress"
-					text="{=${MessageModel>/}.length}" visible="{=!!${MessageModel>/}.length}"/>
+					text="{=${MessageModel>/}.length}" visible="{=!!${MessageModel>/}.length &amp;&amp; ${HierarchyViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
 			</m:Toolbar>
 		</footer>

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"pnp/hierarchyeditor/util/ErrorHandler",
 	"pnp/hierarchyeditor/util/uuid"
-], function (Controller, History, ErrorHandler, uuid) {
+], function(Controller, History, ErrorHandler, uuid) {
 	"use strict";
 
 	return Controller.extend("pnp.blockandreplace.controller.Base", {
@@ -13,7 +13,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {sap.ui.core.routing.Router} the router for this component
 		 */
-		getRouter: function () {
+		getRouter: function() {
 			return this.getOwnerComponent().getRouter();
 		},
 
@@ -23,7 +23,7 @@ sap.ui.define([
 		 * @param {string} sName the model name
 		 * @returns {sap.ui.model.Model} the model instance
 		 */
-		getModel: function (sName) {
+		getModel: function(sName) {
 			return this.getView().getModel(sName);
 		},
 
@@ -34,7 +34,7 @@ sap.ui.define([
 		 * @param {string} sName the model name
 		 * @returns {sap.ui.mvc.View} the view instance
 		 */
-		setModel: function (oModel, sName) {
+		setModel: function(oModel, sName) {
 			return this.getView().setModel(oModel, sName);
 		},
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
 		 */
-		getResourceBundle: function () {
+		getResourceBundle: function() {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
 
@@ -53,7 +53,7 @@ sap.ui.define([
 		 * If not, it will replace the current entry of the browser history with the master route.
 		 * @public
 		 */
-		onNavBack: function () {
+		onNavBack: function() {
 			var sPreviousHash = History.getInstance().getPreviousHash();
 
 			if (sPreviousHash !== undefined) {
@@ -62,7 +62,7 @@ sap.ui.define([
 				this.getRouter().navTo("master", {}, true);
 			}
 		},
-		
+
 		/**
 		 * Gets a UUID as a unique ID at runtime formatted
 		 * in such way that it is acceptable as SAP GUID
@@ -93,13 +93,13 @@ sap.ui.define([
 		 * Send message using message strip
 		 * @private
 		 */
-		sendStripMessage: function (sText, sType, oMessageStrip) {
-			
+		sendStripMessage: function(sText, sType, oMessageStrip) {
+
 			//adopt message strip for issuing message
-			if(!oMessageStrip){
+			if (!oMessageStrip) {
 				oMessageStrip = this.oMessageStrip;
 			}
-			
+
 			//message handling: send message
 			oMessageStrip.setText(sText);
 			oMessageStrip.setType(sType);
@@ -108,13 +108,13 @@ sap.ui.define([
 		},
 
 		//set entity messages
-		setEntityMessages: function (aMessages) {
+		setEntityMessages: function(aMessages) {
 
 			//remove all messages from the message manager
 			this.oMessageManager.removeAllMessages();
 
 			//add messages to message popover
-			aMessages.forEach(function (oMessage) {
+			aMessages.forEach(function(oMessage) {
 				this.oMessageManager.addMessages(
 					new sap.ui.core.message.Message({
 						message: oMessage.MessageText,
@@ -129,7 +129,7 @@ sap.ui.define([
 		},
 
 		//prepare message popover for display
-		prepareMessagePopoverForDisplay: function () {
+		prepareMessagePopoverForDisplay: function() {
 
 			//construct popover for message display
 			var oMessagePopover = new sap.m.MessagePopover({
@@ -145,7 +145,7 @@ sap.ui.define([
 				},
 
 				//destroy after close
-				afterClose: function () {
+				afterClose: function() {
 					oMessagePopover.destroy();
 				}
 
@@ -164,7 +164,7 @@ sap.ui.define([
 		 * @function
 		 * @private
 		 */
-		onMessagesButtonPress: function (oEvent) {
+		onMessagesButtonPress: function(oEvent) {
 
 			//initialize variables
 			var oMessagesButton = oEvent.getSource();
@@ -178,7 +178,7 @@ sap.ui.define([
 		},
 
 		//render OData error response to detail message page
-		renderODataErrorResponseToDetailMessagePage: function (oError) {
+		renderODataErrorResponseToDetailMessagePage: function(oError) {
 
 			//set view to no longer busy
 			this.oViewModel.setProperty("/busy", false);
@@ -201,7 +201,7 @@ sap.ui.define([
 		},
 
 		//render OData error response 
-		renderODataErrorResponse: function (oError, sStripMessageI18nID) {
+		renderODataErrorResponse: function(oError, sStripMessageI18nID) {
 
 			//message handling: update failed
 			this.sendStripMessage(this.getResourceBundle().getText(sStripMessageI18nID), sap.ui.core.MessageType.Error);
@@ -216,12 +216,12 @@ sap.ui.define([
 			}]);
 
 			//set view to no longer busy
-			this.oViewModel.setProperty("/busy", false);
+			this.oViewModel.setProperty("/isViewBusy", false);
 
 		},
 
 		//render OData error response to message popover button
-		renderODataErrorResponseToMessagePopoverButton: function (oError) {
+		renderODataErrorResponseToMessagePopoverButton: function(oError) {
 
 			//get message text
 			var sMessageText = ErrorHandler.prototype.getODataErrorResponseMessageText.call(this, oError);
@@ -235,7 +235,7 @@ sap.ui.define([
 		},
 
 		//check for and visualize errors in BatchResponses
-		hasODataBatchErrorResponse: function (aBatchResponses) {
+		hasODataBatchErrorResponse: function(aBatchResponses) {
 
 			//local data declaration
 			var oMessage = {};
@@ -247,7 +247,7 @@ sap.ui.define([
 			}
 
 			//for each batchResponse
-			aBatchResponses.forEach(function (oBatchResponse) {
+			aBatchResponses.forEach(function(oBatchResponse) {
 
 				//where a batchResponse is contained
 				if (oBatchResponse.response) {
@@ -316,7 +316,7 @@ sap.ui.define([
 		 * @param {sap.ui.layout.form} oForm the form in the view.
 		 * @public
 		 */
-		getFormInputFields: function (oForm) {
+		getFormInputFields: function(oForm) {
 
 			//local data declaration
 			var aInputControl = [];
@@ -325,7 +325,7 @@ sap.ui.define([
 			var aControls = this.getFormFields(oForm, false);
 
 			//reduce all form fields to input
-			aControls.forEach(function (item) {
+			aControls.forEach(function(item) {
 
 				//get reference to this UI control
 				var oControl = item.oControl;
@@ -334,6 +334,7 @@ sap.ui.define([
 				//for controls allowing input
 				if (sControlType === "sap.m.Input" ||
 					sControlType === "sap.m.Switch" ||
+					sControlType === "sap.m.Select" ||
 					sControlType === "sap.m.CheckBox" ||
 					sControlType === "sap.m.ComboBox" ||
 					sControlType === "sap.m.RadioButton" ||
@@ -363,7 +364,7 @@ sap.ui.define([
 		 * @param {sap.ui.layout.form} oSimpleForm the form in the view.
 		 * @public
 		 */
-		getFormActionFields: function (oForm) {
+		getFormActionFields: function(oForm) {
 
 			//local data declaration
 			var aActionControl = [];
@@ -372,7 +373,7 @@ sap.ui.define([
 			var aControls = this.getFormFields(oForm);
 
 			//reduce all form fields to take action
-			aControls.forEach(function (item) {
+			aControls.forEach(function(item) {
 
 				//get reference to this UI control
 				var oControl = item.oControl;
@@ -400,7 +401,7 @@ sap.ui.define([
 		 * @param {boolean} bInvisible Choose to include invisible form fields
 		 * @public
 		 */
-		getFormFields: function (oForm, bInvisible) {
+		getFormFields: function(oForm, bInvisible) {
 
 			//Local data declaration
 			var aControls = [];
@@ -438,7 +439,7 @@ sap.ui.define([
 								//composite field
 								if (aFormFields[n].getMetadata().getName() === "sap.m.HBox") {
 									var aFlexBoxFormField = aFormFields[n].getItems();
-									aFlexBoxFormField.forEach(function (item) {
+									aFlexBoxFormField.forEach(function(item) {
 										aFormContainerElementFields.push({
 											sId: item.getId().match(/[^-]*$/)[0],
 											oControl: item,
@@ -496,7 +497,7 @@ sap.ui.define([
 		 * Returns first invalid input control where applicable
 		 * @private
 		 */
-		isValid: function (aForms) {
+		isValid: function(aForms) {
 
 			//check for missing input
 			if (this.hasMissingInput(aForms).length > 0) {
@@ -519,13 +520,13 @@ sap.ui.define([
 		},
 
 		//return all controls that miss required or carry invalid input
-		hasIncorrectInput: function (aForms, oControl) {
+		hasIncorrectInput: function(aForms, oControl) {
 
 			//local data declaration
 			var sMessageDetails;
 
 			//reset value state of input controls on validated form(s)
-			aForms.forEach(function (oForm) {
+			aForms.forEach(function(oForm) {
 
 				//leaving to next iteration when form not bound
 				if (!oForm) {
@@ -533,7 +534,7 @@ sap.ui.define([
 				}
 
 				//for each form input field
-				this.getFormInputFields(oForm).forEach(function (item) {
+				this.getFormInputFields(oForm).forEach(function(item) {
 
 					//reset value state for single value input controls
 					if (item.oControl.getMetadata().getName() !== "sap.m.List" &&
@@ -548,8 +549,8 @@ sap.ui.define([
 					if (item.oControl.getMetadata().getName() === "sap.m.List") {
 
 						//in each list item reset value state for all single value input controls 
-						item.oControl.getItems().forEach(function (oListItem) {
-							oListItem.getAggregation("content").forEach(function (oListItemControl) {
+						item.oControl.getItems().forEach(function(oListItem) {
+							oListItem.getAggregation("content").forEach(function(oListItemControl) {
 								if (oListItemControl.setValueState) {
 									oListItemControl.setValueState(sap.ui.core.ValueState.None);
 								}
@@ -574,7 +575,7 @@ sap.ui.define([
 			if (aMissingInput.length > 0) {
 
 				//message handling: missing input
-				aMissingInput.forEach(function (oMissingInput) {
+				aMissingInput.forEach(function(oMissingInput) {
 					if (oMissingInput.oLabel) {
 						var sMessage = oMissingInput.oLabel.getText() + " is a required field";
 						this.oMessageManager.addMessages(
@@ -592,13 +593,15 @@ sap.ui.define([
 			}
 
 			//invalid input on the requested forms
-			var aInvalidInput = this.hasInvalidInput(aForms, oControl);
+			if (this.hasInvalidInput) {
+				var aInvalidInput = this.hasInvalidInput(aForms, oControl);
+			}
 
 			//invalid input is present
-			if (aInvalidInput.length > 0) {
+			if (aInvalidInput && aInvalidInput.length > 0) {
 
 				//message handling: invalid input
-				aInvalidInput.forEach(function (oInvalidInput) {
+				aInvalidInput.forEach(function(oInvalidInput) {
 					if (oInvalidInput.oLabel) {
 						var sMessage = oInvalidInput.oLabel.getText() + " validation failed";
 						if (oInvalidInput.sInvalidInputMessage) {
@@ -621,7 +624,7 @@ sap.ui.define([
 			}
 
 			//feedback to caller
-			if (aMissingInput.length > 0 || aInvalidInput.length > 0) {
+			if (aMissingInput.length > 0 || ( aInvalidInput && aInvalidInput.length > 0 )) {
 				return {
 					"missingInput": aMissingInput,
 					"invalidInput": aInvalidInput
@@ -636,14 +639,14 @@ sap.ui.define([
 		 * Validates all required form input controls have input
 		 * @private
 		 */
-		hasMissingInput: function (aForms, oControl) {
+		hasMissingInput: function(aForms, oControl) {
 
 			//local data declaration
 			var aFormFields = [];
 			var aMissingFormFields = [];
 
 			//check required input available in this array of forms
-			aForms.forEach(function (oForm) {
+			aForms.forEach(function(oForm) {
 
 				//leaving to next iteration when form not bound
 				if (!oForm) {
@@ -741,7 +744,7 @@ sap.ui.define([
 			}.bind(this));
 
 			//set value state for all or only specified control
-			aMissingFormFields.forEach(function (oFormField) {
+			aMissingFormFields.forEach(function(oFormField) {
 				if (!oControl || oControl === oFormField.oControl) {
 					if (typeof oFormField.oControl.setValueState === "function") {
 						oFormField.oControl.setValueState(sap.ui.core.ValueState.Error);
@@ -761,7 +764,7 @@ sap.ui.define([
 		 * Checks for error messages bound in model
 		 * @private
 		 */
-		hasErrorMessages: function () {
+		hasErrorMessages: function() {
 
 			//to be implemented in extension controller derived from base controller
 			return false;
@@ -769,7 +772,7 @@ sap.ui.define([
 		},
 
 		//resetting form input fields
-		resetFormInput: function (oForm, oFormField) {
+		resetFormInput: function(oForm, oFormField) {
 
 			//get all formfields in this form
 			var aFormFields = this.getFormFields(oForm, true);
@@ -805,7 +808,7 @@ sap.ui.define([
 		},
 
 		//set 'enabled' state of form input controls
-		setFormInputControlsEnabled: function (aForms, bEnabled) {
+		setFormInputControlsEnabled: function(aForms, bEnabled) {
 
 			//get entity identity form inputs
 			if (this.getIdentityFormInputs) {
@@ -813,7 +816,7 @@ sap.ui.define([
 			}
 
 			//for each requested form
-			aForms.forEach(function (oForm) {
+			aForms.forEach(function(oForm) {
 
 				//get all input fields in this form
 				var aInputControls = this.getFormInputFields(oForm);
@@ -822,13 +825,13 @@ sap.ui.define([
 				if (bEnabled && this.aIdentityFormInputs) {
 
 					//reduce form input controls to non-identity form inputs
-					var aInputControlsNonIdentity = aInputControls.filter(function (oInputControl) {
+					var aInputControlsNonIdentity = aInputControls.filter(function(oInputControl) {
 
 						//local data declaration
 						var isIdentityControl = false;
 
 						//check whether this input control is an identity control
-						this.aIdentityFormInputs.forEach(function (oIdentityInputControl) {
+						this.aIdentityFormInputs.forEach(function(oIdentityInputControl) {
 							if (oInputControl.oControl === oIdentityInputControl) {
 								isIdentityControl = true;
 							}
@@ -850,7 +853,7 @@ sap.ui.define([
 				}
 
 				//set enabled state for all input controls
-				aInputControls.forEach(function (item) {
+				aInputControls.forEach(function(item) {
 
 					//get reference to this UI control
 					var oControl = item.oControl;
@@ -888,22 +891,22 @@ sap.ui.define([
 						var aItems = oControl.getItems();
 
 						//for each table or list item
-						aItems.forEach(function (oItem) {
+						aItems.forEach(function(oItem) {
 
 							//set list item type active or inactive
 							switch (bEnabled) {
-							case false:
-								oItem.setType(sap.m.ListType.Inactive);
-								break;
-							case true:
-								oItem.setType(sap.m.ListType.Active);
-								break;
+								case false:
+									oItem.setType(sap.m.ListType.Inactive);
+									break;
+								case true:
+									oItem.setType(sap.m.ListType.Active);
+									break;
 							}
 
 							//for each control in list item content aggregation
 							if (sControlType === "sap.m.List") {
 								var aControls = oItem.getAggregation("content");
-								aControls.forEach(function (oListItemControl) {
+								aControls.forEach(function(oListItemControl) {
 									if (oListItemControl.setEnabled) {
 										oListItemControl.setEnabled(bEnabled);
 									} else {
@@ -933,7 +936,7 @@ sap.ui.define([
 						}
 
 						//set enabled state for all toolbar controls
-						oUploadCollectionToolbar.getAggregation("content").forEach(function (oToolbarControl) {
+						oUploadCollectionToolbar.getAggregation("content").forEach(function(oToolbarControl) {
 							if (oToolbarControl.setEnabled) {
 								oToolbarControl.setEnabled(bEnabled);
 							}
@@ -941,7 +944,7 @@ sap.ui.define([
 
 						//set enabled state for each item in upload collection
 						aItems = oControl.getItems();
-						aItems.forEach(function (oItem) {
+						aItems.forEach(function(oItem) {
 							oItem.setEnableDelete(bEnabled);
 							oItem.setEnableEdit(bEnabled);
 						});
@@ -954,16 +957,16 @@ sap.ui.define([
 		},
 
 		//set 'enabled' state of form action controls
-		setFormActionControlsEnabled: function (aForms, bEnabled) {
+		setFormActionControlsEnabled: function(aForms, bEnabled) {
 
 			//for each requested form
-			aForms.forEach(function (oForm) {
+			aForms.forEach(function(oForm) {
 
 				//get all action fields in this form
 				var aActionControls = this.getFormActionFields(oForm);
 
 				//set enabled state for all action controls
-				aActionControls.forEach(function (item) {
+				aActionControls.forEach(function(item) {
 
 					//get reference to this UI control
 					var oControl = item.oControl;

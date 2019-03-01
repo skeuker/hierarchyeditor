@@ -3,9 +3,9 @@
 		initialFocus="inputNewItemText">
 		<content>
 			<MessageStrip id="msHierarchyAddPopOverMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
-			<form:Form id="formHierarchyItemAdd" class="sapUiMediumMarginBottom" editable="true" width="450px">
+			<form:Form id="formHierarchyItemAdd" class="sapUiMediumTinyBottom sapUiMediumMarginEnd" editable="true" width="450px">
 				<form:layout>
-					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="true" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="false" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
 				</form:layout>
 				<form:formContainers>
 					<form:FormContainer>

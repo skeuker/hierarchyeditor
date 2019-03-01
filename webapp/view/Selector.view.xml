@@ -6,9 +6,9 @@
 		<semantic:content>
 			<FlexBox direction="Column" fitContainer="true" justifyContent="SpaceBetween">
 				<items>
-					<List id="SelectorList" width="auto" class="sapFDynamicPageAlignContent" busyIndicatorDelay="{SelectViewModel>/delay}"
-						noDataText="{i18n>SelectorListNoDataText}" growing="true" mode="{SelectViewModel>/listMode}" growingScrollToLoad="true"
-						updateFinished="onUpdateFinished" itemPress="onSelectionChange" selectionChange="onSelectionChange">
+					<List id="SelectorList" width="auto" class="sapFDynamicPageAlignContent" busyIndicatorDelay="{SelectorViewModel>/delay}"
+						noDataText="{i18n>SelectorListNoDataText}" growing="true" mode="{SelectorViewModel>/listMode}" growingScrollToLoad="true"
+						updateFinished="onUpdateFinished" itemPress="onSelectionChange" delete="onHierarchyDelete" selectionChange="onSelectionChange">
 						<headerToolbar>
 							<OverflowToolbar>
 								<SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>SelectorSearchTooltip}" search="onSearch" width="auto">
@@ -25,8 +25,11 @@
 				</items>
 			</FlexBox>
 		</semantic:content>
+		<semantic:messagesIndicator>
+			<semantic:MessagesIndicator press="onMessagesButtonPress" visible="{=!!${MessageModel>/}.length &amp;&amp; ${SelectorViewModel>/isLeadingView} }"/>
+		</semantic:messagesIndicator>
 		<semantic:footerCustomActions>
-			<Button id="butSwitchToDeleteMode" icon="sap-icon://less" type="Transparent" press="onSwitchToDeleteModeButtonPress" text="Delete"/>
+			<Button id="butToggleDeleteMode" type="Transparent" press="onToggleDeleteModeButtonPress" text="Danger zone"/>
 			<Button id="butAddHierarchy" icon="sap-icon://add" type="Transparent" press="onHierarchyAddButtonPress" text="Add"/>
 		</semantic:footerCustomActions>
 	</semantic:SemanticPage>
