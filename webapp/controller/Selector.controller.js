@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"pnp/hierarchyeditor/util/Formatter",
 	"sap/m/StandardListItem"
-], function (BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem) {
+], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Selector", {
@@ -24,12 +24,12 @@ sap.ui.define([
 		 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
 		 * @public
 		 */
-		onInit: function () {
+		onInit: function() {
 
 			//local data declaration
 			this.oSelectorList = this.byId("SelectorList");
 			var iOriginalBusyDelay = this.oSelectorList.getBusyIndicatorDelay();
-				
+
 			//keep track of filter and search state
 			this.oSelectorListFilterState = {
 				aFilter: [],
@@ -39,13 +39,19 @@ sap.ui.define([
 			//create view model	
 			this.oViewModel = this.createSelectorViewModel();
 
+			//prepare message handling
+			this.oMessageStrip = this.getView().byId("msSelectorMessageStrip");
+			if (this.oMessageStrip) {
+				this.oMessageStrip.setVisible(false);
+			}
+
 			//set view model to view
 			this.setModel(this.oViewModel, "SelectorViewModel");
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
 			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
-			this.oSelectorList.attachEventOnce("updateFinished", function () {
+			this.oSelectorList.attachEventOnce("updateFinished", function() {
 
 				// Restore original busy indicator delay for the list
 				this.oViewModel.setProperty("/delay", iOriginalBusyDelay);
@@ -54,7 +60,7 @@ sap.ui.define([
 
 			//keep track of selector list for access from detail controller
 			this.getView().addEventDelegate({
-				onBeforeFirstShow: function () {
+				onBeforeFirstShow: function() {
 					this.getOwnerComponent().oListSelector.setBoundMasterList(this.oSelectorList);
 				}.bind(this)
 			});
@@ -70,9 +76,12 @@ sap.ui.define([
 			this.getOwnerComponent().oLeadingViewController = this;
 
 		},
-		
+
 		//handler for view display event
-		onDisplay: function () {
+		onDisplay: function() {
+
+			//prepare view for next action			
+			this.prepareViewForNextAction();
 
 			//Set the layout property of the FCL control to 'OneColumn'
 			this.getModel("SelectorViewModel").setProperty("/layout", "OneColumn");
@@ -92,10 +101,10 @@ sap.ui.define([
 			});
 
 		},
-		
+
 		//create selector list item
-		createSelectorListItem: function (sId, oBindingContext) {
-			
+		createSelectorListItem: function(sId, oBindingContext) {
+
 			//get hierarchy
 			var oHierarchy = oBindingContext.getObject();
 
@@ -107,12 +116,36 @@ sap.ui.define([
 
 		},
 
+		//prepare view for next action
+		prepareViewForNextAction: function() {
+
+			//hide message strip 
+			this.oMessageStrip.setVisible(false);
+
+		},
+
+		/**
+		 * Send message using message strip
+		 * @private
+		 */
+		sendStripMessage: function(sText, sType) {
+
+			//message handling: send message
+			this.oMessageStrip.setText(sText);
+			this.oMessageStrip.setType(sType);
+			this.oMessageStrip.setVisible(true);
+
+		},
+
 		/**
 		 * Event handler for the list selection event
 		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
 		 * @public
 		 */
-		onSelectionChange: function (oEvent) {
+		onSelectionChange: function(oEvent) {
+			
+			//prepare view for next action			
+			this.prepareViewForNextAction();
 
 			//local data declaration
 			var oList = oEvent.getSource(),
@@ -138,7 +171,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the update finished event
 		 * @public
 		 */
-		onUpdateFinished: function (oEvent) {
+		onUpdateFinished: function(oEvent) {
 
 			// update the master list object counter after new data is loaded
 			this.updateListItemCount(oEvent.getParameter("total"));
@@ -153,14 +186,10 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the search event
 		 * @public
 		 */
-		onSearch: function (oEvent) {
+		onSearch: function(oEvent) {
 
 			//refresh search button called
 			if (oEvent.getParameters().refreshButtonPressed) {
-				// Search field's 'refresh' button has been pressed.
-				// This is visible if you select any master list item.
-				// In this case no new search is triggered, we only
-				// refresh the list binding.
 				this.onRefresh();
 				return;
 			}
@@ -181,8 +210,14 @@ sap.ui.define([
 		 * and group settings and refreshes the list binding.
 		 * @public
 		 */
-		onRefresh: function () {
+		onRefresh: function() {
+
+			//prepare view for next action			
+			this.prepareViewForNextAction();
+			
+			//refresh selector list
 			this.oSelectorList.getBinding("items").refresh();
+			
 		},
 
 		/**
@@ -190,7 +225,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 * @public
 		 */
-		onOpenViewSettings: function (oEvent) {
+		onOpenViewSettings: function(oEvent) {
 			if (!this.oViewSettingsDialog) {
 				this.oViewSettingsDialog = sap.ui.xmlfragment("pnp.survey.view.ViewSettingsDialog", this);
 				this.getView().addDependent(this.oViewSettingsDialog);
@@ -211,10 +246,10 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @public
 		 */
-		onConfirmViewSettingsDialog: function (oEvent) {
+		onConfirmViewSettingsDialog: function(oEvent) {
 
 			this.applySortGroup(oEvent);
-			
+
 		},
 
 		/**
@@ -222,7 +257,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @private
 		 */
-		applySortGroup: function (oEvent) {
+		applySortGroup: function(oEvent) {
 			var mParams = oEvent.getParameters(),
 				sPath,
 				bDescending,
@@ -238,7 +273,7 @@ sap.ui.define([
 		 * If there was an object selected in the master list, that selection is removed.
 		 * @public
 		 */
-		onBypassed: function () {
+		onBypassed: function() {
 			this.oSelectorList.removeSelections(true);
 		},
 
@@ -250,7 +285,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
 		 */
-		createGroupHeader: function (oGroup) {
+		createGroupHeader: function(oGroup) {
 			return new GroupHeaderListItem({
 				title: oGroup.text,
 				upperCase: false
@@ -262,7 +297,7 @@ sap.ui.define([
 		 * We navigate back in the browser historz
 		 * @public
 		 */
-		onNavBack: function () {
+		onNavBack: function() {
 			history.go(-1);
 		},
 
@@ -271,9 +306,10 @@ sap.ui.define([
 		/* =========================================================== */
 
 		//create view model to control UI behaviour
-		createSelectorViewModel: function () {
+		createSelectorViewModel: function() {
 			return new JSONModel({
 				filterBarLabel: "",
+				listMode: "SingleSelect",
 				isFilterBarVisible: false,
 				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
 				sortBy: "HierarchyText",
@@ -288,7 +324,7 @@ sap.ui.define([
 		 * @param {sap.m.ObjectListItem} oItem selected Item
 		 * @private
 		 */
-		showHierarchyEditor: function (oItem) {
+		showHierarchyEditor: function(oItem) {
 
 			//get requested hierarchy 
 			var oHierarchy = oItem.getBindingContext("HierarchyModel").getObject();
@@ -305,7 +341,7 @@ sap.ui.define([
 		 * @param {integer} iTotalItems the total number of items in the list
 		 * @private
 		 */
-		updateListItemCount: function (iTotalItems) {
+		updateListItemCount: function(iTotalItems) {
 
 			// only update the counter if the length is final
 			if (this.oSelectorList.getBinding("items").isLengthFinal()) {
@@ -319,7 +355,7 @@ sap.ui.define([
 		 * Internal helper method to apply both filter and search state together on the list binding
 		 * @private
 		 */
-		applyFilterSearch: function () {
+		applyFilterSearch: function() {
 			var aFilters = this.oSelectorListFilterState.aSearch.concat(this.oSelectorListFilterState.aFilter),
 				oViewModel = this.getModel("masterView");
 			this.oSelectorList.getBinding("items").filter(aFilters, "Application");
@@ -337,17 +373,29 @@ sap.ui.define([
 		 * @param {string} sFilterBarText the selected filter value
 		 * @private
 		 */
-		updateFilterBar: function (sFilterBarText) {
+		updateFilterBar: function(sFilterBarText) {
 			var oViewModel = this.getModel("SelectorViewModel");
 			oViewModel.setProperty("/isFilterBarVisible", (this.oSelectorListFilterState.aFilter.length > 0));
 			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("SelectorFilterBarText", [sFilterBarText]));
 		},
 
 		//controller decision whether to delegate OData service error handling
-		delegatesODataErrorHandling: function (sStatusCode) {
+		delegatesODataErrorHandling: function(sStatusCode) {
 
 			//all OData service error handling delegated to ErrorHandler.js
 			return true;
+
+		},
+
+		//switch selector list to delete mode
+		onSwitchToDeleteModeButtonPress: function() {
+
+			//get selector list instance
+			this.getView().byId("SelectorList").setMode("Delete");
+
+			//message handling: incomplete form input detected
+			this.sendStripMessage(this.getResourceBundle().getText("messageListSwitchedToDeleteMode"),
+				sap.ui.core.MessageType.Warning);
 
 		}
 
