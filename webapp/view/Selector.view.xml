@@ -1,5 +1,5 @@
 <mvc:View controllerName="pnp.hierarchyeditor.controller.Selector" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:semantic="sap.f.semantic">
-	<semantic:SemanticPage id="SelectorPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
+	<semantic:SemanticPage id="SelectorPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false" showFooter="true">
 		<semantic:titleHeading>
 			<Title id="selectorViewTitle" text="{SelectorViewModel>/ViewTitle}"/>
 		</semantic:titleHeading>
@@ -20,5 +20,9 @@
 				</headerToolbar>
 			</List>
 		</semantic:content>
+		<semantic:footerCustomActions>
+				<Button id="butAddHierarchy" icon="sap-icon://add" type="Transparent" press="onHierarchyAddButtonPress"
+					text="Add"/>
+		</semantic:footerCustomActions>
 	</semantic:SemanticPage>
 </mvc:View>

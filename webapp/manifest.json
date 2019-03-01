@@ -121,8 +121,8 @@
 				"Hierarchy": {
 					"viewLevel": 1,
 					"viewType": "XML",
-					"viewId": "Home",
-					"viewName": "Home",
+					"viewId": "Hierarchy",
+					"viewName": "Hierarchy",
 					"controlAggregation": "midColumnPages"
 				},
 				"Attributes": {

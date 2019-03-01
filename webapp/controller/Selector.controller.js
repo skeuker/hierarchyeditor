@@ -95,12 +95,36 @@ sap.ui.define([
 		
 		//create selector list item
 		createSelectorListItem: function (sId, oBindingContext) {
+			
+			//get hierarchy
+			var oHierarchy = oBindingContext.getObject();
 
 			//create standard list item with this Binding
 			return new StandardListItem({
 				type: "Navigation",
-				title: "{HierarchyModel>HierarchyText}"
+				title: oHierarchy.HierarchyText
 			});
+
+		},
+
+		/**
+		 * Event handler for the list selection event
+		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
+		 * @public
+		 */
+		onSelectionChange: function (oEvent) {
+
+			//local data declaration
+			var oList = oEvent.getSource(),
+				bSelected = oEvent.getParameter("selected");
+
+			// skip navigation when deselecting an item in multi selection mode
+			if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
+
+				// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
+				this.showHierarchyEditor(oEvent.getParameter("listItem") || oEvent.getSource());
+
+			}
 
 		},
 
@@ -210,27 +234,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for the list selection event
-		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
-		 * @public
-		 */
-		onSelectionChange: function (oEvent) {
-
-			//local data declaration
-			var oList = oEvent.getSource(),
-				bSelected = oEvent.getParameter("selected");
-
-			// skip navigation when deselecting an item in multi selection mode
-			if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
-
-				// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
-				this.showHierarchyEditor(oEvent.getParameter("listItem") || oEvent.getSource());
-
-			}
-
-		},
-
-		/**
 		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
 		 * If there was an object selected in the master list, that selection is removed.
 		 * @public
@@ -287,10 +290,10 @@ sap.ui.define([
 		 */
 		showHierarchyEditor: function (oItem) {
 
-			//get requested survey 
+			//get requested hierarchy 
 			var oHierarchy = oItem.getBindingContext("HierarchyModel").getObject();
 
-			//display detail corresponding to the selected survey
+			//display detail corresponding to the hierarchy
 			this.getRouter().getTargets().display("Hierarchy", {
 				HierarchyID: oHierarchy.HierarchyID
 			});
@@ -335,9 +338,9 @@ sap.ui.define([
 		 * @private
 		 */
 		updateFilterBar: function (sFilterBarText) {
-			var oViewModel = this.getModel("masterView");
+			var oViewModel = this.getModel("SelectorViewModel");
 			oViewModel.setProperty("/isFilterBarVisible", (this.oSelectorListFilterState.aFilter.length > 0));
-			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sFilterBarText]));
+			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("SelectorFilterBarText", [sFilterBarText]));
 		},
 
 		//controller decision whether to delegate OData service error handling

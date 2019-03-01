@@ -5,22 +5,22 @@ sap.ui.define([
 ], function(BaseController, JSONModel, Filter) {
 	"use strict";
 
-	return BaseController.extend("pnp.hierarchyeditor.controller.Home", {
+	return BaseController.extend("pnp.hierarchyeditor.controller.Hierarchy", {
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
-		 * @memberOf pnp.hierarchyeditor.view.Home
+		 * @memberOf pnp.hierarchyeditor.view.Hierarchy
 		 */
 		onInit: function() {
 
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
-				viewTitle: this.getResourceBundle().getText("titleHomeView"),
+				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
 				busyDelay: 0,
 				busy: false
 			});
-			this.setModel(this.oViewModel, "ViewModel");
+			this.setModel(this.oViewModel, "HierarchyViewModel");
 
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
@@ -66,18 +66,26 @@ sap.ui.define([
 		},
 
 		//prepare for display
-		prepareViewForDisplay: function() {
+		prepareViewForDisplay: function(oEvent) {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
+			//get navigation attributes
+			var oNavData = oEvent.getParameter("data");
+
+			//no further processing where no HierarchyID selected yet
+			if (!oNavData.HierarchyID) {
+				return;
+			}
+
 			//construct hierarchy key
 			var sHierarchyPath = "/" + this.getModel("HierarchyModel").createKey("Hierarchies", {
-				HierarchyID: "1"
+				HierarchyID: oNavData.HierarchyID
 			});
 
 			//set view to busy
-			this.getModel("ViewModel").setProperty("/isViewBusy", true);
+			this.getModel("HierarchyViewModel").setProperty("/isViewBusy", true);
 
 			//read hierarchy metadata (without expanding to hierarchy nodes)
 			this.getModel("HierarchyModel").read(sHierarchyPath, {
@@ -95,6 +103,10 @@ sap.ui.define([
 						model: "HierarchyModel",
 						path: sHierarchyPath
 					});
+					
+					//set view title
+					var oHierarchy = this.getModel("HierarchyModel").getProperty(sHierarchyPath);
+					this.getModel("HierarchyViewModel").setProperty("/viewTitle", oHierarchy.HierarchyText);
 
 					//create object carrying hierarchy metadata about node and member types
 					var oHierarchyMetaData = {};
@@ -111,7 +123,7 @@ sap.ui.define([
 					this.getView().setModel(oHierarchyMetaDataModel, "HierarchyMetaDataModel");
 
 					//set view to busy
-					this.getModel("ViewModel").setProperty("/isViewBusy", false);
+					this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 
 				}.bind(this)
 
@@ -176,20 +188,20 @@ sap.ui.define([
 		},
 
 		//handle view display
-		onDisplay: function() {
+		onDisplay: function(oEvent) {
 
 			//get OData model for Hierarchy
 			var oHierarchyModel = this.getModel("HierarchyModel");
 
 			//where metadata is already loaded
 			if (oHierarchyModel.oMetadata && oHierarchyModel.oMetadata.bLoaded) {
-				this.prepareViewForDisplay();
+				this.prepareViewForDisplay(oEvent);
 				return;
 			}
 
 			//metadata is not yet loaded register event handler
 			oHierarchyModel.metadataLoaded().then(function() {
-				this.prepareViewForDisplay();
+				this.prepareViewForDisplay(oEvent);
 			}.bind(this));
 
 		},
@@ -318,7 +330,7 @@ sap.ui.define([
 			this.onHierarchyItemAddInputChange(oEvent);
 
 			//get hierarchy item currently being worked on
-			var oHierarchyItem = this.getModel("ViewModel").getProperty("/NewItem");
+			var oHierarchyItem = this.getModel("HierarchyViewModel").getProperty("/NewItem");
 
 			//set applicable hierarchy metadata filters 
 			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "NodeCategoryID");
@@ -332,7 +344,7 @@ sap.ui.define([
 			this.onHierarchyItemAddInputChange(oEvent);
 
 			//get hierarchy item currently being worked on
-			var oHierarchyItem = this.getModel("ViewModel").getProperty("/NewItem");
+			var oHierarchyItem = this.getModel("HierarchyViewModel").getProperty("/NewItem");
 
 			//adjust hierarchylevel depending on relationship type
 			var iRelationshipDelta = oHierarchyItem.RelationshipTypeID - oHierarchyItem.PreviousRelationshipTypeID;
@@ -917,18 +929,18 @@ sap.ui.define([
 
 			//bind popover to view model instance 
 			oHierarchyItemAddPopover.bindElement({
-				model: "ViewModel",
+				model: "HierarchyViewModel",
 				path: "/NewItem"
 			});
 
 			//set visibility of input control for selected node text
-			this.getModel("ViewModel").setProperty("/bSelectedNodeTextVisible", bSelectedNodeTextVisible);
+			this.getModel("HierarchyViewModel").setProperty("/bSelectedNodeTextVisible", bSelectedNodeTextVisible);
 
 			//set visibility of input control for relationship type
-			this.getModel("ViewModel").setProperty("/bRelationshipTypeVisible", bRelationshipTypeVisible);
+			this.getModel("HierarchyViewModel").setProperty("/bRelationshipTypeVisible", bRelationshipTypeVisible);
 
 			//set enabled state of input control for node category
-			this.getModel("ViewModel").setProperty("/bNodeCategoryEnabled", bNodeCategoryEnabled);
+			this.getModel("HierarchyViewModel").setProperty("/bNodeCategoryEnabled", bNodeCategoryEnabled);
 
 			//set applicable hierarchy metadata filters
 			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "HierarchyLevel");
@@ -987,7 +999,7 @@ sap.ui.define([
 			var oHierarchyTable = this.getView().byId("TreeTable");
 
 			//retrieve new item for hierarchy insert
-			var oNewHierarchyItem = this.getModel("ViewModel").getProperty("/NewItem");
+			var oNewHierarchyItem = this.getModel("HierarchyViewModel").getProperty("/NewItem");
 
 			//get hierarchy boud to view
 			var oHierarchy = this.getView().getBindingContext("HierarchyModel").getObject();
