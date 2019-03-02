@@ -12,6 +12,9 @@ sap.ui.define([
 				layout: "TwoColumnsMidExpanded"
 			});
 			
+			//set view model to owner component
+			this.getOwnerComponent().setModel(this.oViewModel, "AppViewModel");
+			
 			//set view model to view
 			this.getView().setModel(this.oViewModel, "AppViewModel");
 

@@ -13,7 +13,7 @@
 								<Label required="true" text="Hierarchy text" textAlign="Left"/>
 							</form:label>
 							<form:fields>
-								<Input id="inputHierarchyText" liveChange="onHierarchyAddInputChange"/>
+								<Input id="inputHierarchyText" liveChange="onHierarchyAddInputChange" value="{SelectorViewModel>HierarchyText}"/>
 							</form:fields>
 						</form:FormElement>
 						<form:FormElement>

@@ -37,7 +37,7 @@ sap.ui.define([
 				aFilter: [],
 				aSearch: []
 			};
-			
+
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
 
@@ -327,6 +327,7 @@ sap.ui.define([
 			return new JSONModel({
 				filterBarLabel: "",
 				listMode: "None",
+				isLeadingView: false,
 				isFilterBarVisible: false,
 				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
 				sortBy: "HierarchyText",
@@ -484,7 +485,7 @@ sap.ui.define([
 					//user choice: proceed with deletion
 					if (oAction === sap.m.MessageBox.Action.YES) {
 
-						//delete service from backend
+						//delete hierarchy from backend
 						this.getModel("HierarchyModel").remove(oContext.getPath(), {
 
 							//hierarchy entity deleted successfully
@@ -492,6 +493,11 @@ sap.ui.define([
 
 								//message handling
 								this.sendStripMessage(this.getResourceBundle().getText("messageDeletedHierarchySuccessfully"));
+
+								//remove deleted hierarchy from display
+								this.getRouter().getTargets().display("Hierarchy", {
+									HierarchyID: null
+								});
 
 								//post processing after successful updating in the backend
 								this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
@@ -518,23 +524,23 @@ sap.ui.define([
 
 		//on press hierarchy add button
 		onHierarchyAddButtonPress: function() {
-			
+
 			//prepare view for next action
 			this.prepareViewForNextAction();
-			
+
 			//create popover to create new hierarchy
 			this.oHierarchyAddDialog = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyAdd", this);
 			this.oHierarchyAddDialog.attachAfterClose(function() {
 				this.oHierarchyAddDialog.destroy();
 			}.bind(this));
 			this.getView().addDependent(this.oHierarchyAddDialog);
-			
+
 			//instantiate new hierarchy with default attributes
 			var oHierarchy = {
 				"HierarchyText": "",
 				"HierarchyTypeID": null
 			};
-			
+
 			//make available new hierarchy item for binding
 			this.getModel("SelectorViewModel").setProperty("/NewHierarchy", oHierarchy);
 
@@ -574,21 +580,48 @@ sap.ui.define([
 				return;
 
 			}
-			
+
 			//close dialog
 			this.oHierarchyAddDialog.close();
 
+			//retrieve new hierarchy for insert
+			var oNewHierarchy = this.getModel("SelectorViewModel").getProperty("/NewHierarchy");
+
+			//set node key information
+			oNewHierarchy.HierarchyID = this.getGUID();
+
+			//create this node on the backend
+			this.getModel("HierarchyModel").create("/Hierarchies", oNewHierarchy, {
+
+				//success handler for create response
+				success: function(oData) {
+
+					//message handling: successfully created
+					this.sendStripMessage(this.getResourceBundle().getText("msgHierarchyCreatedSuccessfully"), "Success");
+
+				}.bind(this),
+
+				//error handler for delete
+				error: function(oError) {
+
+					//render error in OData response 
+					this.renderODataErrorResponse(oError, "messageAnErrorOccured");
+
+				}.bind(this)
+
+			});
+
 		},
-		
+
 		//on change of input on hierarchy add dialog
-		onHierarchyAddInputChange: function(){
-			
+		onHierarchyAddInputChange: function() {
+
 			//validate input
 			this.hasIncorrectInput([sap.ui.getCore().byId("formAddHierarchy")]);
-			
+
 			//hide message strip in case it was visible
 			sap.ui.getCore().byId("msHierarchyAddDialogMessageStrip").setVisible(false);
-			
+
 		}
 
 	});

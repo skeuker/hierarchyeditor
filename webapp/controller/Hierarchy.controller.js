@@ -17,7 +17,7 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
-				isLeadingController: false,
+				isLeadingView: false,
 				busyDelay: 0,
 				busy: false
 			});
@@ -91,6 +91,23 @@ sap.ui.define([
 
 			//get navigation attributes
 			var oNavData = oEvent.getParameter("data");
+			
+			//get access to hierarchy tree table instance
+			var oHierarchyTable = this.getView().byId("TreeTable");
+			
+			//special use case: hierarchy deleted from selector list
+			if(oNavData && oNavData.HierarchyID === null){
+				
+				//unbind tree table rows
+				oHierarchyTable.unbindRows();
+				
+				//reset title to 'hierarchy maintenance'
+				this.getModel("HierarchyViewModel").setProperty("/viewTitle", this.getResourceBundle().getText("titleHierarchyView"));
+				
+				//no further processing
+				return;
+				
+			}
 
 			//no further processing where no HierarchyID selected yet
 			if (!oNavData || !oNavData.HierarchyID) {
@@ -147,9 +164,6 @@ sap.ui.define([
 
 			});
 
-			//get access to hierarchy tree table instance
-			var oHierarchyTable = this.getView().byId("TreeTable");
-
 			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
 			oHierarchyTable.bindRows({
 
@@ -160,7 +174,7 @@ sap.ui.define([
 				filters: [new Filter({
 					path: "HierarchyID",
 					operator: "EQ",
-					value1: "1"
+					value1: oNavData.HierarchyID
 				})],
 
 				//other binding parameters
@@ -1129,27 +1143,55 @@ sap.ui.define([
 
 			}
 
-			//get binding context of selected row
-			var sNodePath = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getPath();
+			//get binding context of node to be deleted
+			var oNodeBindingContext = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel");
 
-			//remove this node from the backend
-			this.getModel("HierarchyModel").remove(sNodePath, {
+			//build confirmation text for hierarchy node deletion
+			var oNode = oNodeBindingContext.getObject();
 
-				//success handler for delete
-				success: function() {
+			//build confirmation text
+			var sConfirmationText = "Delete hierarchy node " + "'" + oNode.NodeText + "'?";
 
-					//message handling: successfully updated
-					this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
+			//confirmation dialog to delete this hierarchy
+			sap.m.MessageBox.confirm(sConfirmationText, {
+				actions: [
+					sap.m.MessageBox.Action.YES,
+					sap.m.MessageBox.Action.CANCEL
+				],
 
-				}.bind(this),
+				//on confirmation dialog close
+				onClose: (function(oAction) {
 
-				//error handler for delete
-				error: function(oError) {
+					//user choice: proceed with deletion
+					if (oAction === sap.m.MessageBox.Action.YES) {
 
-					//render OData error response
-					this.renderODataErrorResponseToMessagePopoverButton(oError);
+						//get path to selected node in OData model
+						var sNodePath = oNodeBindingContext.getPath();
 
-				}.bind(this)
+						//remove this node from the backend
+						this.getModel("HierarchyModel").remove(sNodePath, {
+
+							//success handler for delete
+							success: function() {
+
+								//message handling: successfully updated
+								this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
+
+							}.bind(this),
+
+							//error handler for delete
+							error: function(oError) {
+
+								//render OData error response
+								this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+							}.bind(this)
+
+						});
+
+					}
+
+				}).bind(this)
 
 			});
 
@@ -1175,10 +1217,20 @@ sap.ui.define([
 		},
 
 		//on hierarchy row selection change
-		onHierarchyRowSelectionChange: function() {
+		onHierarchyRowSelectionChange: function(oEvent) {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
+			
+			//identify selected row
+
+			//change flexible column layout
+			this.getModel("AppViewModel").setProperty("/layout", "ThreeColumnsMidExpanded");
+
+			/*display detail corresponding to the hierarchy
+			this.getRouter().getTargets().display("Attributes", {
+				HierarchyNodeID: oHierarchyNode.HierarchyID
+			});*/
 
 		},
 

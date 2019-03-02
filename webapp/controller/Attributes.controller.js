@@ -1,18 +1,28 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+	"pnp/hierarchyeditor/controller/Base.controller",
+	"sap/ui/model/json/JSONModel"
+], function(BaseController, JSONModel) {
 	"use strict";
 
-	return Controller.extend("pnp.hierarchyeditor.view.controller.Attributes", {
+	return BaseController.extend("pnp.hierarchyeditor.view.controller.Attributes", {
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
 		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
 		 * @memberOf pnp.hierarchyeditor.view.view.Attributes
 		 */
-		//	onInit: function() {
-		//
-		//	},
+		onInit: function() {
+			
+			//instantiate view model and set to view
+			this.oViewModel = new JSONModel({
+				viewTitle: this.getResourceBundle().getText("titleAttributesView"),
+				isLeadingView: false,
+				busyDelay: 0,
+				busy: false
+			});
+			this.setModel(this.oViewModel, "AttributesViewModel");
+		
+		}
 
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
