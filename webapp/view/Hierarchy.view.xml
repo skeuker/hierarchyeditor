@@ -23,7 +23,7 @@
 						visibleRowCountMode="Auto" minAutoRowCount="13" cellClick="onHierarchyCellClick">
 						<table:extension>
 							<m:Toolbar>
-								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="onRefresh"
+								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"
 									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 								<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"
 									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>

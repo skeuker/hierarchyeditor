@@ -103,6 +103,11 @@ sap.ui.define([
 				//path to OData 
 				path: "HierarchyModel>/Hierarchies",
 
+				//expand parameters
+				parameters: {
+					"expand": "toMetadata"
+				},
+
 				//group header factory
 				groupHeaderFactory: this.createGroupHeader,
 
@@ -122,7 +127,8 @@ sap.ui.define([
 			//create standard list item with this Binding
 			return new StandardListItem({
 				type: "Navigation",
-				title: oHierarchy.HierarchyText
+				title: "{HierarchyModel>HierarchyText}",
+				description: "{HierarchyModel>toMetadata/HierarchyTypeText}"
 			});
 
 		},
