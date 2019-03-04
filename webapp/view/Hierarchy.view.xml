@@ -20,7 +20,8 @@
 				<m:items>
 					<table:TreeTable id="TreeTable" selectionMode="Single" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
 						busy="{HierarchyViewModel>/isHierarchyBusy}" busyIndicatorDelay="0" rowSelectionChange="onHierarchyRowSelectionChange"
-						visibleRowCountMode="Auto" minAutoRowCount="13" cellClick="onHierarchyCellClick">
+						visibleRowCountMode="Auto" minAutoRowCount="13" cellClick="onHierarchyCellClick" useGroupMode="false"
+						toggleOpenState="onNodeToggleOpenState">
 						<table:extension>
 							<m:Toolbar>
 								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"

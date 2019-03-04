@@ -164,6 +164,8 @@ sap.ui.define([
 
 			});
 
+			this.oTreeState = {};
+
 			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
 			oHierarchyTable.bindRows({
 
@@ -182,13 +184,14 @@ sap.ui.define([
 					countMode: "Inline",
 					operationMode: "Client",
 					numberOfExpandedLevels: 0,
-					useServersideApplicationFilters: "true",
+					autoExpandMode: "Bundle",
+					useServersideApplicationFilters: "false",
 					treeAnnotationProperties: {
 						hierarchyLevelFor: "HierarchyLevel",
 						hierarchyNodeFor: "HierarchyNodeID",
 						hierarchyParentNodeFor: "ParentNodeID",
-						hierarchyDrillStateFor: "DrillState",
-						hierarchyNodeDescendantCountFor: "ChildCount"
+						hierarchyNodeDescendantCountFor: "ChildCount",
+						hierarchyDrillStateFor: "DrillState"
 					}
 				},
 
@@ -206,9 +209,6 @@ sap.ui.define([
 					//data received from backend
 					"dataReceived": function(oEvent) {
 
-						//apply hierarchy drill state where applicable
-						this.reapplyNodeState();
-
 						//set tree table to no longer busy
 						this.oViewModel.setProperty("/isHierarchyBusy", false);
 
@@ -216,25 +216,11 @@ sap.ui.define([
 						this.oViewModel.setProperty("/iHierarchyRowCount", oEvent.getParameter("data").results.length);
 
 					}.bind(this)
+					
 				}
-
+				
 			});
-
-		},
-
-		//reapply node state
-		reapplyNodeState: function() {
-
-			//get access to hierarchy tree table instance
-			var oHierarchyTable = this.getView().byId("TreeTable");
-
-			//reapply node state where applicable
-			if (this.aExpandedNodes) {
-				this.aExpandedNodes.forEach(function(iRowIndex) {
-					oHierarchyTable.expand(iRowIndex);
-				});
-			}
-
+			
 		},
 
 		//handle view display
@@ -250,7 +236,7 @@ sap.ui.define([
 			}
 
 			//metadata is not yet loaded register event handler
-			oHierarchyModel.metadataLoaded().then(function() {
+			oHierarchyModel.metadataLoaded().then(function(oEvent) {
 				this.prepareViewForDisplay(oEvent);
 			}.bind(this));
 
@@ -1030,9 +1016,6 @@ sap.ui.define([
 		//on insert of a new hierarchy item
 		onInsertHierarchyItem: function() {
 
-			//local data declaration
-			var aExpandedNodes = [];
-
 			//message handling: invalid form input where applicable
 			if (this.hasMissingInput([sap.ui.getCore().byId("formHierarchyItemAdd")]).length > 0) {
 
@@ -1092,24 +1075,18 @@ sap.ui.define([
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("popHierarchyItemAdd").close();
 
-			//get rows currently in hierarchy
-			var aHierarchyTableRows = oHierarchyTable.getRows();
-
-			//keep track of row drill state
-			aHierarchyTableRows.forEach(function(oRow) {
-				if (oRow._oNodeState && oRow._oNodeState.expanded === true) {
-					aExpandedNodes.push(oRow.getIndex());
-				}
-			});
-
-			//adopt node state array for use in table event 'DataReceived' handler
-			this.aExpandedNodes = aExpandedNodes;
+			//get current tree state of expanded and collapsed nodes
+			var oBinding = oHierarchyTable.getBinding();
+			var oCurrentTreeState = oBinding.getCurrentTreeState();
 
 			//create this node on the backend
 			this.getModel("HierarchyModel").create("/HierarchyNodes", oNewHierarchyItem, {
 
 				//success handler for delete
 				success: function(oData) {
+					
+					//reapply previous tree state as otherwise all nodes will be collapsed after refresh
+					oBinding.setTreeState(oCurrentTreeState);
 
 					//message handling: successfully created
 					this.sendStripMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"), "Success");
