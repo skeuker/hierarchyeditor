@@ -6,6 +6,7 @@
 					<PropertyRef  Name="SolutionAreaID"/>
 				</Key>
 				<Property Name="SolutionAreaID" Type="Edm.String" Nullable="false"/>
+				<Property Name="HierarchyNodeID" Type="Edm.String" Nullable="true"/>
 				<Property Name="HierarchyMemberID" Type="Edm.String" Nullable="true"/>
 				<Property Name="SolutionAreaArchitectID" Type="Edm.String" Nullable="false"/>
 				<Property Name="SolutionAreaText" Type="Edm.String" Nullable="false"/>

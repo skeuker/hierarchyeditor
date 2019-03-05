@@ -10,6 +10,7 @@
                     <PropertyRef Name="SolutionAreaID"/>
                 </Key>
                 <Property Name="SolutionAreaText" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="SolutionAreaID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="SolutionAreaArchitectID" Type="Edm.String" Nullable="false" sap:unicode="false"/>

@@ -83,7 +83,7 @@ sap.ui.define([
 
 					//set url parameters to expand to person
 					oUrlParameters = {
-						"$expand": "toPerson"
+						"$expand": "toSolutionAreaArchitect"
 					};
 
 					break;
@@ -108,7 +108,7 @@ sap.ui.define([
 
 					//set url parameters to expand to person
 					oUrlParameters = {
-						"$expand": "toPerson"
+						"$expand": "toApplicationAreaArchitect"
 					};
 
 					break;
