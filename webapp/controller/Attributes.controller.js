@@ -54,6 +54,7 @@ sap.ui.define([
 			var sODataEntitySet;
 			var sFilterPath;
 			var sFilterValue1;
+			var sTextAttribute;
 			var oUrlParameters = {};
 
 			//prepare view for next action
@@ -80,6 +81,7 @@ sap.ui.define([
 					sODataEntitySet = "SolutionAreas";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sTextAttribute = "SolutionAreaText";
 
 					//set url parameters to expand to person
 					oUrlParameters = {
@@ -95,6 +97,7 @@ sap.ui.define([
 					sODataEntitySet = "SolutionAreaComponents";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sTextAttribute = "SolutionAreaComponentText";
 
 					break;
 
@@ -105,6 +108,7 @@ sap.ui.define([
 					sODataEntitySet = "ApplicationAreas";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sTextAttribute = "ApplicationAreaText";
 
 					//set url parameters to expand to person
 					oUrlParameters = {
@@ -120,6 +124,7 @@ sap.ui.define([
 					sODataEntitySet = "ApplicationAreaComponents";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sTextAttribute = "ApplicationAreaComponentText";
 
 					break;
 
@@ -130,6 +135,7 @@ sap.ui.define([
 					sODataEntitySet = "Resources";
 					sFilterPath = "HierarchyMemberID";
 					sFilterValue1 = oHierarchyItem.MemberID;
+					sTextAttribute = "MemberText";
 
 			}
 
@@ -153,9 +159,12 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
+					
+					//get hold of service hierarchy item
+					var oServiceHierarchyItem = oData.results[0];
 
 					//create path to this entity in the service model
-					var sODataEntityPath = "/" + this.getModel("ServiceModel").createKey(sODataEntitySet, oHierarchyItem);
+					var sODataEntityPath = "/" + this.getModel("ServiceModel").createKey(sODataEntitySet, oServiceHierarchyItem);
 
 					//bind view to service model  
 					this.getView().bindElement({
@@ -164,8 +173,7 @@ sap.ui.define([
 					});
 
 					//set view title
-					var oServiceItem = this.getModel("ServiceModel").getProperty(sODataEntityPath);
-					this.getModel("AttributesViewModel").setProperty("/viewTitle", oServiceItem["/Text/"]);
+					this.getModel("AttributesViewModel").setProperty("/viewTitle", oServiceHierarchyItem[sTextAttribute]);
 
 					//set view to busy
 					this.getModel("AttributesViewModel").setProperty("/isViewBusy", false);

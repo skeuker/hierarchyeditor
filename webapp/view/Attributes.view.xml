@@ -17,13 +17,7 @@
 		<content>
 			<m:FlexBox direction="Column" fitContainer="true" justifyContent="SpaceBetween">
 				<m:items>
-					<f:Form id="FormServiceHierarchyMember" editable="true" ariaLabelledBy="Title1">
-						<f:toolbar>
-							<m:Toolbar>
-								<m:ToolbarSpacer/>
-								<m:Button icon="sap-icon://drop-down-list"/>
-							</m:Toolbar>
-						</f:toolbar>
+					<f:Form id="FormServiceHierarchyMember" editable="true">
 						<f:layout>
 							<f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4"
 								emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
@@ -32,22 +26,22 @@
 							<f:FormContainer>
 								<f:formElements>
 									<f:FormElement>
-										<f:fields>
-											<m:Input value="{SolutionAreaText}" width="100%" liveChange="onInputChange"/>
-										</f:fields>
 										<f:label>
 											<m:Label text="Solution Area Text"/>
 										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>SolutionAreaText}" width="100%" liveChange="onInputChange"/>
+										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
-										<f:fields>
-											<m:Input xmlns:m="sap.m"
-												value="{= ${SolutionAreaArchitectID/toSolutionAreaArchitect/FirstName} + ' ' + ${SolutionAreaArchitectID/toSolutionAreaArchitect/LastName} }"
-												width="100%" liveChange="onInputChange"/>
-										</f:fields>
 										<f:label>
 											<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 										</f:label>
+										<f:fields>
+											<m:Input xmlns:m="sap.m"
+												value="{= ${ServiceModel>SolutionAreaArchitectID/toSolutionAreaArchitect/FirstName} + ' ' + ${SolutionAreaArchitectID/toSolutionAreaArchitect/LastName} }"
+												width="100%" liveChange="onInputChange"/>
+										</f:fields>
 									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
