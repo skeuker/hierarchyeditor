@@ -1,5 +1,5 @@
-<mvc:View controllerName="pnp.hierarchyeditor.controller.Attributes" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="sap.f"
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="sap.f" controllerName="pnp.hierarchyeditor.controller.Attributes"
 	busy="{AttributesViewModel>/isViewBusy}" busyIndicatorDelay="0">
 	<DynamicPage id="pageHierarchy" showFooter="true">
 		<title>
@@ -11,17 +11,15 @@
 		</title>
 		<header>
 			<DynamicPageHeader>
-				<content></content>
+				<content/>
 			</DynamicPageHeader>
 		</header>
 		<content>
 			<m:VBox class="sapUiSmallMargin">
-				<f:Form id="FormToolbar" editable="true" ariaLabelledBy="Title1">
+				<f:Form id="FormServiceHierarchyMember" editable="true" ariaLabelledBy="Title1">
 					<f:toolbar>
-						<m:Toolbar id="TB1">
-							<m:Title id="Title1" text="Address" level="H4" titleStyle="H4"/>
+						<m:Toolbar>
 							<m:ToolbarSpacer/>
-							<m:Button icon="sap-icon://settings"/>
 							<m:Button icon="sap-icon://drop-down-list"/>
 						</m:Toolbar>
 					</f:toolbar>
@@ -30,29 +28,23 @@
 							emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
 					</f:layout>
 					<f:formContainers>
-						<f:FormContainer ariaLabelledBy="Title2">
-							<f:toolbar>
-								<m:Toolbar>
-									<m:Title id="Title2" text="Office" level="H5" titleStyle="H5"/>
-									<m:ToolbarSpacer/>
-									<m:Button icon="sap-icon://settings"/>
-								</m:Toolbar>
-							</f:toolbar>
+						<f:FormContainer>
 							<f:formElements>
-								<f:FormElement label="Name">
+								<f:FormElement>
 									<f:fields>
-										<m:Input value="{SupplierName}" id="name"/>
+										<m:Input value="{SolutionAreaText}" width="100%" id="__input0"/>
 									</f:fields>
+									<f:label>
+										<m:Label text="Solution Area Text"/>
+									</f:label>
 								</f:FormElement>
-								<f:FormElement label="Street">
+								<f:FormElement>
 									<f:fields>
-										<m:Input value="{Street}"/>
-										<m:Input value="{HouseNumber}">
-											<m:layoutData>
-												<l:GridData span="XL2 L1 M3 S4"/>
-											</m:layoutData>
-										</m:Input>
+										<m:Input xmlns:m="sap.m" value="{= ${SolutionAreaArchitectID/toSolutionAreaArchitect/FirstName} + ' ' + ${SolutionAreaArchitectID/toSolutionAreaArchitect/LastName} }" width="100%"/>
 									</f:fields>
+									<f:label>
+										<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
+									</f:label>
 								</f:FormElement>
 							</f:formElements>
 						</f:FormContainer>
@@ -63,8 +55,11 @@
 		<footer>
 			<m:Toolbar>
 				<m:Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" press="onMessagesButtonPress"
-					text="{=${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length > 0 &amp;&amp; ${AttributesViewModel>/isLeadingView} }"/>
+					text="{=${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length &gt; 0 &amp;&amp; ${AttributesViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
+				<m:content>
+					<m:Button type="Emphasized" press="onMessagesButtonPress" text="Save"/>
+				</m:content>
 			</m:Toolbar>
 		</footer>
 	</DynamicPage>

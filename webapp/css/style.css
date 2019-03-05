@@ -1,1 +1,9 @@
 /* Enter your custom styles here */
+
+.pnpUiTableAction {
+    font-size: 10px;
+    color: #346187;
+    text-align: center;
+    vertical-align: top;
+    min-width: 1.625rem;
+}

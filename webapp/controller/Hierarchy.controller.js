@@ -1202,19 +1202,25 @@ sap.ui.define([
 		//on hierarchy row selection change
 		onHierarchyRowSelectionChange: function(oEvent) {
 
+		},
+		
+		//on row action 'Navigate'
+		onRowActionNavigate: function(oEvent){
+
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
 			//identify selected row
+			var oHierarchyItem = oEvent.getParameter("row").getBindingContext("HierarchyModel").getObject();
 
 			//change flexible column layout
 			this.getModel("AppViewModel").setProperty("/layout", "ThreeColumnsMidExpanded");
-
-			/*display detail corresponding to the hierarchy
+			
+			//display detail corresponding to the hierarchy
 			this.getRouter().getTargets().display("Attributes", {
-				HierarchyNodeID: oHierarchyNode.HierarchyID
-			});*/
-
+				HierarchyNodeID: oHierarchyItem.HierarchyNodeID
+			});
+			
 		},
 
 		//on collapse of all levels

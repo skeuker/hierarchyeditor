@@ -21,7 +21,31 @@ sap.ui.define([
 				busy: false
 			});
 			this.setModel(this.oViewModel, "AttributesViewModel");
+			
+			//initiate interaction with message manager	
+			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			this.oMessageManager = sap.ui.getCore().getMessageManager();
+			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
+			this.getView().setModel(this.oMessageManager.getMessageModel(), "MessageModel");
+
+			//attach to display event for survey detail
+			this.getRouter().getTarget("Attributes").attachDisplay(this.onDisplay, this);
+
+		},
 		
+		//handle view display
+		onDisplay: function(oEvent) {
+			
+			//get navigation attributes
+			var oNavData = oEvent.getParameter("data");
+
+			//get OData model for Hierarchy
+			var oServiceModel = this.getModel("ServiceModel");
+
+			//create key of this hierarchy item
+			//var oHierarchyItemKey = this.getModel("HierarchyModel").createKey("HierarchyNodes", oHierarchyItem);
+
+
 		}
 
 		/**

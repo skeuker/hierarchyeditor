@@ -4,6 +4,23 @@
       "templateId": "ui5template.basicSAPUI5ApplicationComponent",
       "templateVersion": "1.4.0",
       "dateTimeStamp": "Thu, 28 Feb 2019 13:22:42 GMT"
+    },
+    {
+      "templateId": "servicecatalog.connectivityComponent",
+      "templateVersion": "0.0.0",
+      "dateTimeStamp": "Tue, 05 Mar 2019 10:57:29 GMT"
     }
-  ]
+  ],
+  "mockpreview": {
+    "mockUri": "/sap/opu/odata/pnp/CA_SERV_HIERARCHY_SRV",
+    "metadataFilePath": "",
+    "loadJSONFiles": false,
+    "loadCustomRequests": false,
+    "mockRequestsFilePath": ""
+  },
+  "dataBinding": {
+    "/webapp/view/Attributes.view.xml": {
+      "entitySet": "/SolutionAreas"
+    }
+  }
 }

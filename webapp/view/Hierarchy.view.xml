@@ -21,7 +21,7 @@
 					<table:TreeTable id="TreeTable" selectionMode="Single" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
 						busy="{HierarchyViewModel>/isHierarchyBusy}" busyIndicatorDelay="0" rowSelectionChange="onHierarchyRowSelectionChange"
 						visibleRowCountMode="Auto" minAutoRowCount="13" cellClick="onHierarchyCellClick" useGroupMode="false"
-						toggleOpenState="onNodeToggleOpenState">
+						toggleOpenState="onNodeToggleOpenState" rowActionCount="1">
 						<table:extension>
 							<m:Toolbar>
 								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"
@@ -46,6 +46,13 @@
 								</table:template>
 							</table:Column>
 						</table:columns>
+						<table:rowActionTemplate>
+							<table:RowAction>
+								<table:items>
+									<table:RowActionItem type="Navigation" press="onRowActionNavigate" class="pnpUiTableAction"/>
+								</table:items>
+							</table:RowAction>
+						</table:rowActionTemplate>
 					</table:TreeTable>
 					<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text="" class="sapUiSmallMarginBottom sapUiSmallMarginTop"/>
 				</m:items>
