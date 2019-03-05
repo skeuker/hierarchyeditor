@@ -156,6 +156,12 @@ sap.ui.define([
 			//demote other views in this application
 			this.getOwnerComponent().getModel("HierarchyViewModel").setProperty("/isLeadingView", false);
 
+			//where attributes model is already instantiated
+			var oAttributesViewModel = this.getOwnerComponent().getModel("AttributesViewModel");
+			if (oAttributesViewModel) {
+				oAttributesViewModel.setProperty("/isLeadingView", false);
+			}
+
 		},
 
 		/**

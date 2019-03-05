@@ -1,0 +1,142 @@
+<edmx:Edmx
+    xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+    xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+    xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="pnp.hierarchyeditor" xml:lang="en" sap:schema-version="1">
+            <EntityType Name="HierarchyType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyTypeID"/>
+                </Key>
+                <Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyTypeText" Type="Edm.String" sap:unicode="false"/>
+                <NavigationProperty Name="toMemberTypes" Relationship="pnp.hierarchyeditor.HierarchyTypeToMemberTypes" FromRole="FromRole_HierarchyTypeToMemberTypes" ToRole="ToRole_HierarchyTypeToMemberTypes"/>
+                <NavigationProperty Name="toNodeTypes" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeTypes" FromRole="FromRole_HierarchyTypeToNodeTypes" ToRole="ToRole_HierarchyTypeToNodeTypes"/>
+                <NavigationProperty Name="toNodeDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeDefinitions" FromRole="FromRole_HierarchyTypeToNodeDefinitions" ToRole="ToRole_HierarchyTypeToNodeDefinitions"/>
+                <NavigationProperty Name="toNodeMemberDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeMemberDefinitions" FromRole="FromRole_HierarchyTypeToNodeMemberDefinitions" ToRole="ToRole_HierarchyTypeToNodeMemberDefinitions"/>
+            </EntityType>
+            <EntityType Name="Hierarchy" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyID"/>
+                </Key>
+                <Property Name="HierarchyText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyTypeID" Type="Edm.String" sap:unicode="false"/>
+                <NavigationProperty Name="toMetadata" Relationship="pnp.hierarchyeditor.HierarchyTypeToMetadata" FromRole="FromRole_HierarchyTypeToMetadata" ToRole="ToRole_HierarchyTypeToMetadata"/>
+                <NavigationProperty Name="toNodes" Relationship="pnp.hierarchyeditor.HierarchyToNodes" FromRole="FromRole_HierarchyToNodes" ToRole="ToRole_HierarchyToNodes"/>
+            </EntityType>
+            <EntityType Name="HierarchyNode" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyID"/>
+                    <PropertyRef Name="HierarchyNodeID"/>
+                </Key>
+                <Property Name="MemberTypeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="HierarchyMembID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="NodeCategoryID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="ChildCount" Type="Edm.Int16" sap:unicode="false" sap:label="Signed INT2 / int16"/>
+                <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyNodeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false" sap:unicode="false"/>
+                <Property Name="NodeText" Type="Edm.String" Nullable="false" sap:unicode="true"/>
+                <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="ParentNodeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="true"/>
+            </EntityType>
+            <EntityType Name="HierarchyNodeType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="NodeTypeID"/>
+                </Key>
+                <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="NodeTypeText" Type="Edm.String" sap:unicode="false"/>
+            </EntityType>
+            <EntityType Name="HierarchyMemberType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="MemberTypeID"/>
+                </Key>
+                <Property Name="MemberTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="MemberTypeText" Type="Edm.String" sap:unicode="false"/>
+            </EntityType>
+            <EntityType Name="HierarchyNodeDefinition" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyTypeID"/>
+                    <PropertyRef Name="HierarchyLevel"/>
+                </Key>
+                <Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="HierarchyLevel" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="Signed INT2 / int16"/>
+                <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+            </EntityType>
+            <EntityType Name="HierarchyNodeMemberDefinition" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyTypeID"/>
+                    <PropertyRef Name="NodeTypeID"/>
+                    <PropertyRef Name="MemberTypeID"/>
+                </Key>
+                <Property Name="HierarchyTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="MemberTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+            </EntityType>
+            <Association Name="HierarchyTypeToMetadata" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.Hierarchy" Multiplicity="1" Role="FromRole_HierarchyTypeToMetadata"/>
+                <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="ToRole_HierarchyTypeToMetadata"/>
+            </Association>
+            <Association Name="HierarchyToNodes" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.Hierarchy" Multiplicity="1" Role="FromRole_HierarchyToNodes"/>
+                <End Type="pnp.hierarchyeditor.HierarchyNode" Multiplicity="*" Role="ToRole_HierarchyToNodes"/>
+            </Association>
+            <Association Name="HierarchyTypeToNodeDefinitions" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="FromRole_HierarchyTypeToNodeDefinitions"/>
+                <End Type="pnp.hierarchyeditor.HierarchyNodeDefinition" Multiplicity="*" Role="ToRole_HierarchyTypeToNodeDefinitions"/>
+            </Association>
+            <Association Name="HierarchyTypeToNodeMemberDefinitions" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="FromRole_HierarchyTypeToNodeMemberDefinitions"/>
+                <End Type="pnp.hierarchyeditor.HierarchyNodeMemberDefinition" Multiplicity="*" Role="ToRole_HierarchyTypeToNodeMemberDefinitions"/>
+            </Association>
+            <Association Name="HierarchyTypeToNodeTypes" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="FromRole_HierarchyTypeToNodeTypes"/>
+                <End Type="pnp.hierarchyeditor.HierarchyNodeType" Multiplicity="*" Role="ToRole_HierarchyTypeToNodeTypes"/>
+            </Association>
+            <Association Name="HierarchyTypeToMemberTypes" sap:content-version="1">
+                <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="FromRole_HierarchyTypeToMemberTypes"/>
+                <End Type="pnp.hierarchyeditor.HierarchyMemberType" Multiplicity="*" Role="ToRole_HierarchyTypeToMemberTypes"/>
+            </Association>
+            <EntityContainer Name="pnp.hierarchyeditor_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="HierarchyTypes" EntityType="pnp.hierarchyeditor.HierarchyType" sap:content-version="1"/>
+                <EntitySet Name="Hierarchies" EntityType="pnp.hierarchyeditor.Hierarchy" sap:content-version="1"/>
+                <EntitySet Name="HierarchyNodes" EntityType="pnp.hierarchyeditor.HierarchyNode" sap:content-version="1"/>
+                <EntitySet Name="HierarchyNodeTypes" EntityType="pnp.hierarchyeditor.HierarchyNodeType" sap:content-version="1"/>
+                <EntitySet Name="HierarchyMemberTypes" EntityType="pnp.hierarchyeditor.HierarchyMemberType" sap:content-version="1"/>
+                <EntitySet Name="HierarchyNodeDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeDefinition" sap:content-version="1"/>
+                <EntitySet Name="HierarchyNodeMemberDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeMemberDefinition" sap:content-version="1"/>
+                <AssociationSet Name="HierarchyTypeToMetadata_AssocSet" Association="pnp.hierarchyeditor.HierarchyTypeToMetadata" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Hierarchies" Role="FromRole_HierarchyTypeToMetadata"/>
+                    <End EntitySet="HierarchyTypes" Role="ToRole_HierarchyTypeToMetadata"/>
+                </AssociationSet>
+                <AssociationSet Name="HierarchyTypeToNodeTypes_AssocSet" Association="pnp.hierarchyeditor.HierarchyTypeToNodeTypes" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="HierarchyTypes" Role="FromRole_HierarchyTypeToNodeTypes"/>
+                    <End EntitySet="HierarchyNodeTypes" Role="ToRole_HierarchyTypeToNodeTypes"/>
+                </AssociationSet>
+                <AssociationSet Name="HierarchyTypeToNodeMemberDefinitions_Ass" Association="pnp.hierarchyeditor.HierarchyTypeToNodeMemberDefinitions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="HierarchyTypes" Role="FromRole_HierarchyTypeToNodeMemberDefinitions"/>
+                    <End EntitySet="HierarchyNodeMemberDefinitions" Role="ToRole_HierarchyTypeToNodeMemberDefinitions"/>
+                </AssociationSet>
+                <AssociationSet Name="HierarchyTypeToNodeDefinitions_AssocSet" Association="pnp.hierarchyeditor.HierarchyTypeToNodeDefinitions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="HierarchyTypes" Role="FromRole_HierarchyTypeToNodeDefinitions"/>
+                    <End EntitySet="HierarchyNodeDefinitions" Role="ToRole_HierarchyTypeToNodeDefinitions"/>
+                </AssociationSet>
+                <AssociationSet Name="HierarchyToNodes_AssocSet" Association="pnp.hierarchyeditor.HierarchyToNodes" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Hierarchies" Role="FromRole_HierarchyToNodes"/>
+                    <End EntitySet="HierarchyNodes" Role="ToRole_HierarchyToNodes"/>
+                </AssociationSet>
+                <AssociationSet Name="HierarchyTypeToMemberTypes_AssocSet" Association="pnp.hierarchyeditor.HierarchyTypeToMemberTypes" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="HierarchyTypes" Role="FromRole_HierarchyTypeToMemberTypes"/>
+                    <End EntitySet="HierarchyMemberTypes" Role="ToRole_HierarchyTypeToMemberTypes"/>
+                </AssociationSet>
+            </EntityContainer>
+            <atom:link
+                xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="./pnp/CA_HIERARCHY_EDITOR_SRV/$metadata"/>
+                <atom:link
+                    xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="./pnp/CA_HIERARCHY_EDITOR_SRV/$metadata"/>
+                </Schema>
+            </edmx:DataServices>
+        </edmx:Edmx>

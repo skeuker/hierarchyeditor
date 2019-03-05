@@ -58,20 +58,6 @@ sap.ui.define([
 
 		},
 
-		//prepare view for next action
-		prepareViewForNextAction: function() {
-
-			//hide message strip 
-			this.oMessageStrip.setVisible(false);
-
-			//remove all messages from the message manager
-			this.oMessageManager.removeAllMessages();
-
-			//set current view as leading view
-			this.setAsLeadingView();
-
-		},
-
 		//set this view as leading view
 		setAsLeadingView: function() {
 
@@ -80,6 +66,12 @@ sap.ui.define([
 
 			//demote other views in this application
 			this.getOwnerComponent().getModel("SelectorViewModel").setProperty("/isLeadingView", false);
+
+			//where attributes model is already instantiated
+			var oAttributesViewModel = this.getOwnerComponent().getModel("AttributesViewModel");
+			if (oAttributesViewModel) {
+				oAttributesViewModel.setProperty("/isLeadingView", false);
+			}
 
 		},
 
@@ -133,6 +125,11 @@ sap.ui.define([
 				//success handler
 				success: function(oData) {
 
+					//inspect batchResponses for errors and visualize
+					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
+						return;
+					}
+
 					//bind popover to hierarchy model instance 
 					this.getView().bindElement({
 						model: "HierarchyModel",
@@ -160,11 +157,17 @@ sap.ui.define([
 					//set view to busy
 					this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 
+				}.bind(this),
+
+				//success callback function
+				error: function(oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
 				}.bind(this)
 
 			});
-
-			this.oTreeState = {};
 
 			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
 			oHierarchyTable.bindRows({
@@ -216,11 +219,11 @@ sap.ui.define([
 						this.oViewModel.setProperty("/iHierarchyRowCount", oEvent.getParameter("data").results.length);
 
 					}.bind(this)
-					
+
 				}
-				
+
 			});
-			
+
 		},
 
 		//handle view display
@@ -1084,7 +1087,7 @@ sap.ui.define([
 
 				//success handler for delete
 				success: function(oData) {
-					
+
 					//reapply previous tree state as otherwise all nodes will be collapsed after refresh
 					oBinding.setTreeState(oCurrentTreeState);
 
@@ -1203,9 +1206,9 @@ sap.ui.define([
 		onHierarchyRowSelectionChange: function(oEvent) {
 
 		},
-		
+
 		//on row action 'Navigate'
-		onRowActionNavigate: function(oEvent){
+		onRowActionNavigate: function(oEvent) {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -1215,12 +1218,12 @@ sap.ui.define([
 
 			//change flexible column layout
 			this.getModel("AppViewModel").setProperty("/layout", "ThreeColumnsMidExpanded");
-			
+
 			//display detail corresponding to the hierarchy
 			this.getRouter().getTargets().display("Attributes", {
-				HierarchyNodeID: oHierarchyItem.HierarchyNodeID
+				HierarchyItem: oHierarchyItem
 			});
-			
+
 		},
 
 		//on collapse of all levels

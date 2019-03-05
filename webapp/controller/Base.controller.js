@@ -984,6 +984,20 @@ sap.ui.define([
 
 			}.bind(this));
 
+		},
+		
+		//prepare view for next action
+		prepareViewForNextAction: function() {
+
+			//hide message strip 
+			this.oMessageStrip.setVisible(false);
+
+			//remove all messages from the message manager
+			this.oMessageManager.removeAllMessages();
+
+			//set current view as leading view
+			this.setAsLeadingView();
+
 		}
 
 	});

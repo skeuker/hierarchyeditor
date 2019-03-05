@@ -19,7 +19,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri": "localService/metadata.xml"
+					"localUri": "localService/CA_HIERARCHY_EDITOR_SRV/metadata.xml"
 				}
 			},
 			"CA_SERV_HIERARCHY_SRV": {
