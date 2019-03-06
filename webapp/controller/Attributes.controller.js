@@ -45,10 +45,14 @@ sap.ui.define([
 			//attach to display event for survey detail
 			this.getRouter().getTarget("Attributes").attachDisplay(this.onDisplay, this);
 
+			//keep track of service OData model
+			this.oServiceModel = this.getOwnerComponent().getModel("ServiceModel");
+			this.setModel(this.oServiceModel, "ServiceModel");
+
 		},
 
-		//handle view display
-		onDisplay: function(oEvent) {
+		//prepare view for display
+		prepareViewForDisplay: function(oNavData) {
 
 			//local data declaration
 			var sODataEntitySet;
@@ -60,13 +64,13 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
-			//get data received with navigation
-			var oNavData = oEvent.getParameter("data");
-
 			//no further processing where applicable
-			if (!oNavData.HierarchyItem) {
+			if (!oNavData || !oNavData.HierarchyItem) {
 				return;
 			}
+
+			//initialize input fields on attributes form
+			this.getView().unbindElement("ServiceModel");
 
 			//adopt hierarchy item invoking this display
 			var oHierarchyItem = oNavData.HierarchyItem;
@@ -159,7 +163,7 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
-					
+
 					//get hold of service hierarchy item
 					var oServiceHierarchyItem = oData.results[0];
 
@@ -192,6 +196,64 @@ sap.ui.define([
 
 		},
 
+		//handle view display
+		onDisplay: function(oEvent) {
+
+			//keep track of incoming event
+			var oNavData = oEvent.getParameter("data");
+
+			//detect whether changes are present
+			var bHasPendingChanges = this.getModel("ServiceModel").hasPendingChanges();
+
+			//depending on whether unsaved changes are present
+			switch (bHasPendingChanges) {
+
+				//unsaved changes exist
+				case true:
+
+					//confirmation dialog to delete this hierarchy
+					sap.m.MessageBox.confirm(this.getResourceBundle().getText("confirmNavigateWithoutSave"), {
+
+						//'yes' and 'cancel' as confirm options
+						actions: [
+							sap.m.MessageBox.Action.YES,
+							sap.m.MessageBox.Action.CANCEL
+						],
+
+						//on confirmation dialog close
+						onClose: function(oAction) {
+
+							//user choice: discard unsaved changes
+							if (oAction === sap.m.MessageBox.Action.YES) {
+
+								//discard unsaved changes
+								this.getModel("ServiceModel").resetChanges();
+
+								//prepare view for display
+								this.prepareViewForDisplay(oNavData);
+
+							}
+
+						}.bind(this)
+
+					});
+
+					//no further processing here
+					break;
+
+					//no unsaved changes exist
+				case false:
+
+					//prepare view for display
+					this.prepareViewForDisplay(oNavData);
+
+					//no further processing here
+					break;
+
+			}
+
+		},
+
 		//set this view as leading view
 		setAsLeadingView: function() {
 
@@ -206,6 +268,9 @@ sap.ui.define([
 
 		//handline change of input
 		onInputChange: function() {
+			
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			//detect changes in model data
 			if (this.getModel("ServiceModel").hasPendingChanges()) {
@@ -214,6 +279,46 @@ sap.ui.define([
 				this.getOwnerComponent().getModel("AttributesViewModel").setProperty("/isSaveEnabled", true);
 
 			}
+
+		},
+
+		//on press of save attributes button
+		oPressSaveAttributesButton: function() {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//set view to busy
+			this.oViewModel.setProperty("/isViewBusy", true);
+
+			//submit changes to the backend
+			this.oServiceModel.submitChanges({
+
+				//success callback function
+				success: function(oData) {
+
+					//inspect batchResponses for errors and visualize
+					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
+						return;
+					}
+
+					//set view to busy
+					this.oViewModel.setProperty("/isViewBusy", false);
+
+					//message handling: successfully created
+					this.sendStripMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"), "Success");
+
+				}.bind(this),
+
+				//success callback function
+				error: function(oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});
 
 		}
 

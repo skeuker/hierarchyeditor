@@ -231,6 +231,9 @@ sap.ui.define([
 				MessageText: sMessageText,
 				MessageType: "Error"
 			}]);
+			
+			//set view to no longer busy
+			this.oViewModel.setProperty("/isViewBusy", false);
 
 		},
 
@@ -298,7 +301,7 @@ sap.ui.define([
 				this.setEntityMessages(aMessages);
 
 				//set view to no busy
-				this.oViewModel.setProperty("/busy", false);
+				this.oViewModel.setProperty("/isViewBusy", false);
 
 				//feedback to caller: errors occured
 				return true;

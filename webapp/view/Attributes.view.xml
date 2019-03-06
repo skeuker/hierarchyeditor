@@ -17,7 +17,7 @@
 		<content>
 			<m:FlexBox direction="Column" fitContainer="true" justifyContent="SpaceBetween">
 				<m:items>
-					<f:Form id="FormServiceHierarchyMember" editable="true">
+					<f:Form id="formServiceHierarchyItem" editable="true">
 						<f:layout>
 							<f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4"
 								emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
@@ -38,9 +38,9 @@
 											<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'Firstname' } }" selectedKey="{ServiceModel>SolutionAreaArchitectID}"
+											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>SolutionAreaArchitectID}"
 												change="onInputChange">
-												<core:Item key="{PersonID}" text="{= ${FirstName} + ' ' + ${LastName} }"/>
+												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -58,7 +58,7 @@
 					text="{=${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length &gt; 0 &amp;&amp; ${AttributesViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
 				<m:content>
-					<m:Button type="Emphasized" press="onMessagesButtonPress" text="Save" enabled="{AttributesViewModel>/isSaveEnabled}"/>
+					<m:Button type="Emphasized" press="oPressSaveAttributesButton" text="Save" enabled="{AttributesViewModel>/isSaveEnabled}"/>
 				</m:content>
 			</m:Toolbar>
 		</footer>
