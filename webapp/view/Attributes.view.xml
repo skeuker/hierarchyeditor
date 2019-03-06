@@ -38,9 +38,10 @@
 											<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 										</f:label>
 										<f:fields>
-											<m:Input xmlns:m="sap.m"
-												value="{= ${ServiceModel>SolutionAreaArchitectID/toSolutionAreaArchitect/FirstName} + ' ' + ${SolutionAreaArchitectID/toSolutionAreaArchitect/LastName} }"
-												width="100%" liveChange="onInputChange"/>
+											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'Firstname' } }" selectedKey="{ServiceModel>SolutionAreaArchitectID}"
+												change="onInputChange">
+												<core:Item key="{PersonID}" text="{= ${FirstName} + ' ' + ${LastName} }"/>
+											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>
