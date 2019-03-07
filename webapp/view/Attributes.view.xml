@@ -23,7 +23,7 @@
 								emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
 						</f:layout>
 						<f:formContainers>
-							<f:FormContainer>
+							<f:FormContainer id="fcontSolutionArea" visible="false">
 								<f:formElements>
 									<f:FormElement>
 										<f:label>
@@ -43,6 +43,36 @@
 												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+							<f:FormContainer id="fcontSolutionAreaComponent" visible="false">
+								<f:formElements>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Solution Area Component Text"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>SolutionAreaComponentText}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+							<f:FormContainer id="fcontApplication" visible="false">
+								<f:formElements>
+									<f:FormElement>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+							<f:FormContainer id="fcontApplicationComponent" visible="false">
+								<f:formElements>
+									<f:FormElement>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+							<f:FormContainer id="fcontResource" visible="false">
+								<f:formElements>
+									<f:FormElement>
 									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>

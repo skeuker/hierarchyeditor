@@ -93,6 +93,10 @@ sap.ui.define([
 					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaText";
 
+					//ensure form container for solution area is visible
+					this.toggleFormContainerVisibility("fcontSolutionArea");
+					
+					//no further processing here
 					break;
 
 					//hierarchy item is of type solution area component
@@ -104,28 +108,40 @@ sap.ui.define([
 					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaComponentText";
 
+					//ensure form container for solution area component is visible
+					this.toggleFormContainerVisibility("fcontSolutionAreaComponent");
+					
+					//no further processing here
 					break;
 
 					//hierarchy item is of type application area
 				case "AA":
 
 					//set entity set and filter path
-					sODataEntitySet = "ApplicationAreas";
+					sODataEntitySet = "Applications";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
-					sTextAttribute = "ApplicationAreaText";
+					sTextAttribute = "ApplicationText";
 
+					//ensure form container for application is visible
+					this.toggleFormContainerVisibility("fcontApplication");
+					
+					//no further processing here
 					break;
 
 					//hierarchy item is of type application area component
 				case "AAC":
 
 					//set entity set and filter path
-					sODataEntitySet = "ApplicationAreaComponents";
+					sODataEntitySet = "ApplicationComponents";
 					sFilterPath = "HierarchyNodeID";
 					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
-					sTextAttribute = "ApplicationAreaComponentText";
-
+					sTextAttribute = "ApplicationComponentText";
+					
+					//ensure form container for application component is visible
+					this.toggleFormContainerVisibility("fcontApplicationComponent");
+					
+					//no further processing here
 					break;
 
 					//hierarchy item is member	
@@ -136,6 +152,12 @@ sap.ui.define([
 					sFilterPath = "HierarchyMemberID";
 					sFilterValue1 = this.oHierarchyItem.MemberID;
 					sTextAttribute = "MemberText";
+					
+					//ensure form container for resource is visible
+					this.toggleFormContainerVisibility("fcontResource");
+					
+					//no further processing here
+					break;
 
 			}
 
@@ -325,6 +347,51 @@ sap.ui.define([
 
 			});
 
+		},
+
+		//toggle form container visibility depending on type
+		toggleFormContainerVisibility: function(sVisibleFormContainer) {
+			
+			//solution area 
+			var oFcontSolutionArea = this.getView().byId("fcontSolutionArea");
+			if(sVisibleFormContainer === "fcontSolutionArea"){
+				oFcontSolutionArea.setVisible(true);	
+			}else{
+				oFcontSolutionArea.setVisible(false);
+			}
+			
+			//solution area component
+			var oFcontSolutionAreaComponent = this.getView().byId("fcontSolutionAreaComponent");
+			if(sVisibleFormContainer === "fcontSolutionAreaComponent"){
+				oFcontSolutionAreaComponent.setVisible(true);	
+			}else{
+				oFcontSolutionAreaComponent.setVisible(false);
+			}
+
+			//application
+			var oFcontApplication = this.getView().byId("fcontApplication");
+			if(sVisibleFormContainer === "fcontApplication"){
+				oFcontApplication.setVisible(true);	
+			}else{
+				oFcontApplication.setVisible(false);
+			}
+			
+			//application component
+			var oFcontApplicationComponent = this.getView().byId("fcontApplicationComponent");
+			if(sVisibleFormContainer === "fcontApplicationComponent"){
+				oFcontApplicationComponent.setVisible(true);	
+			}else{
+				oFcontApplicationComponent.setVisible(false);
+			}
+			
+			//resource
+			var oFcontResource = this.getView().byId("fcontResource");
+			if(sVisibleFormContainer === "fcontResource"){
+				oFcontResource.setVisible(true);	
+			}else{
+				oFcontResource.setVisible(false);
+			}
+			
 		}
 
 	});
