@@ -114,7 +114,7 @@
 				"viewType": "XML",
 				"async": true,
 				"viewPath": "pnp.hierarchyeditor.view",
-				"controlId": "layout",
+				"controlId": "FlexibleColumnLayout",
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
 					"target": "notFound"
@@ -127,8 +127,7 @@
 					"name": "App",
 					"target": [
 						"Selector",
-						"Hierarchy",
-						"Attributes"
+						"Hierarchy"
 					]
 				}
 			],
@@ -152,6 +151,13 @@
 					"viewType": "XML",
 					"viewId": "Attributes",
 					"viewName": "Attributes",
+					"controlAggregation": "endColumnPages"
+				},
+				"Message": {
+					"viewLevel": 1,
+					"viewType": "XML",
+					"viewId": "Message",
+					"viewName": "Message",
 					"controlAggregation": "endColumnPages"
 				}
 			}

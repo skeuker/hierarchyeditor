@@ -1163,6 +1163,12 @@ sap.ui.define([
 								//message handling: successfully updated
 								this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
 
+								//unbind attributes view in connected hierarchy component
+								this.getOwnerComponent().unbindAttributesView();
+
+								//change flexible column layout
+								this.getModel("AppViewModel").setProperty("/layout", "TwoColumnsMidExpanded");
+
 							}.bind(this),
 
 							//error handler for delete
@@ -1213,14 +1219,21 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
+			//get row from which to navigate
+			var oRow = oEvent.getParameter("row");
+
 			//identify selected row
-			var oHierarchyItem = oEvent.getParameter("row").getBindingContext("HierarchyModel").getObject();
+			var oHierarchyItem = oRow.getBindingContext("HierarchyModel").getObject();
 
 			//change flexible column layout
 			this.getModel("AppViewModel").setProperty("/layout", "ThreeColumnsMidExpanded");
 
+			//set row as selected
+			this.getView().byId("TreeTable").setSelectedIndex(oRow.getIndex());
+
 			//display detail corresponding to the hierarchy
 			this.getRouter().getTargets().display("Attributes", {
+				HierarchyComponent: this.getOwnerComponent(),
 				HierarchyItem: oHierarchyItem
 			});
 

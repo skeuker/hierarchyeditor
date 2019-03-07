@@ -5,6 +5,8 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("pnp.hierarchyeditor.controller.App", {
+		
+		//on initialization
 		onInit: function() {
 			
 			//create this controller's ViewModel
@@ -15,9 +17,14 @@ sap.ui.define([
 			//set view model to owner component
 			this.getOwnerComponent().setModel(this.oViewModel, "AppViewModel");
 			
+			//keep track of the app controller
+			this.getOwnerComponent().oAppController = this;
+			
 			//set view model to view
 			this.getView().setModel(this.oViewModel, "AppViewModel");
 
 		}
+		
 	});
+	
 });

@@ -4,7 +4,7 @@ sap.ui.define([
 	"pnp/hierarchyeditor/model/models",
 	"pnp/hierarchyeditor/util/ListSelector",
 	"pnp/hierarchyeditor/util/ErrorHandler"
-], function (UIComponent, Device, models, ListSelector, ErrorHandler) {
+], function(UIComponent, Device, models, ListSelector, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("pnp.hierarchyeditor.Component", {
@@ -18,12 +18,12 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		init: function () {
-			
+		init: function() {
+
 			//initialize component attributes
 			this.oListSelector = new ListSelector();
 			this.oErrorHandler = new ErrorHandler(this);
-			
+
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -32,9 +32,35 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
+
+		},
+
+		/*The following methods are for inter-component communication
+		  between the hierarchy editor and its connected hierarchy*/
+
+		//on hierarchy item save from attributes view
+		onSaveOfHierarchyItem: function(oHierarchyItem) {
+
+			//construct hierarchy item OData path
+			var sHierarchyItemODataPath = "/" + this.getModel("HierarchyModel").createKey("HierarchyNodes", {
+				HierarchyID: oHierarchyItem.HierarchyID,
+				HierarchyNodeID: oHierarchyItem.HierarchyNodeID
+			});
+
+			/*read service model entity to update related hierarchy node text
+			  Explicitly no exception handling as failure here is not critical*/
+			this.getModel("HierarchyModel").read(sHierarchyItemODataPath, {});
+
+		},
+
+		//reset attributes view
+		unbindAttributesView: function() {
+
+			//unbind attributes view service hierarchy OData model
+			this.oAttributesController.getView().unbindElement("ServiceModel");
 			
 		}
-		
+
 	});
-	
+
 });

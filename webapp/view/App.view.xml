@@ -1,6 +1,6 @@
 <mvc:View controllerName="pnp.hierarchyeditor.controller.App" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true" xmlns:f="sap.f" xmlns="sap.m">
 	<App id="idAppControl">
-		<f:FlexibleColumnLayout id="layout" layout="{AppViewModel>/layout}" backgroundDesign="Translucent"></f:FlexibleColumnLayout>
+		<f:FlexibleColumnLayout id="FlexibleColumnLayout" layout="{AppViewModel>/layout}" backgroundDesign="Translucent"></f:FlexibleColumnLayout>
 	</App>
 </mvc:View>

@@ -59,10 +59,12 @@ sap.ui.define([
 			var sFilterPath;
 			var sFilterValue1;
 			var sTextAttribute;
-			var oUrlParameters = {};
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
+
+			//set save button to disabled
+			this.getModel("AttributesViewModel").setProperty("/isSaveEnabled", false);
 
 			//no further processing where applicable
 			if (!oNavData || !oNavData.HierarchyItem) {
@@ -73,10 +75,14 @@ sap.ui.define([
 			this.getView().unbindElement("ServiceModel");
 
 			//adopt hierarchy item invoking this display
-			var oHierarchyItem = oNavData.HierarchyItem;
+			this.oHierarchyItem = oNavData.HierarchyItem;
+			this.oHierarchyComponent = oNavData.HierarchyComponent;
+
+			//keep track of this controller on the component
+			this.getOwnerComponent().oAttributesController = this;
 
 			//depending on type of hierarchy item
-			switch (oHierarchyItem.NodeTypeID) {
+			switch (this.oHierarchyItem.NodeTypeID) {
 
 				//hierarchy item is of type solution area
 				case "SA":
@@ -84,13 +90,8 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "SolutionAreas";
 					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaText";
-
-					//set url parameters to expand to person
-					oUrlParameters = {
-						"$expand": "toSolutionAreaArchitect"
-					};
 
 					break;
 
@@ -100,7 +101,7 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "SolutionAreaComponents";
 					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaComponentText";
 
 					break;
@@ -111,13 +112,8 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "ApplicationAreas";
 					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "ApplicationAreaText";
-
-					//set url parameters to expand to person
-					oUrlParameters = {
-						"$expand": "toApplicationAreaArchitect"
-					};
 
 					break;
 
@@ -127,7 +123,7 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "ApplicationAreaComponents";
 					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = oHierarchyItem.HierarchyNodeID;
+					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "ApplicationAreaComponentText";
 
 					break;
@@ -138,16 +134,16 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "Resources";
 					sFilterPath = "HierarchyMemberID";
-					sFilterValue1 = oHierarchyItem.MemberID;
+					sFilterValue1 = this.oHierarchyItem.MemberID;
 					sTextAttribute = "MemberText";
 
 			}
 
+			//set view to busy
+			this.getModel("AttributesViewModel").setProperty("/isViewBusy", true);
+
 			//read service model entity
 			this.getModel("ServiceModel").read("/" + sODataEntitySet, {
-
-				//url parameters
-				urlParameters: oUrlParameters,
 
 				//filter
 				filters: [new Filter({
@@ -229,6 +225,9 @@ sap.ui.define([
 								//discard unsaved changes
 								this.getModel("ServiceModel").resetChanges();
 
+								//set save button to disabled awaiting changes to be made
+								this.getOwnerComponent().getModel("AttributesViewModel").setProperty("/isSaveEnabled", false);
+
 								//prepare view for display
 								this.prepareViewForDisplay(oNavData);
 
@@ -268,7 +267,7 @@ sap.ui.define([
 
 		//handline change of input
 		onInputChange: function() {
-			
+
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
@@ -283,7 +282,7 @@ sap.ui.define([
 		},
 
 		//on press of save attributes button
-		oPressSaveAttributesButton: function() {
+		onPressSaveAttributesButton: function() {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -301,6 +300,12 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
+
+					//inform hierarchy component that attributes save occured
+					this.oHierarchyComponent.onSaveOfHierarchyItem(this.oHierarchyItem);
+
+					//set save button to disabled
+					this.getModel("AttributesViewModel").setProperty("/isSaveEnabled", false);
 
 					//set view to busy
 					this.oViewModel.setProperty("/isViewBusy", false);

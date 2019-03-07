@@ -1,0 +1,4 @@
+<mvc:View controllerName="pnp.hierarchyeditor.controller.Message" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<MessagePage id="pageMessage" title="{i18n>titleMessageView}" text="{MessageViewModel>/sMessageText}" icon="{MessageViewModel>/sMessageIcon}"
+		showNavButton="false" description="{MessageViewModel>/sMessageDescription}"></MessagePage>
+</mvc:View>

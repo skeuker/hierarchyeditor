@@ -177,29 +177,6 @@ sap.ui.define([
 
 		},
 
-		//render OData error response to detail message page
-		renderODataErrorResponseToDetailMessagePage: function(oError) {
-
-			//set view to no longer busy
-			this.oViewModel.setProperty("/busy", false);
-
-			// set the layout property of flexible column layout control to show two columns
-			this.getModel("AppViewModel").setProperty("/layout", "TwoColumnsMidExpanded");
-
-			//clear master list selection state
-			this.getOwnerComponent().oListSelector.clearMasterListSelection();
-
-			//get message text
-			var sMessageText = ErrorHandler.prototype.getODataErrorResponseMessageText.call(this, oError);
-
-			//error encountered
-			this.getRouter().getTargets().display("detailObjectMessage", {
-				messageText: sMessageText,
-				messageType: "Error"
-			});
-
-		},
-
 		//render OData error response 
 		renderODataErrorResponse: function(oError, sStripMessageI18nID) {
 

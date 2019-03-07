@@ -30,7 +30,7 @@
 											<m:Label text="Solution Area Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>SolutionAreaText}" width="100%" liveChange="onInputChange"/>
+											<m:Input value="{ServiceModel>SolutionAreaText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -58,7 +58,7 @@
 					text="{=${MessageModel>/}.length}" visible="{= ${MessageModel>/}.length &gt; 0 &amp;&amp; ${AttributesViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
 				<m:content>
-					<m:Button type="Emphasized" press="oPressSaveAttributesButton" text="Save" enabled="{AttributesViewModel>/isSaveEnabled}"/>
+					<m:Button type="Emphasized" press="onPressSaveAttributesButton" text="Save" enabled="{AttributesViewModel>/isSaveEnabled}"/>
 				</m:content>
 			</m:Toolbar>
 		</footer>
