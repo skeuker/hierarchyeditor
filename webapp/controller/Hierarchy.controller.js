@@ -336,6 +336,10 @@ sap.ui.define([
 				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
 
 			}.bind(this));
+			
+			//get current tree state of expanded and collapsed nodes
+			var oBinding = oTreeTable.getBinding();
+			var oCurrentTreeState = oBinding.getCurrentTreeState();
 
 			//submit changes
 			this.getModel("HierarchyModel").submitChanges({
@@ -347,6 +351,9 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
+					
+					//reapply previous tree state after refresh
+					oBinding.setTreeState(oCurrentTreeState);
 
 				}.bind(this),
 
