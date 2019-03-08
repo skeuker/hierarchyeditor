@@ -24,5 +24,22 @@
 		"NodeCategoryID": "2",
 		"NodeCategoryText": "Member",
 		"NodeCategoryIcon": "sap-icon://tags"
+	}],
+	"ResourceTypes": [{
+		"ResourceTypeID": "1",
+		"ResourceTypeText": "Type 1"
+	}, {
+		"ResourceTypeID": "2",
+		"ResourceTypeText": "Type 2"
+	}, {
+		"ResourceTypeID": "3",
+		"ResourceTypeText": "Type 3"
+	}],
+	"ResourceCategories": [{
+		"ResourceCategoryID": "0",
+		"ResourceCategoryText": "Virtual"
+	}, {
+		"ResourceCategoryID": "1",
+		"ResourceCategoryText": "Physical"
 	}]
 }

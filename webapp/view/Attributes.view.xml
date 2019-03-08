@@ -142,20 +142,86 @@
 								<f:formElements>
 									<f:FormElement>
 										<f:label>
-											<m:Label text="Application Component Text"/>
+											<m:Label text="Resource Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceModel>ResourceText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
 										<f:label>
-											<m:Label text="Annual growth factor"/>
+											<m:Label xmlns:m="sap.m" text="Resource Type"/>
 										</f:label>
 										<f:fields>
-											<m:Input
-												value="{ path: 'ServiceModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
-												type="Number" width="100%" change="onInputChange" description="%"/>
+											<m:ComboBox items="{ path: 'OptionsModel>/ResourceTypes' }" selectedKey="{ServiceModel>ResourceTypeID}"
+												change="onInputChange">
+												<core:Item key="{OptionsModel>ResourceTypeID}" text="{OptionsModel>ResourceTypeText}"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label xmlns:m="sap.m" text="Resource Category"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'OptionsModel>/ResourceCategories' }" selectedKey="{ServiceModel>ResourceCategoryID}"
+												change="onInputChange">
+												<core:Item key="{OptionsModel>ResourceCategoryID}" text="{OptionsModel>ResourceCategoryText}"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label xmlns:m="sap.m" text="Resource Owner"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>ResourceOwnerID}"
+												change="onInputChange">
+												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label xmlns:m="sap.m" text="Resource Location"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'ServiceModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceModel>LocationID}"
+												change="onInputChange">
+												<core:Item key="{ServiceModel>LocationID}" text="{ServiceModel>LocationText}"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Serial Number"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>SerialNumber}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Manufacturer"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>Manufacturer}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Hosting Partner"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>HostingPartner}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Platform"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>Platform}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -172,6 +238,14 @@
 										</f:label>
 										<f:fields>
 											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+										</f:fields>
+									</f:FormElement>
+										<f:FormElement>
+										<f:label>
+											<m:Label text="Created By"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>CreatedBy}" width="100%" change="onInputChange" enabled="false"/>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>
