@@ -23,36 +23,13 @@
                 <Property Name="FirstName" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="LastName" Type="Edm.String" Nullable="false" sap:unicode="false"/>
             </EntityType>
-            <EntityType Name="Resource" sap:content-version="1">
+            <EntityType Name="SolutionAreaComponent" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="ResourceID"/>
+                    <PropertyRef Name="SolutionAreaComponentID"/>
                 </Key>
-                <Property Name="ResourceID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
-                <Property Name="ResourceOwnerID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="ResourceTypeID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="ResourceText" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="ResourceLocationID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="ResourceCategoryID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="SerialNumber" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="Manufacturer" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
-                <Property Name="EndDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
-                <Property Name="LandscapeTier" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HostingPartner" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="Platform" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="CreatedBy" Type="Edm.String" sap:unicode="false"/>
-            </EntityType>
-            <EntityType Name="ApplicationComponent" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="ApplicationComponentID"/>
-                </Key>
-                <Property Name="ApplicationComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
-                <Property Name="ApplicationComponentText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="SolutionAreaComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="SolutionAreaComponentText" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="AnnualGrowthFactor" Type="Edm.Int16" sap:unicode="false" sap:label="Signed INT2 / int16"/>
-                <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
-                <Property Name="EndDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
             </EntityType>
             <EntityType Name="Application" sap:content-version="1">
                 <Key>
@@ -65,13 +42,36 @@
                 <Property Name="BusinessDivision" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="BusinessOwnerID" Type="Edm.String" sap:unicode="false"/>
             </EntityType>
-            <EntityType Name="SolutionAreaComponent" sap:content-version="1">
+            <EntityType Name="ApplicationComponent" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="SolutionAreaComponentID"/>
+                    <PropertyRef Name="ApplicationComponentID"/>
                 </Key>
-                <Property Name="SolutionAreaComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
-                <Property Name="SolutionAreaComponentText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ApplicationComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="ApplicationComponentText" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="AnnualGrowthFactor" Type="Edm.Decimal" Precision="31" Scale="0" sap:unicode="false"/>
+                <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
+                <Property Name="EndDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
+            </EntityType>
+            <EntityType Name="Resource" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ResourceID"/>
+                </Key>
+                <Property Name="LandscapeTierID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ResourceID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="ResourceOwnerID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ResourceTypeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ResourceText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ResourceLocationID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ResourceCategoryID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="SerialNumber" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="Manufacturer" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
+                <Property Name="EndDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
+                <Property Name="HostingPartner" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="Platform" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="CreatedBy" Type="Edm.String" sap:unicode="false"/>
             </EntityType>
             <EntityType Name="Location" sap:content-version="1">
                 <Key>
@@ -87,10 +87,10 @@
             <EntityContainer Name="pnp.servicehierarchy_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="SolutionAreas" EntityType="pnp.servicehierarchy.SolutionArea" sap:content-version="1"/>
                 <EntitySet Name="People" EntityType="pnp.servicehierarchy.Person" sap:content-version="1"/>
-                <EntitySet Name="Resources" EntityType="pnp.servicehierarchy.Resource" sap:content-version="1"/>
-                <EntitySet Name="ApplicationComponents" EntityType="pnp.servicehierarchy.ApplicationComponent" sap:content-version="1"/>
-                <EntitySet Name="Applications" EntityType="pnp.servicehierarchy.Application" sap:content-version="1"/>
                 <EntitySet Name="SolutionAreaComponents" EntityType="pnp.servicehierarchy.SolutionAreaComponent" sap:content-version="1"/>
+                <EntitySet Name="Applications" EntityType="pnp.servicehierarchy.Application" sap:content-version="1"/>
+                <EntitySet Name="ApplicationComponents" EntityType="pnp.servicehierarchy.ApplicationComponent" sap:content-version="1"/>
+                <EntitySet Name="Resources" EntityType="pnp.servicehierarchy.Resource" sap:content-version="1"/>
                 <EntitySet Name="Locations" EntityType="pnp.servicehierarchy.Location" sap:content-version="1"/>
                 <AssociationSet Name="SolutionAreaToArchitectPerson_AssocSet" Association="pnp.servicehierarchy.SolutionAreaToArchitectPerson" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="SolutionAreas" Role="FromRole_SolutionAreaToArchitectPerson"/>

@@ -31,10 +31,10 @@
                     <PropertyRef Name="HierarchyID"/>
                     <PropertyRef Name="HierarchyNodeID"/>
                 </Key>
-                <Property Name="MemberTypeID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyMembID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="NodeCategoryID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="ChildCount" Type="Edm.Int16" sap:unicode="false" sap:label="Signed INT2 / int16"/>
+                <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="MemberTypeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="NodeCategoryID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyNodeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false" sap:unicode="false"/>

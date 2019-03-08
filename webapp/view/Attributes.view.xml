@@ -115,7 +115,9 @@
 											<m:Label text="Annual growth factor"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>Annual Growth Factor}" type="Number" width="100%" change="onInputChange" description="%"/>
+											<m:Input
+												value="{ path: 'ServiceModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
+												type="Number" width="100%" change="onInputChange" description="%"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -123,7 +125,7 @@
 											<m:Label text="Start Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -131,14 +133,47 @@
 											<m:Label text="End Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 							<f:FormContainer id="fcontResource" visible="false">
 								<f:formElements>
-									<f:FormElement></f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Application Component Text"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Annual growth factor"/>
+										</f:label>
+										<f:fields>
+											<m:Input
+												value="{ path: 'ServiceModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
+												type="Number" width="100%" change="onInputChange" description="%"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Start Date" width="100%"/>
+										</f:label>
+										<f:fields>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="End Date" width="100%"/>
+										</f:label>
+										<f:fields>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+										</f:fields>
+									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 						</f:formContainers>

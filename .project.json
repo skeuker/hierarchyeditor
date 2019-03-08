@@ -8,11 +8,11 @@
     {
       "templateId": "servicecatalog.connectivityComponent",
       "templateVersion": "0.0.0",
-      "dateTimeStamp": "Fri, 08 Mar 2019 08:11:53 GMT"
+      "dateTimeStamp": "Fri, 08 Mar 2019 11:38:05 GMT"
     }
   ],
   "mockpreview": {
-    "mockUri": "/sap/opu/odata/pnp/CA_SERV_HIERARCHY_SRV",
+    "mockUri": "/sap/opu/odata/pnp/CA_HIERARCHY_EDITOR_SRV",
     "metadataFilePath": "",
     "loadJSONFiles": false,
     "loadCustomRequests": false,
