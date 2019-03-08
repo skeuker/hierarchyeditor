@@ -1065,13 +1065,13 @@ sap.ui.define([
 				//node of type root or inner node
 				case "0":
 				case "1":
-					delete oNewHierarchyItem.HierarchyMembID;
+					delete oNewHierarchyItem.HierarchyMemberID;
 					delete oNewHierarchyItem.MemberTypeID;
 					break;
 
 					//node of type leaf
 				case "2":
-					oNewHierarchyItem.HierarchyMembID = this.getGUID();
+					oNewHierarchyItem.HierarchyMemberID = this.getGUID();
 					delete oNewHierarchyItem.NodeTypeID;
 					break;
 			}

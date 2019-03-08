@@ -172,6 +172,17 @@
 									</f:FormElement>
 									<f:FormElement>
 										<f:label>
+											<m:Label xmlns:m="sap.m" text="Landscape Tier"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceModel>LandscapeTierID}"
+												change="onInputChange">
+												<core:Item key="{OptionsModel>LandscapeTierID}" text="{OptionsModel>LandscapeTierText}"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
 											<m:Label xmlns:m="sap.m" text="Resource Owner"/>
 										</f:label>
 										<f:fields>
@@ -186,7 +197,7 @@
 											<m:Label xmlns:m="sap.m" text="Resource Location"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceModel>LocationID}"
+											<m:ComboBox items="{ path: 'ServiceModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceModel>ResourceLocationID}"
 												change="onInputChange">
 												<core:Item key="{ServiceModel>LocationID}" text="{ServiceModel>LocationText}"/>
 											</m:ComboBox>

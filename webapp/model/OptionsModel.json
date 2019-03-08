@@ -41,5 +41,12 @@
 	}, {
 		"ResourceCategoryID": "1",
 		"ResourceCategoryText": "Physical"
+	}],
+	"LandscapeTiers": [{
+		"LandscapeTierID": "1",
+		"LandscapeTierText": "Tier 1"
+	}, {
+		"LandscapeTierID": "2",
+		"LandscapeTierText": "Tier 2"
 	}]
 }

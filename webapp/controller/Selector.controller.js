@@ -178,6 +178,9 @@ sap.ui.define([
 			var oList = oEvent.getSource(),
 				bSelected = oEvent.getParameter("selected");
 
+			//change flexible column layout to hide attributes view where previously opened
+			this.getModel("AppViewModel").setProperty("/layout", "TwoColumnsMidExpanded");
+
 			// skip navigation when deselecting an item in multi selection mode
 			if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
 
