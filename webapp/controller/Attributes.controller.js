@@ -114,8 +114,8 @@ sap.ui.define([
 					//no further processing here
 					break;
 
-					//hierarchy item is of type application area
-				case "AA":
+					//hierarchy item is of type application
+				case "AP":
 
 					//set entity set and filter path
 					sODataEntitySet = "Applications";
@@ -130,7 +130,7 @@ sap.ui.define([
 					break;
 
 					//hierarchy item is of type application area component
-				case "AAC":
+				case "APC":
 
 					//set entity set and filter path
 					sODataEntitySet = "ApplicationComponents";

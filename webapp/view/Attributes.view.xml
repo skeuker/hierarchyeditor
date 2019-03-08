@@ -61,19 +61,84 @@
 							<f:FormContainer id="fcontApplication" visible="false">
 								<f:formElements>
 									<f:FormElement>
+										<f:label>
+											<m:Label text="Application Text"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>ApplicationText}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label xmlns:m="sap.m" text="Application Architect"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>ApplicationArchitectID}"
+												change="onInputChange">
+												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+											</m:ComboBox>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Business Division"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>BusinessDivision}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label xmlns:m="sap.m" text="Business Owner"/>
+										</f:label>
+										<f:fields>
+											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>BusinessOwnerID}"
+												change="onInputChange">
+												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+											</m:ComboBox>
+										</f:fields>
 									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 							<f:FormContainer id="fcontApplicationComponent" visible="false">
 								<f:formElements>
 									<f:FormElement>
+										<f:label>
+											<m:Label text="Application Component Text"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Annual growth factor"/>
+										</f:label>
+										<f:fields>
+											<m:Input value="{ServiceModel>Annual Growth Factor}" type="Number" width="100%" change="onInputChange" description="%"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="Start Date" width="100%"/>
+										</f:label>
+										<f:fields>
+											<m:DatePicker placeholder="Enter a date" change="onInputChange" width="100%"></m:DatePicker>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:label>
+											<m:Label text="End Date" width="100%"/>
+										</f:label>
+										<f:fields>
+											<m:DatePicker placeholder="Enter a date" change="onInputChange" width="100%"></m:DatePicker>
+										</f:fields>
 									</f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 							<f:FormContainer id="fcontResource" visible="false">
 								<f:formElements>
-									<f:FormElement>
-									</f:FormElement>
+									<f:FormElement></f:FormElement>
 								</f:formElements>
 							</f:FormContainer>
 						</f:formContainers>

@@ -56,9 +56,11 @@ sap.ui.define([
 		//reset attributes view
 		unbindAttributesView: function() {
 
-			//unbind attributes view service hierarchy OData model
-			this.oAttributesController.getView().unbindElement("ServiceModel");
-			
+			//unbind attributes view service hierarchy OData model where applicable
+			if (this.oAttributesController) {
+				this.oAttributesController.getView().unbindElement("ServiceModel");
+			}
+
 		}
 
 	});

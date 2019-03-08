@@ -336,7 +336,7 @@ sap.ui.define([
 				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
 
 			}.bind(this));
-			
+
 			//get current tree state of expanded and collapsed nodes
 			var oBinding = oTreeTable.getBinding();
 			var oCurrentTreeState = oBinding.getCurrentTreeState();
@@ -351,7 +351,7 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
-					
+
 					//reapply previous tree state after refresh
 					oBinding.setTreeState(oCurrentTreeState);
 
@@ -1106,6 +1106,9 @@ sap.ui.define([
 				//error handler for delete
 				error: function(oError) {
 
+					//reapply previous tree state as otherwise all nodes will be collapsed after refresh
+					oBinding.setTreeState(oCurrentTreeState);
+
 					//render OData error response
 					this.renderODataErrorResponseToMessagePopoverButton(oError);
 
@@ -1122,8 +1125,8 @@ sap.ui.define([
 			this.prepareViewForNextAction();
 
 			//get node instance being deleted
-			var oHierarchyTree = this.getView().byId("TreeTable");
-			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
+			var oHierarchyTable = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTable.getSelectedIndex();
 
 			//message handling: no row selected
 			if (iSelectedIndex === -1) {
@@ -1137,7 +1140,7 @@ sap.ui.define([
 			}
 
 			//get binding context of node to be deleted
-			var oNodeBindingContext = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel");
+			var oNodeBindingContext = oHierarchyTable.getRows()[iSelectedIndex].getBindingContext("HierarchyModel");
 
 			//build confirmation text for hierarchy node deletion
 			var oNode = oNodeBindingContext.getObject();
@@ -1161,11 +1164,18 @@ sap.ui.define([
 						//get path to selected node in OData model
 						var sNodePath = oNodeBindingContext.getPath();
 
+						//get current tree state of expanded and collapsed nodes
+						var oBinding = oHierarchyTable.getBinding();
+						var oCurrentTreeState = oBinding.getCurrentTreeState();
+
 						//remove this node from the backend
 						this.getModel("HierarchyModel").remove(sNodePath, {
 
 							//success handler for delete
 							success: function() {
+
+								//reapply previous tree state as otherwise all nodes will be collapsed after refresh
+								oBinding.setTreeState(oCurrentTreeState);
 
 								//message handling: successfully updated
 								this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
@@ -1180,6 +1190,9 @@ sap.ui.define([
 
 							//error handler for delete
 							error: function(oError) {
+
+								//reapply previous tree state as otherwise all nodes will be collapsed after refresh
+								oBinding.setTreeState(oCurrentTreeState);
 
 								//render OData error response
 								this.renderODataErrorResponseToMessagePopoverButton(oError);
