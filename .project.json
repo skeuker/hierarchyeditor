@@ -22,5 +22,9 @@
     "/webapp/view/Attributes.view.xml": {
       "entitySet": "/SolutionAreas"
     }
+  },
+  "deploy": {
+    "destination": "SMD100",
+    "name": "/PNP/HIEREDIT"
   }
 }

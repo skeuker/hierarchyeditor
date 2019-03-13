@@ -131,6 +131,7 @@ sap.ui.define([
 					onClose: function () {
 						this.bMessageBoxOpen = false;
 					}.bind(this)
+					
 				}
 
 			);
