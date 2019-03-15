@@ -150,7 +150,7 @@ sap.ui.define([
 					//set entity set and filter path
 					sODataEntitySet = "Resources";
 					sFilterPath = "HierarchyMemberID";
-					sFilterValue1 = this.oHierarchyItem.MemberID;
+					sFilterValue1 = this.oHierarchyItem.HierarchyMemberID;
 					sTextAttribute = "ResourceText";
 					
 					//ensure form container for resource is visible

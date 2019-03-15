@@ -26,14 +26,8 @@
 		"NodeCategoryIcon": "sap-icon://tags"
 	}],
 	"ResourceTypes": [{
-		"ResourceTypeID": "1",
-		"ResourceTypeText": "Type 1"
-	}, {
-		"ResourceTypeID": "2",
-		"ResourceTypeText": "Type 2"
-	}, {
-		"ResourceTypeID": "3",
-		"ResourceTypeText": "Type 3"
+		"ResourceTypeID": "0",
+		"ResourceTypeText": "Workload"
 	}],
 	"ResourceCategories": [{
 		"ResourceCategoryID": "0",
@@ -43,10 +37,38 @@
 		"ResourceCategoryText": "Physical"
 	}],
 	"LandscapeTiers": [{
-		"LandscapeTierID": "1",
-		"LandscapeTierText": "Tier 1"
+		"LandscapeTierID": "0STIE",
+		"LandscapeTierText": "0 - Single Tier"
 	}, {
-		"LandscapeTierID": "2",
-		"LandscapeTierText": "Tier 2"
+		"LandscapeTierID": "PROD",
+		"LandscapeTierText": "0 - Production"
+	}, {
+		"LandscapeTierID": "1HSB",
+		"LandscapeTierText": "1 - Hot Standby"
+	}, {
+		"LandscapeTierID": "1DRE",
+		"LandscapeTierText": "1 - Disaster Recovery"
+	}, {
+		"LandscapeTierID": "2REG",
+		"LandscapeTierText": "2 - Regression"
+	}, {
+		"LandscapeTierID": "3QAS",
+		"LandscapeTierText": "3 - Quality Assurance"
+	}, {
+		"LandscapeTierID": "4DEV",
+		"LandscapeTierText": "4 - Development"
+	}, {
+		"LandscapeTierID": "4SDQ",
+		"LandscapeTierText": "4 - Shared Dev and QA"
+	}, {
+		"LandscapeTierID": "5SND",
+		"LandscapeTierText": "5 - Sandbox"
+	}, {
+		"LandscapeTierID": "6PRF",
+		"LandscapeTierText": "6 - Proof of Concept"
+	}, {
+		"LandscapeTierID": "8TRA",
+		"LandscapeTierText": "8 - Training"
 	}]
 }
+	
