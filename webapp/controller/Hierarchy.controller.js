@@ -346,14 +346,14 @@ sap.ui.define([
 
 				//success callback function
 				success: function(oData) {
+					
+					//reapply previous tree state after refresh
+					oBinding.setTreeState(oCurrentTreeState);
 
 					//inspect batchResponses for errors and visualize
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
-
-					//reapply previous tree state after refresh
-					oBinding.setTreeState(oCurrentTreeState);
 
 				}.bind(this),
 
@@ -614,8 +614,13 @@ sap.ui.define([
 				//prepare for next loop pass
 				bApplicableMemberType = false;
 
-				//keep track of this node type as applicable member type
+				//applicable member type:
 				if (oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) { //Sibling
+					bApplicableMemberType = true;
+				}
+				
+				//applicable member type: for oHierarchyItem as target drop location
+				if(oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID){
 					bApplicableMemberType = true;
 				}
 
@@ -893,7 +898,17 @@ sap.ui.define([
 					bIsAllowable = true;
 				}
 			});
+			
+			//get applicable member types allowed for children of this target node
+			var aApplicableMemberTypes = this.getApplicableMemberTypes(oTargetNode);
 
+			//verify whether incoming node meets member type requirements
+			aApplicableMemberTypes.forEach(function(oApplicableMemberType) {
+				if (oApplicableMemberType.MemberTypeID === oNode.MemberTypeID) {
+					bIsAllowable = true;
+				}
+			});
+			
 			//reaching this point means not an allowable drop location
 			return bIsAllowable;
 

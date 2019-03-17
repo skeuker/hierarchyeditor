@@ -208,7 +208,7 @@ sap.ui.define([
 				MessageText: sMessageText,
 				MessageType: "Error"
 			}]);
-			
+
 			//set view to no longer busy
 			this.oViewModel.setProperty("/isViewBusy", false);
 
@@ -220,6 +220,7 @@ sap.ui.define([
 			//local data declaration
 			var oMessage = {};
 			var aMessages = [];
+			var sMessageText;
 
 			//no further processing where input not type compliant
 			if (!Array.isArray(aBatchResponses)) {
@@ -232,7 +233,7 @@ sap.ui.define([
 				//where a batchResponse is contained
 				if (oBatchResponse.response) {
 
-					//in case of errors
+					//in case of error ok code
 					if (/^4/.test(oBatchResponse.response.statusCode) ||
 						/^5/.test(oBatchResponse.response.statusCode)) {
 
@@ -247,9 +248,20 @@ sap.ui.define([
 
 								//construct message
 								if (oResponseBody.error) {
+									
+									//default message text to what was returned by the server
+									sMessageText = oResponseBody.error.message.value;
+
+									//deal with 'Precondition failed' eTag check failure
+									if (/Precondition failed. Diagnosis ETag/.test(oResponseBody.error.message.value)) {
+
+										//set a user friendly message text to replace the 'Precondition failed' message
+										sMessageText = this.getResourceBundle().getText("messageEncounteredOptimisticLock");
+										
+									}
 
 									//adopt error attributes into message	
-									oMessage.MessageText = oResponseBody.error.message.value;
+									oMessage.MessageText = sMessageText;
 									oMessage.MessageCode = oResponseBody.error.code;
 									oMessage.MessageType = "Error";
 
@@ -269,7 +281,7 @@ sap.ui.define([
 
 				}
 
-			});
+			}.bind(this));
 
 			//message handling
 			if (aMessages.length > 0) {
@@ -604,7 +616,7 @@ sap.ui.define([
 			}
 
 			//feedback to caller
-			if (aMissingInput.length > 0 || ( aInvalidInput && aInvalidInput.length > 0 )) {
+			if (aMissingInput.length > 0 || (aInvalidInput && aInvalidInput.length > 0)) {
 				return {
 					"missingInput": aMissingInput,
 					"invalidInput": aInvalidInput
@@ -965,7 +977,7 @@ sap.ui.define([
 			}.bind(this));
 
 		},
-		
+
 		//prepare view for next action
 		prepareViewForNextAction: function() {
 

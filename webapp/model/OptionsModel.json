@@ -35,12 +35,15 @@
 	}, {
 		"ResourceCategoryID": "1",
 		"ResourceCategoryText": "Physical"
+	},	{
+		"ResourceCategoryID": "2",
+		"ResourceCategoryText": "Hardware"
 	}],
 	"LandscapeTiers": [{
 		"LandscapeTierID": "0STIE",
 		"LandscapeTierText": "0 - Single Tier"
 	}, {
-		"LandscapeTierID": "PROD",
+		"LandscapeTierID": "0PROD",
 		"LandscapeTierText": "0 - Production"
 	}, {
 		"LandscapeTierID": "1HSB",
@@ -71,4 +74,3 @@
 		"LandscapeTierText": "8 - Training"
 	}]
 }
-	
