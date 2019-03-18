@@ -30,6 +30,7 @@
 		</semantic:messagesIndicator>
 		<semantic:footerCustomActions>
 			<Button id="butToggleDeleteMode" type="Transparent" press="onToggleDeleteModeButtonPress" text="Danger zone"/>
+			<Button id="butEditHierarchy" icon="sap-icon://edit" type="Transparent" press="onHierarchyEditButtonPress" text="Edit" visible="{SelectorViewModel>/btnHierarchyEditVisible}"/>
 			<Button id="butAddHierarchy" icon="sap-icon://add" type="Transparent" press="onHierarchyAddButtonPress" text="Add"/>
 		</semantic:footerCustomActions>
 	</semantic:SemanticPage>

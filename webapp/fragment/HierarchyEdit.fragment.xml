@@ -1,0 +1,30 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<Dialog id="dialogHierarchyEdit" title="{i18n>titleEditHierarchyDialog}" class="sapUiContentPadding">
+		<content>
+			<MessageStrip id="msHierarchyEditDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
+			<form:Form id="formEditHierarchy" editable="true" width="450px" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
+				<form:layout>
+					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="false" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+				</form:layout>
+				<form:formContainers>
+					<form:FormContainer>
+						<form:FormElement>
+							<form:label>
+								<Label required="true" text="Hierarchy text" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Input id="inputHierarchyText" liveChange="onHierarchyEditInputChange" value="{ path: 'HierarchyModel>HierarchyText' }"/>
+							</form:fields>
+						</form:FormElement>
+					</form:FormContainer>
+				</form:formContainers>
+			</form:Form>
+		</content>
+		<beginButton>
+			<Button text="Cancel" press="onPressHierarchyEditCancelButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="Confirm" type="Emphasized" press="onPressHierarchyEditConfirmButton"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

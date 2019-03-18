@@ -9,9 +9,12 @@ sap.ui.define([
 	"sap/ui/Device",
 	"pnp/hierarchyeditor/util/Formatter",
 	"sap/m/StandardListItem",
-	"pnp/hierarchyeditor/util/ErrorHandler"
+	"sap/m/CustomListItem",
+	"sap/m/VBox",
+	"sap/m/Input",
+	"sap/m/Text"
 ], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem,
-	ErrorHandler) {
+	CustomListItem, VBox, Input, Text) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Selector", {
@@ -189,6 +192,9 @@ sap.ui.define([
 
 			}
 
+			//set hierarchy edit button visibile
+			this.getModel("SelectorViewModel").setProperty("/btnHierarchyEditVisible", true);
+
 		},
 
 		/* =========================================================== */
@@ -340,12 +346,13 @@ sap.ui.define([
 
 			//create JSON model with attributes for controlling view behaviour
 			return new JSONModel({
+				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
+				btnHierarchyEditVisible: false,
+				isFilterBarVisible: false,
+				sortBy: "HierarchyText",
+				isLeadingView: false,
 				filterBarLabel: "",
 				listMode: "None",
-				isLeadingView: false,
-				isFilterBarVisible: false,
-				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
-				sortBy: "HierarchyText",
 				groupBy: "None",
 				delay: 0
 			});
@@ -360,8 +367,11 @@ sap.ui.define([
 		 */
 		showHierarchyEditor: function(oItem) {
 
-			//get requested hierarchy 
-			var oHierarchy = oItem.getBindingContext("HierarchyModel").getObject();
+			//get binding context of selected item
+			this.oHierarchyBindingContext = oItem.getBindingContext("HierarchyModel");
+
+			//get requested hierarchy from binding context 
+			var oHierarchy = this.oHierarchyBindingContext.getObject();
 
 			//display detail corresponding to the hierarchy
 			this.getRouter().getTargets().display("Hierarchy", {
@@ -514,6 +524,9 @@ sap.ui.define([
 									HierarchyID: null
 								});
 
+								//set hierarchy edit button visibile
+								this.getModel("SelectorViewModel").setProperty("/btnHierarchyEditVisible", false);
+
 								//post processing after successful updating in the backend
 								this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 
@@ -534,6 +547,33 @@ sap.ui.define([
 				}).bind(this)
 
 			});
+
+		},
+
+		//on press hierarchy edit button
+		onHierarchyEditButtonPress: function() {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//create popover to edit existing hierarchy
+			this.oHierarchyEditDialog = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyEdit", this);
+			this.oHierarchyEditDialog.attachAfterClose(function() {
+				this.oHierarchyEditDialog.destroy();
+			}.bind(this));
+			this.getView().addDependent(this.oHierarchyEditDialog);
+
+			//initialize input fields
+			this.resetFormInput(sap.ui.getCore().byId("formEditHierarchy"));
+
+			//bind edit dialog to hierarchy model instance 
+			this.oHierarchyEditDialog.bindElement({
+				model: "HierarchyModel",
+				path: this.oHierarchyBindingContext.getPath()
+			});
+
+			//delay because addDependent will do a async rerendering 
+			this.oHierarchyEditDialog.open();
 
 		},
 
@@ -570,6 +610,60 @@ sap.ui.define([
 
 			//delay because addDependent will do a async rerendering 
 			this.oHierarchyAddDialog.open();
+
+		},
+
+		//cancel hierarchy edit
+		onPressHierarchyEditCancelButton: function() {
+
+			//close dialog
+			this.oHierarchyEditDialog.close();
+
+		},
+
+		//confirm hierarchy edit
+		onPressHierarchyEditConfirmButton: function() {
+
+			//Check for missing or invalid input
+			if (this.hasIncorrectInput([sap.ui.getCore().byId("formEditHierarchy")])) {
+
+				//message handling: incomplete form input detected
+				this.sendStripMessage(this.getResourceBundle().getText("messageInputCheckedWithErrors"),
+					sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msHierarchyEditDialogMessageStrip"));
+
+				//no further processing at this point
+				return;
+
+			}
+
+			//close dialog
+			this.oHierarchyEditDialog.close();
+
+			//no further action where no changes
+			if (!this.getModel("HierarchyModel").hasPendingChanges()) {
+				return;
+			}
+
+			//create this node on the backend
+			this.getModel("HierarchyModel").submitChanges({
+
+				//success handler for create response
+				success: function(oData) {
+
+					//message handling: successfully created
+					this.sendStripMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"), "Success");
+
+				}.bind(this),
+
+				//error handler for delete
+				error: function(oError) {
+
+					//render error in OData response 
+					this.renderODataErrorResponse(oError, "messageAnErrorOccured");
+
+				}.bind(this)
+
+			});
 
 		},
 
