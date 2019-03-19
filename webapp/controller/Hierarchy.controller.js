@@ -225,7 +225,7 @@ sap.ui.define([
 					//set facet filter to visible
 					this.getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", true);
 
-					//reset facet filter to ensure previous filters are removed
+					//reset and apply facet filter to get hierarchy nodes list display
 					this.resetFacetFilter(this.getView().byId("idFacetFilter"));
 
 					//set view to busy
@@ -242,13 +242,6 @@ sap.ui.define([
 				}.bind(this)
 
 			});
-
-			//bind hierarchy tree table
-			this.bindHierarchyTreeTable(new Filter({
-				path: "HierarchyID",
-				operator: "EQ",
-				value1: oNavData.HierarchyID
-			}));
 
 		},
 
@@ -1394,7 +1387,7 @@ sap.ui.define([
 			//get filter criteria contained in facet filter
 			var aFacetFilterLists = oFacetFilter.getLists();
 
-			//for each facet filter entries
+			//for each facet filter entry
 			aFacetFilterLists.forEach(function(oFacetFilterList) {
 				oFacetFilterList.setSelectedKeys();
 			});

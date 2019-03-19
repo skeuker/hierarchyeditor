@@ -11,7 +11,7 @@
 			</DynamicPageTitle>
 		</title>
 		<header>
-			<DynamicPageHeader backgroundDesign="Translucent">
+			<DynamicPageHeader backgroundDesign="Translucent" pinnable="false">
 				<content>
 					<m:FacetFilter id="idFacetFilter" type="Light" showPersonalization="true" showReset="true" reset="handleFacetFilterReset"
 						lists="{ServiceHierarchyFilterModel>/Filters}" visible="{HierarchyViewModel>/isFacetFilterVisible}">
