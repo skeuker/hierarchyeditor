@@ -46,8 +46,8 @@ sap.ui.define([
 			this.getRouter().getTarget("Attributes").attachDisplay(this.onDisplay, this);
 
 			//keep track of service OData model
-			this.oServiceModel = this.getOwnerComponent().getModel("ServiceModel");
-			this.setModel(this.oServiceModel, "ServiceModel");
+			this.oServiceHierarchyModel = this.getOwnerComponent().getModel("ServiceHierarchyModel");
+			this.setModel(this.oServiceHierarchyModel, "ServiceHierarchyModel");
 
 		},
 
@@ -72,7 +72,7 @@ sap.ui.define([
 			}
 
 			//initialize input fields on attributes form
-			this.getView().unbindElement("ServiceModel");
+			this.getView().unbindElement("ServiceHierarchyModel");
 
 			//adopt hierarchy item invoking this display
 			this.oHierarchyItem = oNavData.HierarchyItem;
@@ -165,7 +165,7 @@ sap.ui.define([
 			this.getModel("AttributesViewModel").setProperty("/isViewBusy", true);
 
 			//read service model entity
-			this.getModel("ServiceModel").read("/" + sODataEntitySet, {
+			this.getModel("ServiceHierarchyModel").read("/" + sODataEntitySet, {
 
 				//filter
 				filters: [new Filter({
@@ -186,11 +186,11 @@ sap.ui.define([
 					var oServiceHierarchyItem = oData.results[0];
 
 					//create path to this entity in the service model
-					var sODataEntityPath = "/" + this.getModel("ServiceModel").createKey(sODataEntitySet, oServiceHierarchyItem);
+					var sODataEntityPath = "/" + this.getModel("ServiceHierarchyModel").createKey(sODataEntitySet, oServiceHierarchyItem);
 
 					//bind view to service model  
 					this.getView().bindElement({
-						model: "ServiceModel",
+						model: "ServiceHierarchyModel",
 						path: sODataEntityPath
 					});
 
@@ -221,7 +221,7 @@ sap.ui.define([
 			var oNavData = oEvent.getParameter("data");
 
 			//detect whether changes are present
-			var bHasPendingChanges = this.getModel("ServiceModel").hasPendingChanges();
+			var bHasPendingChanges = this.getModel("ServiceHierarchyModel").hasPendingChanges();
 
 			//depending on whether unsaved changes are present
 			switch (bHasPendingChanges) {
@@ -245,7 +245,7 @@ sap.ui.define([
 							if (oAction === sap.m.MessageBox.Action.YES) {
 
 								//discard unsaved changes
-								this.getModel("ServiceModel").resetChanges();
+								this.getModel("ServiceHierarchyModel").resetChanges();
 
 								//set save button to disabled awaiting changes to be made
 								this.getOwnerComponent().getModel("AttributesViewModel").setProperty("/isSaveEnabled", false);
@@ -294,7 +294,7 @@ sap.ui.define([
 			this.prepareViewForNextAction();
 
 			//detect changes in model data
-			if (this.getModel("ServiceModel").hasPendingChanges()) {
+			if (this.getModel("ServiceHierarchyModel").hasPendingChanges()) {
 
 				//keep track in view model that changes to model data are present
 				this.getOwnerComponent().getModel("AttributesViewModel").setProperty("/isSaveEnabled", true);
@@ -313,7 +313,7 @@ sap.ui.define([
 			this.oViewModel.setProperty("/isViewBusy", true);
 
 			//submit changes to the backend
-			this.oServiceModel.submitChanges({
+			this.oServiceHierarchyModel.submitChanges({
 
 				//success callback function
 				success: function(oData) {

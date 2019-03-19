@@ -8,13 +8,8 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/Device",
 	"pnp/hierarchyeditor/util/Formatter",
-	"sap/m/StandardListItem",
-	"sap/m/CustomListItem",
-	"sap/m/VBox",
-	"sap/m/Input",
-	"sap/m/Text"
-], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem,
-	CustomListItem, VBox, Input, Text) {
+	"sap/m/StandardListItem"
+], function(BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Formatter, StandardListItem) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Selector", {
@@ -527,6 +522,9 @@ sap.ui.define([
 								//set hierarchy edit button visibile
 								this.getModel("SelectorViewModel").setProperty("/btnHierarchyEditVisible", false);
 
+								//set facet filter to invisible
+								this.getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", false);
+								
 								//post processing after successful updating in the backend
 								this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 

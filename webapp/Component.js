@@ -89,7 +89,7 @@ sap.ui.define([
 
 			//unbind attributes view service hierarchy OData model where applicable
 			if (this.oAttributesController) {
-				this.oAttributesController.getView().unbindElement("ServiceModel");
+				this.oAttributesController.getView().unbindElement("ServiceHierarchyModel");
 			}
 
 		}

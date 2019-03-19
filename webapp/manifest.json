@@ -86,7 +86,7 @@
 				"dataSource": "CA_HIERARCHY_EDITOR_SRV",
 				"preload": true
 			},
-			"ServiceModel": {
+			"ServiceHierarchyModel": {
 				"type": "sap.ui.model.odata.v2.ODataModel",
 				"settings": {
 					"defaultOperationMode": "Server",

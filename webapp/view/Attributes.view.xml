@@ -30,7 +30,7 @@
 											<m:Label text="Solution Area Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>SolutionAreaText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>SolutionAreaText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -38,9 +38,9 @@
 											<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>SolutionAreaArchitectID}"
+											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>SolutionAreaArchitectID}"
 												change="onInputChange">
-												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -53,7 +53,7 @@
 											<m:Label text="Solution Area Component Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>SolutionAreaComponentText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>SolutionAreaComponentText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>
@@ -65,7 +65,7 @@
 											<m:Label text="Application Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>ApplicationText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>ApplicationText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -73,9 +73,9 @@
 											<m:Label xmlns:m="sap.m" text="Application Architect"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>ApplicationArchitectID}"
+											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>ApplicationArchitectID}"
 												change="onInputChange">
-												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -84,7 +84,7 @@
 											<m:Label text="Business Division"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>BusinessDivision}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>BusinessDivision}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -92,9 +92,9 @@
 											<m:Label xmlns:m="sap.m" text="Business Owner"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>BusinessOwnerID}"
+											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>BusinessOwnerID}"
 												change="onInputChange">
-												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -107,7 +107,7 @@
 											<m:Label text="Application Component Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -116,7 +116,7 @@
 										</f:label>
 										<f:fields>
 											<m:Input
-												value="{ path: 'ServiceModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
+												value="{ path: 'ServiceHierarchyModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
 												type="Number" width="100%" change="onInputChange" description="%"/>
 										</f:fields>
 									</f:FormElement>
@@ -125,7 +125,7 @@
 											<m:Label text="Start Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -133,7 +133,7 @@
 											<m:Label text="End Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>
@@ -145,7 +145,7 @@
 											<m:Label text="Resource Text"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>ResourceText}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>ResourceText}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -153,7 +153,7 @@
 											<m:Label xmlns:m="sap.m" text="Resource Type"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/ResourceTypes' }" selectedKey="{ServiceModel>ResourceTypeID}"
+											<m:ComboBox items="{ path: 'OptionsModel>/ResourceTypes' }" selectedKey="{ServiceHierarchyModel>ResourceTypeID}"
 												change="onInputChange">
 												<core:Item key="{OptionsModel>ResourceTypeID}" text="{OptionsModel>ResourceTypeText}"/>
 											</m:ComboBox>
@@ -164,7 +164,7 @@
 											<m:Label xmlns:m="sap.m" text="Resource Category"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/ResourceCategories' }" selectedKey="{ServiceModel>ResourceCategoryID}"
+											<m:ComboBox items="{ path: 'OptionsModel>/ResourceCategories' }" selectedKey="{ServiceHierarchyModel>ResourceCategoryID}"
 												change="onInputChange">
 												<core:Item key="{OptionsModel>ResourceCategoryID}" text="{OptionsModel>ResourceCategoryText}"/>
 											</m:ComboBox>
@@ -175,7 +175,7 @@
 											<m:Label xmlns:m="sap.m" text="Landscape Tier"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceModel>LandscapeTierID}"
+											<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceHierarchyModel>LandscapeTierID}"
 												change="onInputChange">
 												<core:Item key="{OptionsModel>LandscapeTierID}" text="{OptionsModel>LandscapeTierText}"/>
 											</m:ComboBox>
@@ -186,9 +186,9 @@
 											<m:Label xmlns:m="sap.m" text="Resource Owner"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceModel>ResourceOwnerID}"
+											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>ResourceOwnerID}"
 												change="onInputChange">
-												<core:Item key="{ServiceModel>PersonID}" text="{= ${ServiceModel>FirstName} + ' ' + ${ServiceModel>LastName} }"/>
+												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -197,9 +197,9 @@
 											<m:Label xmlns:m="sap.m" text="Resource Location"/>
 										</f:label>
 										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceModel>ResourceLocationID}"
+											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceHierarchyModel>ResourceLocationID}"
 												change="onInputChange">
-												<core:Item key="{ServiceModel>LocationID}" text="{ServiceModel>LocationText}"/>
+												<core:Item key="{ServiceHierarchyModel>LocationID}" text="{ServiceHierarchyModel>LocationText}"/>
 											</m:ComboBox>
 										</f:fields>
 									</f:FormElement>
@@ -208,7 +208,7 @@
 											<m:Label text="Serial Number"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>SerialNumber}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>SerialNumber}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -216,7 +216,7 @@
 											<m:Label text="Manufacturer"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>Manufacturer}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>Manufacturer}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -224,7 +224,7 @@
 											<m:Label text="Hosting Partner"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>HostingPartner}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>HostingPartner}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -232,7 +232,7 @@
 											<m:Label text="Platform"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>Platform}" width="100%" change="onInputChange"/>
+											<m:Input value="{ServiceHierarchyModel>Platform}" width="100%" change="onInputChange"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -240,7 +240,7 @@
 											<m:Label text="Start Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement>
@@ -248,7 +248,7 @@
 											<m:Label text="End Date" width="100%"/>
 										</f:label>
 										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
 										</f:fields>
 									</f:FormElement>
 										<f:FormElement>
@@ -256,7 +256,7 @@
 											<m:Label text="Created By"/>
 										</f:label>
 										<f:fields>
-											<m:Input value="{ServiceModel>CreatedBy}" width="100%" change="onInputChange" enabled="false"/>
+											<m:Input value="{ServiceHierarchyModel>CreatedBy}" width="100%" change="onInputChange" enabled="false"/>
 										</f:fields>
 									</f:FormElement>
 								</f:formElements>

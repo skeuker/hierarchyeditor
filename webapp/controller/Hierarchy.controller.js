@@ -17,6 +17,7 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
+				isFacetFilterVisible: false,
 				isLeadingView: false,
 				busyDelay: 0,
 				busy: false
@@ -48,6 +49,14 @@ sap.ui.define([
 			this.oHierarchyModel = this.getOwnerComponent().getModel("HierarchyModel");
 			this.setModel(this.oHierarchyModel, "HierarchyModel");
 
+			//get OData model for service hierarchy
+			var oServiceHierarchyModel = this.getOwnerComponent().getModel("ServiceHierarchyModel");
+
+			//create service hierarchy filter model
+			oServiceHierarchyModel.metadataLoaded().then(function(oEvent) {
+				this.createServiceHierarchyFilterModel(oEvent);
+			}.bind(this));
+
 			//initialize tree expand level
 			this.iTreeExpandLevel = 0;
 
@@ -72,6 +81,65 @@ sap.ui.define([
 			if (oAttributesViewModel) {
 				oAttributesViewModel.setProperty("/isLeadingView", false);
 			}
+
+		},
+
+		//bind hiearchy tree table to OData model
+		bindHierarchyTreeTable: function(oFilter) {
+
+			//get access to hierarchy tree table instance
+			var oHierarchyTable = this.getView().byId("TreeTable");
+
+			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
+			oHierarchyTable.bindRows({
+
+				//oData binding path
+				path: "HierarchyModel>/HierarchyNodes",
+
+				//filters
+				filters: oFilter,
+
+				//other binding parameters
+				parameters: {
+					countMode: "Inline",
+					operationMode: "Client",
+					numberOfExpandedLevels: 0,
+					autoExpandMode: "Bundle",
+					useServersideApplicationFilters: "false",
+					treeAnnotationProperties: {
+						hierarchyLevelFor: "HierarchyLevel",
+						hierarchyNodeFor: "HierarchyNodeID",
+						hierarchyParentNodeFor: "ParentNodeID",
+						hierarchyNodeDescendantCountFor: "ChildCount",
+						hierarchyDrillStateFor: "DrillState"
+					}
+				},
+
+				//event handlers
+				events: {
+
+					//data requested from backend
+					"dataRequested": function() {
+
+						//set tree table to busy
+						this.oViewModel.setProperty("/isHierarchyBusy", true);
+
+					}.bind(this),
+
+					//data received from backend
+					"dataReceived": function(oEvent) {
+
+						//set tree table to no longer busy
+						this.oViewModel.setProperty("/isHierarchyBusy", false);
+
+						//keep track of count of rows received
+						this.oViewModel.setProperty("/iHierarchyRowCount", oEvent.getParameter("data").results.length);
+
+					}.bind(this)
+
+				}
+
+			});
 
 		},
 
@@ -154,6 +222,12 @@ sap.ui.define([
 					//bind hierarchy metadata model to view
 					this.getView().setModel(oHierarchyMetaDataModel, "HierarchyMetaDataModel");
 
+					//set facet filter to visible
+					this.getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", true);
+
+					//reset facet filter to ensure previous filters are removed
+					this.resetFacetFilter(this.getView().byId("idFacetFilter"));
+
 					//set view to busy
 					this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 
@@ -169,60 +243,12 @@ sap.ui.define([
 
 			});
 
-			//do bind aggregation 'rows' of treetable to hierarchnodes of this hierarchy
-			oHierarchyTable.bindRows({
-
-				//oData binding path
-				path: "HierarchyModel>/HierarchyNodes",
-
-				//filters
-				filters: [new Filter({
-					path: "HierarchyID",
-					operator: "EQ",
-					value1: oNavData.HierarchyID
-				})],
-
-				//other binding parameters
-				parameters: {
-					countMode: "Inline",
-					operationMode: "Client",
-					numberOfExpandedLevels: 0,
-					autoExpandMode: "Bundle",
-					useServersideApplicationFilters: "false",
-					treeAnnotationProperties: {
-						hierarchyLevelFor: "HierarchyLevel",
-						hierarchyNodeFor: "HierarchyNodeID",
-						hierarchyParentNodeFor: "ParentNodeID",
-						hierarchyNodeDescendantCountFor: "ChildCount",
-						hierarchyDrillStateFor: "DrillState"
-					}
-				},
-
-				//event handlers
-				events: {
-
-					//data requested from backend
-					"dataRequested": function() {
-
-						//set tree table to busy
-						this.oViewModel.setProperty("/isHierarchyBusy", true);
-
-					}.bind(this),
-
-					//data received from backend
-					"dataReceived": function(oEvent) {
-
-						//set tree table to no longer busy
-						this.oViewModel.setProperty("/isHierarchyBusy", false);
-
-						//keep track of count of rows received
-						this.oViewModel.setProperty("/iHierarchyRowCount", oEvent.getParameter("data").results.length);
-
-					}.bind(this)
-
-				}
-
-			});
+			//bind hierarchy tree table
+			this.bindHierarchyTreeTable(new Filter({
+				path: "HierarchyID",
+				operator: "EQ",
+				value1: oNavData.HierarchyID
+			}));
 
 		},
 
@@ -346,7 +372,7 @@ sap.ui.define([
 
 				//success callback function
 				success: function(oData) {
-					
+
 					//reapply previous tree state after refresh
 					oBinding.setTreeState(oCurrentTreeState);
 
@@ -618,9 +644,9 @@ sap.ui.define([
 				if (oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) { //Sibling
 					bApplicableMemberType = true;
 				}
-				
+
 				//applicable member type: for oHierarchyItem as target drop location
-				if(oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID){
+				if (oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) {
 					bApplicableMemberType = true;
 				}
 
@@ -898,7 +924,7 @@ sap.ui.define([
 					bIsAllowable = true;
 				}
 			});
-			
+
 			//get applicable member types allowed for children of this target node
 			var aApplicableMemberTypes = this.getApplicableMemberTypes(oTargetNode);
 
@@ -908,7 +934,7 @@ sap.ui.define([
 					bIsAllowable = true;
 				}
 			});
-			
+
 			//reaching this point means not an allowable drop location
 			return bIsAllowable;
 
@@ -1318,6 +1344,194 @@ sap.ui.define([
 			if (!sNodeText) {
 				this.getView().byId("TreeTable").setSelectedIndex(-1);
 			}
+
+		},
+
+		//toggle facet filter
+		onPressToggleFacetFilter: function() {
+
+			//get current facet filter visibility state
+			var bFacetFilterVisible = this.getView().getModel("HierarchyViewModel").getProperty("/isFacetFilterVisible");
+
+			//toggle facet filter visibility property
+			this.getView().getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", !bFacetFilterVisible);
+
+			//get OData model for service hierarchy
+			var oServiceHierarchyModel = this.getModel("ServiceHierarchyModel");
+
+			//create service hierarchy filter model
+			oServiceHierarchyModel.metadataLoaded().then(function(oEvent) {
+				this.createServiceHierarchyFilterModel(oEvent);
+			}.bind(this));
+
+		},
+
+		//handle facet filter list close event
+		handleFacetFilterListClose: function(oEvent) {
+
+			//Get access to facet filter 
+			var oFacetFilter = oEvent.getSource().getParent();
+
+			//Apply facet filter to hierarchy model
+			this.filterHierarchyModel(oFacetFilter);
+
+		},
+
+		//clear all filter entries
+		handleFacetFilterReset: function(oEvent) {
+
+			//get access to facet filter
+			var oFacetFilter = sap.ui.getCore().byId(oEvent.getParameter("id"));
+
+			//reset requested facet filter
+			this.resetFacetFilter(oFacetFilter);
+
+		},
+
+		//reset facet filter
+		resetFacetFilter: function(oFacetFilter) {
+
+			//get filter criteria contained in facet filter
+			var aFacetFilterLists = oFacetFilter.getLists();
+
+			//for each facet filter entries
+			aFacetFilterLists.forEach(function(oFacetFilterList) {
+				oFacetFilterList.setSelectedKeys();
+			});
+
+			//unfilter node display for current hierarchy
+			this.applyFacetFilter(null);
+
+		},
+
+		//filter hierarchy model
+		filterHierarchyModel: function(oFacetFilter) {
+
+			//get a map of all filter criteria
+			var mFacetFilterLists = oFacetFilter.getLists().filter(function(oList) {
+				return oList.getSelectedItems().length;
+			});
+
+			//where filter entries were made
+			if (mFacetFilterLists.length > 0) {
+
+				//Build nested filter with ORs between values of each group and ANDs between each group
+				var oFilter = new Filter(mFacetFilterLists.map(function(oList) {
+					return new Filter(oList.getSelectedItems().map(function(oItem) {
+						return new Filter(oList.getKey(), "EQ", "'" + oItem.getKey() + "'");
+					}), false);
+				}), true);
+
+				//apply newly constructed nested filter
+				this.applyFacetFilter(oFilter);
+
+			}
+
+			//where no filter entries were made
+			if (mFacetFilterLists.length === 0) {
+
+				//unfilter hierarchy display
+				this.applyFacetFilter(null);
+
+			}
+
+		},
+
+		//apply facet filter
+		applyFacetFilter: function(oFilter) {
+
+			//get current binding context
+			var oBindingContext = this.getView().getBindingContext("HierarchyModel");
+
+			//no further processing where applicable
+			if (!oBindingContext) {
+				return;
+			}
+
+			//get hierarchy currently displayed
+			var oHierarchy = this.getView().getBindingContext("HierarchyModel").getObject();
+
+			//componse hierarchy ID filter
+			var oHierarchyIDFilter = new Filter({
+				path: "HierarchyID",
+				operator: "EQ",
+				value1: oHierarchy.HierarchyID
+			});
+
+			//include hierarchy ID filter in facet filters
+			if (oFilter) {
+				oFilter.aFilters.push(oHierarchyIDFilter);
+			} else {
+				oFilter = oHierarchyIDFilter;
+			}
+
+			//depending on filter info provided
+			this.bindHierarchyTreeTable(oFilter);
+
+		},
+
+		//create service hierarchy filter model
+		createServiceHierarchyFilterModel: function(oEvent) {
+
+			//no further action where filter model already created
+			if (this.getView().getModel("ServiceHierarchyFilterModel")) {
+				return;
+			}
+
+			//create new JSON Model
+			var oServiceHierarchyFilterModel = new JSONModel({
+				Filters: [{
+					"Key": "NodeFilter1",
+					"Text": "Application Architect",
+					"Values": []
+				}, {
+					"Key": "NodeFilter2",
+					"Text": "Solution Architect",
+					"Values": []
+				}]
+			});
+
+			//get filters from service hierarchy filter model
+			var aFilters = oServiceHierarchyFilterModel.getProperty("/Filters");
+
+			//get all people defined as possible filter values
+			this.getOwnerComponent().getModel("ServiceHierarchyModel").read("/People", {
+
+				//success handler
+				success: function(oData) {
+
+					//inspect batchResponses for errors and visualize
+					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
+						return;
+					}
+
+					//add each person as filter value 
+					aFilters.forEach(function(oFilter) {
+						oData.results.forEach(function(oPerson) {
+							oFilter.Values.push({
+								Text: oPerson.FirstName + ' ' + oPerson.LastName,
+								Key: oPerson.PersonID
+							});
+						});
+					});
+
+					//set filters to service hierarchy filter model
+					oServiceHierarchyFilterModel.setProperty("/Filters", aFilters);
+
+				}.bind(this),
+
+				//error handler
+				error: function(oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});
+
+			//set JSON model to view
+			this.getView().setModel(oServiceHierarchyFilterModel, "ServiceHierarchyFilterModel");
 
 		}
 

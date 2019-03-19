@@ -23,6 +23,7 @@
                 <Property Name="HierarchyText" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyTypeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp" sap:sortable="false"/>
                 <NavigationProperty Name="toMetadata" Relationship="pnp.hierarchyeditor.HierarchyTypeToMetadata" FromRole="FromRole_HierarchyTypeToMetadata" ToRole="ToRole_HierarchyTypeToMetadata"/>
                 <NavigationProperty Name="toNodes" Relationship="pnp.hierarchyeditor.HierarchyToNodes" FromRole="FromRole_HierarchyToNodes" ToRole="ToRole_HierarchyToNodes"/>
             </EntityType>
@@ -42,6 +43,8 @@
                 <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="ParentNodeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="true"/>
+                <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"/>
+            	<Property Name="NodeFilter" Type="Edm.String" Nullable="true" sap:unicode="true"/>
             </EntityType>
             <EntityType Name="HierarchyNodeType" sap:content-version="1">
                 <Key>
