@@ -1411,7 +1411,7 @@ sap.ui.define([
 				//Build nested filter with ORs between values of each group and ANDs between each group
 				var oFilter = new Filter(mFacetFilterLists.map(function(oList) {
 					return new Filter(oList.getSelectedItems().map(function(oItem) {
-						return new Filter(oList.getKey(), "EQ", "'" + oItem.getKey() + "'");
+						return new Filter(oList.getKey(), "EQ", oItem.getKey());
 					}), false);
 				}), true);
 
@@ -1475,11 +1475,11 @@ sap.ui.define([
 			var oServiceHierarchyFilterModel = new JSONModel({
 				Filters: [{
 					"Key": "NodeFilter1",
-					"Text": "Application Architect",
+					"Text": "Solution Architect",
 					"Values": []
 				}, {
 					"Key": "NodeFilter2",
-					"Text": "Solution Architect",
+					"Text": "Application Architect",
 					"Values": []
 				}]
 			});
