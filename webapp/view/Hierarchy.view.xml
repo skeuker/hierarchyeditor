@@ -14,13 +14,12 @@
 			<DynamicPageHeader backgroundDesign="Translucent" pinnable="false">
 				<content>
 					<m:FacetFilter id="idFacetFilter" type="Light" showPersonalization="true" showReset="true" reset="handleFacetFilterReset"
-						lists="{ServiceHierarchyFilterModel>/Filters}" visible="{HierarchyViewModel>/isFacetFilterVisible}">
+						lists="{HierarchyFilterModel>/Filters}" visible="{HierarchyViewModel>/isFacetFilterVisible}">
 						<m:lists>
-							<m:FacetFilterList title="{ServiceHierarchyFilterModel>Text}" key="{ServiceHierarchyFilterModel>Key}" mode="MultiSelect"
-								listClose="handleFacetFilterListClose" items="{path: 'ServiceHierarchyFilterModel>Values', templateShareable: 'true'}">
+							<m:FacetFilterList title="{HierarchyFilterModel>FilterText}" key="{HierarchyFilterModel>FilterID}" mode="MultiSelect"
+								listClose="handleFacetFilterListClose" items="{path: 'HierarchyFilterModel>toFilterOptions', templateShareable: 'true'}">
 								<m:items>
-									<m:FacetFilterItem text="{ServiceHierarchyFilterModel>Text}" key="{ServiceHierarchyFilterModel>Key}"
-										count="{ServiceHierarchyFilterModel>Data}"/>
+									<m:FacetFilterItem text="{HierarchyFilterModel>FilterOptionText}" key="{HierarchyFilterModel>FilterOptionValue}"/>
 								</m:items>
 							</m:FacetFilterList>
 						</m:lists>

@@ -54,7 +54,7 @@ sap.ui.define([
 
 			//create service hierarchy filter model
 			oServiceHierarchyModel.metadataLoaded().then(function(oEvent) {
-				this.createServiceHierarchyFilterModel(oEvent);
+				this.createHierarchyFilterModel(oEvent);
 			}.bind(this));
 
 			//initialize tree expand level
@@ -1153,7 +1153,7 @@ sap.ui.define([
 		},
 
 		//on delete node
-		onDeleteHierarchyItem: function() {
+		onDeleteHierarchyItem: function(oEvent) {
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -1174,7 +1174,7 @@ sap.ui.define([
 			}
 
 			//get binding context of node to be deleted
-			var oNodeBindingContext = oHierarchyTable.getRows()[iSelectedIndex].getBindingContext("HierarchyModel");
+			var oNodeBindingContext = oHierarchyTable.getContextByIndex(iSelectedIndex);
 
 			//build confirmation text for hierarchy node deletion
 			var oNode = oNodeBindingContext.getObject();
@@ -1354,7 +1354,7 @@ sap.ui.define([
 
 			//create service hierarchy filter model
 			oServiceHierarchyModel.metadataLoaded().then(function(oEvent) {
-				this.createServiceHierarchyFilterModel(oEvent);
+				this.createHierarchyFilterModel(oEvent);
 			}.bind(this));
 
 		},
@@ -1464,31 +1464,20 @@ sap.ui.define([
 		},
 
 		//create service hierarchy filter model
-		createServiceHierarchyFilterModel: function(oEvent) {
+		createHierarchyFilterModel: function(oEvent) {
 
 			//no further action where filter model already created
-			if (this.getView().getModel("ServiceHierarchyFilterModel")) {
+			if (this.getView().getModel("HierarchyFilterModel")) {
 				return;
 			}
 
-			//create new JSON Model
-			var oServiceHierarchyFilterModel = new JSONModel({
-				Filters: [{
-					"Key": "NodeFilter1",
-					"Text": "Solution Architect",
-					"Values": []
-				}, {
-					"Key": "NodeFilter2",
-					"Text": "Application Architect",
-					"Values": []
-				}]
-			});
-
-			//get filters from service hierarchy filter model
-			var aFilters = oServiceHierarchyFilterModel.getProperty("/Filters");
-
 			//get all people defined as possible filter values
-			this.getOwnerComponent().getModel("ServiceHierarchyModel").read("/People", {
+			this.getOwnerComponent().getModel("ServiceHierarchyModel").read("/Filters", {
+
+				//url parameters
+				urlParameters: {
+					"$expand": "toFilterOptions"
+				},
 
 				//success handler
 				success: function(oData) {
@@ -1497,19 +1486,37 @@ sap.ui.define([
 					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
 						return;
 					}
-
-					//add each person as filter value 
-					aFilters.forEach(function(oFilter) {
-						oData.results.forEach(function(oPerson) {
-							oFilter.Values.push({
-								Text: oPerson.FirstName + ' ' + oPerson.LastName,
-								Key: oPerson.PersonID
-							});
-						});
+					
+					//remove 'results' array from FilterOptions
+					var oFilter = {};
+					var aFilters = [];
+					var aFilterOptions = [];
+					oData.results.forEach(function(oResult){
+						
+						//extract filter options for this filter
+						aFilterOptions = oResult.toFilterOptions.results;
+						
+						//remove 'deep' FilterOptions property
+						delete oResult.toFilterOptions;
+						
+						//adopt filter attributes
+						oFilter = oResult;
+						
+						//inject filter 'flat' filter options
+						oFilter.toFilterOptions = aFilterOptions;
+						
+						//keep track of this filter incl. filter option
+						aFilters.push(oFilter);
+						
 					});
 
-					//set filters to service hierarchy filter model
-					oServiceHierarchyFilterModel.setProperty("/Filters", aFilters);
+					//create new JSON Model
+					var oHierarchyFilterModel = new JSONModel({
+						Filters: aFilters
+					});
+
+					//set JSON model to view
+					this.getView().setModel(oHierarchyFilterModel, "HierarchyFilterModel");
 
 				}.bind(this),
 
@@ -1522,9 +1529,6 @@ sap.ui.define([
 				}.bind(this)
 
 			});
-
-			//set JSON model to view
-			this.getView().setModel(oServiceHierarchyFilterModel, "ServiceHierarchyFilterModel");
 
 		}
 
