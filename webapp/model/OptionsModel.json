@@ -29,6 +29,16 @@
 		"ResourceTypeID": "0",
 		"ResourceTypeText": "Workload"
 	}],
+	"HierarchyItemAddAction": [{
+		"AddActionID": "0",
+		"AddActionText": "Create new",
+		"AddActionIcon": "sap-icon://add"
+	},
+	{
+		"AddActionID": "1",
+		"AddActionText": "Add existing",
+		"AddActionIcon": ""
+	}],
 	"ResourceCategories": [{
 		"ResourceCategoryID": "0",
 		"ResourceCategoryText": "Virtual"

@@ -966,7 +966,7 @@ sap.ui.define([
 			if (iSelectedIndex >= 0) {
 
 				//keep track of relationship to the selected hierarchy item
-				oHierarchyItem.oRelatedItem = oHierarchyTree.getRows()[iSelectedIndex].getBindingContext("HierarchyModel").getObject();
+				oHierarchyItem.oRelatedItem = oHierarchyTree.getContextByIndex(iSelectedIndex).getObject();
 
 				//set ViewModel attributes that are bound on popover
 				this.oViewModel.setProperty("/sSelectedNodeText", oHierarchyItem.oRelatedItem.NodeText);
@@ -983,6 +983,9 @@ sap.ui.define([
 				if (oHierarchyItem.oRelatedItem.HierarchyLevel < iMaxHierarchyLevel) {
 					oHierarchyItem.HierarchyLevel = oHierarchyItem.HierarchyLevel + 1;
 				}
+				
+				//default to 'create new' for resource
+				oHierarchyItem.NewOrExistingHierarchyItem = "0"; //Create new
 
 				//keep track of this relationship type as 'previous
 				oHierarchyItem.PreviousRelationshipTypeID = oHierarchyItem.RelationshipTypeID;
