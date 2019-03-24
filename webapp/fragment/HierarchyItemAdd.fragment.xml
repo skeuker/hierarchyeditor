@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
 	<ResponsivePopover id="popHierarchyItemAdd" title="{i18n>titleAddNewItem}" class="sapUiPopupWithPadding" placement="Bottom"
-		initialFocus="inputNewItemText">
+		initialFocus="inputNewItemText" busy="{HierarchyViewModel>/isHierarchyItemAddPopoverBusy}">
 		<content>
 			<MessageStrip id="msHierarchyAddPopOverMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
 			<form:Form id="formHierarchyItemAdd" class="sapUiMediumTinyBottom sapUiMediumMarginEnd" editable="true" width="450px">
@@ -24,7 +24,7 @@
 								</form:label>
 								<form:fields>
 									<Select id="inputAddNewOrExisting" forceSelection="false" selectedKey="{HierarchyViewModel>NewOrExistingHierarchyItem}"
-										items="{ path: 'OptionsModel>/HierarchyItemAddAction' }" width="160px" change="onHierarchyItemAddInputChange">
+										items="{ path: 'OptionsModel>/HierarchyItemAddAction' }" width="160px" change="onChangeAddNewOrExistingHierarchyItem">
 										<core:ListItem key="{OptionsModel>AddActionID}" text="{OptionsModel>AddActionText}" icon="{OptionsModel>AddActionIcon}"/>
 									</Select>
 								</form:fields>
@@ -42,9 +42,9 @@
 									<Label required="true" text="{i18n>lblmcboxResources}"/>
 								</form:label>
 								<form:fields>
-									<MultiComboBox id="mCBoxResources" items="{ path: 'HierarchyModel>/HierarchyMembers', sorter: { path: 'HierarchyMemberText' }, filters: [ { path: 'Unassigned', operator: 'EQ', value1: 'true' } ] }"
-										selectedKeys="{HierarchyViewModel>/aResources}" width="280px" selectionFinish="onHierarchyItemAddInputChange">
-										<core:Item key="{HierarchyModel>HierarchyMemberID}" text="{HierarchyModel>HierarchyMemberText}"/>
+									<MultiComboBox id="mCBoxResources" items="{ path: 'HierarchyViewModel>/UnassignedHierarchyMembers' }"
+										selectedKeys="{HierarchyViewModel>SelectedHierarchyMembers}" width="280px" selectionFinish="onHierarchyItemAddInputChange">
+										<core:Item key="{HierarchyViewModel>ExternalEntityID}" text="{HierarchyViewModel>MemberText}"/>
 									</MultiComboBox>
 								</form:fields>
 							</form:FormElement>
@@ -102,7 +102,7 @@
 			<Button text="Cancel" press="onCloseHierarchyItemAddPopover"/>
 		</beginButton>
 		<endButton>
-			<Button text="Insert" press="onInsertHierarchyItem"/>
+			<Button text="Confirm" press="onConfirmHierarchyItemAddPopover"/>
 		</endButton>
 	</ResponsivePopover>
 </core:FragmentDefinition>
