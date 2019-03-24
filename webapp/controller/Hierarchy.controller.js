@@ -987,9 +987,6 @@ sap.ui.define([
 					oHierarchyItem.HierarchyLevel = oHierarchyItem.HierarchyLevel + 1;
 				}
 
-				//default to 'create new' for resource
-				oHierarchyItem.NewOrExistingHierarchyItem = "0"; //Create new
-
 				//keep track of this relationship type as 'previous
 				oHierarchyItem.PreviousRelationshipTypeID = oHierarchyItem.RelationshipTypeID;
 
@@ -1009,6 +1006,9 @@ sap.ui.define([
 				oHierarchyItem.HierarchyLevel = 0;
 
 			}
+
+			//default to 'create new' hierarchy item
+			oHierarchyItem.NewOrExistingHierarchyItem = "0"; //Create new
 
 			//make available new hierarchy item for binding
 			this.oViewModel.setProperty("/NewItem", oHierarchyItem);

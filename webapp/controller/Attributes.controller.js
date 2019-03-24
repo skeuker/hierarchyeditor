@@ -56,9 +56,8 @@ sap.ui.define([
 
 			//local data declaration
 			var sODataEntitySet;
-			var sFilterPath;
-			var sFilterValue1;
 			var sTextAttribute;
+			var sFilterPath;
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -89,9 +88,8 @@ sap.ui.define([
 
 					//set entity set and filter path
 					sODataEntitySet = "SolutionAreas";
-					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaText";
+					sFilterPath = "SolutionAreaID";
 
 					//ensure form container for solution area is visible
 					this.toggleFormContainerVisibility("fcontSolutionArea");
@@ -104,9 +102,8 @@ sap.ui.define([
 
 					//set entity set and filter path
 					sODataEntitySet = "SolutionAreaComponents";
-					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "SolutionAreaComponentText";
+					sFilterPath = "SolutionAreaComponentID";
 
 					//ensure form container for solution area component is visible
 					this.toggleFormContainerVisibility("fcontSolutionAreaComponent");
@@ -119,9 +116,8 @@ sap.ui.define([
 
 					//set entity set and filter path
 					sODataEntitySet = "Applications";
-					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "ApplicationText";
+					sFilterPath = "ApplicationID";
 
 					//ensure form container for application is visible
 					this.toggleFormContainerVisibility("fcontApplication");
@@ -134,9 +130,8 @@ sap.ui.define([
 
 					//set entity set and filter path
 					sODataEntitySet = "ApplicationComponents";
-					sFilterPath = "HierarchyNodeID";
-					sFilterValue1 = this.oHierarchyItem.HierarchyNodeID;
 					sTextAttribute = "ApplicationComponentText";
+					sFilterPath = "ApplicationComponentID";
 					
 					//ensure form container for application component is visible
 					this.toggleFormContainerVisibility("fcontApplicationComponent");
@@ -149,9 +144,8 @@ sap.ui.define([
 
 					//set entity set and filter path
 					sODataEntitySet = "Resources";
-					sFilterPath = "HierarchyMemberID";
-					sFilterValue1 = this.oHierarchyItem.HierarchyMemberID;
 					sTextAttribute = "ResourceText";
+					sFilterPath = "ResourceID";
 					
 					//ensure form container for resource is visible
 					this.toggleFormContainerVisibility("fcontResource");
@@ -171,7 +165,7 @@ sap.ui.define([
 				filters: [new Filter({
 					path: sFilterPath,
 					operator: "EQ",
-					value1: sFilterValue1
+					value1: this.oHierarchyItem.ExternalEntityID
 				})],
 
 				//success handler
