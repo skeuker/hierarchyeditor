@@ -17,7 +17,7 @@
 									</layoutData>
 								</SearchField>
 								<ToolbarSpacer/>
-								<Button id="sortButton" press="onOpenViewSettings" icon="sap-icon://sort" type="Transparent"/>
+								<Button id="sortButton" press="onSort" icon="sap-icon://sort" type="Transparent"/>
 							</OverflowToolbar>
 						</headerToolbar>
 					</List>

@@ -92,8 +92,11 @@ sap.ui.define([
 			//bind master list 'items' aggregation to OData content
 			this.getView().byId("SelectorList").bindAggregation("items", {
 
-				//path to OData 
+				//path to OData hierarchy entities
 				path: "HierarchyModel>/Hierarchies",
+				
+				//sorter
+				sorters: new Sorter("HierarchyText", false),
 
 				//expand parameters
 				parameters: {
@@ -239,7 +242,7 @@ sap.ui.define([
 			} 
 
 			//apply filters to selector list
-			this.oSelectorList.getBinding("items").filter(aFilters, "Application");
+			this.getView().byId("SelectorList").getBinding("items").filter(aFilters);
 
 		},
 
@@ -263,16 +266,19 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 * @public
 		 */
-		onOpenViewSettings: function(oEvent) {
-			if (!this.oViewSettingsDialog) {
-				this.oViewSettingsDialog = sap.ui.xmlfragment("pnp.survey.view.ViewSettingsDialog", this);
-				this.getView().addDependent(this.oViewSettingsDialog);
-				// forward compact/cozy style into Dialog
-				this.oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-			}
-			var sDialogTab = "sort";
-
-			this.oViewSettingsDialog.open(sDialogTab);
+		onSort: function(oEvent) {
+			
+			//local data declaration
+			var bDescending = this.getView().getModel("SelectorViewModel").getProperty("/descendingSelectorListSort");
+			var aSorters = [];
+			
+			//Apply sort direction opposite to current
+			aSorters.push(new Sorter('HierarchyText', !bDescending));
+			this.getView().byId("SelectorList").getBinding("items").sort(aSorters);
+			
+			//keep track of the new sort order
+			this.getView().getModel("SelectorViewModel").setProperty("/descendingSelectorListSort", !bDescending);
+			
 		},
 
 		/**
@@ -350,6 +356,7 @@ sap.ui.define([
 			return new JSONModel({
 				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
 				noDataText: this.getResourceBundle().getText("selectorListNoDataText"),
+				descendingSelectorListSort: false,
 				btnHierarchyEditVisible: false,
 				isFilterBarVisible: false,
 				sortBy: "HierarchyText",
