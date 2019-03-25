@@ -7,7 +7,7 @@
 			<FlexBox direction="Column" fitContainer="true" justifyContent="SpaceBetween">
 				<items>
 					<List id="SelectorList" width="auto" class="sapFDynamicPageAlignContent" busyIndicatorDelay="{SelectorViewModel>/delay}"
-						noDataText="{i18n>SelectorListNoDataText}" growing="true" mode="{SelectorViewModel>/listMode}" growingScrollToLoad="true"
+						noDataText="{SelectorViewModel>/noDataText}" growing="true" mode="{SelectorViewModel>/listMode}" growingScrollToLoad="true"
 						updateFinished="onUpdateFinished" itemPress="onSelectionChange" delete="onHierarchyDelete" selectionChange="onSelectionChange">
 						<headerToolbar>
 							<OverflowToolbar>

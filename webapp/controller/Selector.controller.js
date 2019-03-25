@@ -30,12 +30,6 @@ sap.ui.define([
 			this.oSelectorList = this.byId("SelectorList");
 			var iOriginalBusyDelay = this.oSelectorList.getBusyIndicatorDelay();
 
-			//keep track of filter and search state
-			this.oSelectorListFilterState = {
-				aFilter: [],
-				aSearch: []
-			};
-
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
 
@@ -218,6 +212,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onSearch: function(oEvent) {
+			
+			//local data declaration
+			var aFilters = [];
 
 			//refresh search button called
 			if (oEvent.getParameters().refreshButtonPressed) {
@@ -225,14 +222,24 @@ sap.ui.define([
 				return;
 			}
 
+			//get query string entered in search field
 			var sQuery = oEvent.getParameter("query");
 
+			//construct filter to filter 'items' aggregation binding
 			if (sQuery) {
-				this.oSelectorListFilterState.aSearch = [new Filter("TopicID", FilterOperator.Contains, sQuery)];
-			} else {
-				this.oSelectorListFilterState.aSearch = [];
-			}
-			this.applyFilterSearch();
+				aFilters = [new Filter("HierarchyText", FilterOperator.Contains, sQuery)];
+			} 
+			
+			//reset the no data text to default when no filter provided
+			this.getModel("SelectorViewModel").setProperty("/noDataText", this.getResourceBundle().getText("selectorListNoDataText"));
+
+			//amend 'no data text' to point to the fact that list is now filtered
+			if (aFilters.length !== 0) {
+				this.getModel("SelectorViewModel").setProperty("/noDataText", this.getResourceBundle().getText("selectorListNoDataWithFilterText"));
+			} 
+
+			//apply filters to selector list
+			this.oSelectorList.getBinding("items").filter(aFilters, "Application");
 
 		},
 
@@ -342,6 +349,7 @@ sap.ui.define([
 			//create JSON model with attributes for controlling view behaviour
 			return new JSONModel({
 				ViewTitle: this.getResourceBundle().getText("SelectorViewTitle", [0]),
+				noDataText: this.getResourceBundle().getText("selectorListNoDataText"),
 				btnHierarchyEditVisible: false,
 				isFilterBarVisible: false,
 				sortBy: "HierarchyText",
@@ -388,38 +396,6 @@ sap.ui.define([
 				this.getModel("SelectorViewModel").setProperty("/ViewTitle", sTitle);
 			}
 
-		},
-
-		/**
-		 * Internal helper method to apply both filter and search state together on the list binding
-		 * @private
-		 */
-		applyFilterSearch: function() {
-
-			//apply filters to selector list
-			var aFilters = this.oSelectorListFilterState.aSearch.concat(this.oSelectorListFilterState.aFilter),
-				oViewModel = this.getModel("masterView");
-			this.oSelectorList.getBinding("items").filter(aFilters, "Application");
-
-			// changes the noDataText of the list in case there are no filter results
-			if (aFilters.length !== 0) {
-				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
-			} else if (this.oSelectorListFilterState.aSearch.length > 0) {
-				// only reset the no data text to default when no new search was triggered
-				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
-			}
-
-		},
-
-		/**
-		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
-		 * @param {string} sFilterBarText the selected filter value
-		 * @private
-		 */
-		updateFilterBar: function(sFilterBarText) {
-			var oViewModel = this.getModel("SelectorViewModel");
-			oViewModel.setProperty("/isFilterBarVisible", (this.oSelectorListFilterState.aFilter.length > 0));
-			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("SelectorFilterBarText", [sFilterBarText]));
 		},
 
 		//controller decision whether to delegate OData service error handling
