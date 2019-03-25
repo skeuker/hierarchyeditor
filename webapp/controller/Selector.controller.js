@@ -100,7 +100,8 @@ sap.ui.define([
 
 				//expand parameters
 				parameters: {
-					"expand": "toMetadata"
+					"expand": "toMetadata",
+					"operationMode": "Client"
 				},
 
 				//group header factory
