@@ -98,10 +98,10 @@
 			</form:Form>
 		</content>
 		<beginButton>
-			<Button text="Cancel" press="onCloseHierarchyItemAddPopover"/>
+			<Button text="Cancel" press="onCloseHierarchyItemAddDialog"/>
 		</beginButton>
 		<endButton>
-			<Button text="Confirm" press="onConfirmHierarchyItemAddPopover"/>
+			<Button text="Confirm" press="onConfirmHierarchyItemAddDialog"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

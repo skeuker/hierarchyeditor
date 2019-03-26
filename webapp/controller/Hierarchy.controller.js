@@ -631,11 +631,17 @@ sap.ui.define([
 				//prepare for next loop pass
 				bApplicableMemberType = false;
 
-				//applicable member type:
+				//applicable member type: node type matches that of related item
 				if (oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) { //Sibling
 					bApplicableMemberType = true;
 				}
-
+				
+				//applicable member type: adding sibling of same type as related node
+				if(oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.HierarchyLevel === oHierarchyItem.HierarchyLevel
+				   && oHierarchyItem.oRelatedItem.MemberTypeID === oNodeMemberDefinition.MemberTypeID){
+					bApplicableMemberType = true;	
+				}
+				
 				//applicable member type: for oHierarchyItem as target drop location
 				if (oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) {
 					bApplicableMemberType = true;
@@ -661,7 +667,7 @@ sap.ui.define([
 		},
 
 		//set applicable member types for hierarchy item
-		setApplicableMemberTypes: function(oHierarchyItem, sRelationshipTypeID) {
+		setApplicableMemberTypes: function(oHierarchyItem) {
 
 			//local data declaration
 			var aMemberTypeFilters = [];
@@ -676,7 +682,7 @@ sap.ui.define([
 			var oMemberTypesBinding = sap.ui.getCore().byId("inputMemberTypeID").getBinding("items");
 
 			//get applicable member types
-			var aApplicableMemberTypes = this.getApplicableMemberTypes(oHierarchyItem, sRelationshipTypeID);
+			var aApplicableMemberTypes = this.getApplicableMemberTypes(oHierarchyItem);
 
 			//build filter array of applicable member types			
 			aApplicableMemberTypes.forEach(function(oMemberType) {
@@ -976,6 +982,12 @@ sap.ui.define([
 				oHierarchyItem.NodeCategoryID = "1"; //Branch
 				oHierarchyItem.RelationshipTypeID = "2"; //Child'
 
+				//where selected node is of type 'leaf'
+				if (oHierarchyItem.oRelatedItem.NodeCategoryID === "2") {
+					oHierarchyItem.NodeCategoryID = "2"; //Leaf
+					oHierarchyItem.RelationshipTypeID = "1"; //Sibling					
+				}
+
 				//get max hierarchy level
 				var iMaxHierarchyLevel = this.getModel("HierarchyMetaDataModel").getProperty("/MaxHierarchyLevel");
 
@@ -1051,7 +1063,7 @@ sap.ui.define([
 		},
 
 		//on closing the hierarchy item add popover
-		onCloseHierarchyItemAddPopover: function() {
+		onCloseHierarchyItemAddDialog: function() {
 
 			//close hierarchy item add popover
 			sap.ui.getCore().byId("dialogHierarchyItemAdd").close();
@@ -1059,7 +1071,7 @@ sap.ui.define([
 		},
 
 		//on confirm to add new hierarchy item(s)
-		onConfirmHierarchyItemAddPopover: function() {
+		onConfirmHierarchyItemAddDialog: function() {
 
 			//message handling: invalid form input where applicable
 			if (this.hasMissingInput([sap.ui.getCore().byId("formHierarchyItemAdd")]).length > 0) {
@@ -1130,6 +1142,10 @@ sap.ui.define([
 
 			//create a sibling or child
 			switch (oHierarchyItem.RelationshipTypeID) {
+				case "1": //Sibling
+					oHierarchyItem.ParentNodeID = oHierarchyItem.oRelatedItem.ParentNodeID;
+					oHierarchyItem.HierarchyLevel = oHierarchyItem.oRelatedItem.HierarchyLevel;
+					break;
 				case "2": //Child
 					oHierarchyItem.ParentNodeID = oHierarchyItem.oRelatedItem.HierarchyNodeID;
 					oHierarchyItem.HierarchyLevel = oHierarchyItem.oRelatedItem.HierarchyLevel + 1;
@@ -1646,18 +1662,18 @@ sap.ui.define([
 			});
 
 		},
-		
+
 		/**
 		 * Send message using message strip
 		 * @private
 		 */
 		sendStripMessage: function(sText, sType, oMessageStrip) {
-			
+
 			//deliver as message box where header expanded
-			if(this.getView().byId("pageHierarchy").getHeaderExpanded()){
-				
+			if (this.getView().byId("pageHierarchy").getHeaderExpanded()) {
+
 				//depending on message type to issue
-				switch(sType){
+				switch (sType) {
 					case "Error":
 						MessageBox.error(sText);
 						break;
@@ -1668,10 +1684,10 @@ sap.ui.define([
 						MessageBox.success(sText);
 						break;
 				}
-				
+
 				//no further processing here
 				return;
-				
+
 			}
 
 			//adopt message strip for issuing message
