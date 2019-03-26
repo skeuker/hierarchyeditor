@@ -1,6 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
-	<ResponsivePopover id="popHierarchyItemAdd" title="{i18n>titleAddNewItem}" class="sapUiPopupWithPadding" placement="Bottom"
-		initialFocus="inputNewItemText" busy="{HierarchyViewModel>/isHierarchyItemAddPopoverBusy}">
+	<Dialog id="dialogHierarchyItemAdd" title="{i18n>titleAddNewItem}" class="sapUiPopupWithPadding" initialFocus="inputNewItemText" busy="{HierarchyViewModel>/isHierarchyItemAddPopoverBusy}">
 		<content>
 			<MessageStrip id="msHierarchyAddPopOverMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
 			<form:Form id="formHierarchyItemAdd" class="sapUiMediumTinyBottom sapUiMediumMarginEnd" editable="true" width="450px">
@@ -104,5 +103,5 @@
 		<endButton>
 			<Button text="Confirm" press="onConfirmHierarchyItemAddPopover"/>
 		</endButton>
-	</ResponsivePopover>
+	</Dialog>
 </core:FragmentDefinition>

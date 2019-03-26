@@ -1,8 +1,9 @@
 sap.ui.define([
 	"pnp/hierarchyeditor/controller/Base.controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Filter"
-], function(BaseController, JSONModel, Filter) {
+	"sap/ui/model/Filter",
+	'sap/m/MessageBox'
+], function(BaseController, JSONModel, Filter, MessageBox) {
 	"use strict";
 
 	return BaseController.extend("pnp.hierarchyeditor.controller.Hierarchy", {
@@ -17,7 +18,7 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
-				isFacetFilterVisible: false,
+				isPageHeaderExpanded: false,
 				isLeadingView: false,
 				busyDelay: 0,
 				busy: false
@@ -221,9 +222,6 @@ sap.ui.define([
 
 					//bind hierarchy metadata model to view
 					this.getView().setModel(oHierarchyMetaDataModel, "HierarchyMetaDataModel");
-
-					//set facet filter to visible
-					this.getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", true);
 
 					//reset and apply facet filter to get hierarchy nodes list display
 					this.resetFacetFilter(this.getView().byId("idFacetFilter"));
@@ -949,11 +947,11 @@ sap.ui.define([
 			var iSelectedIndex = oHierarchyTree.getSelectedIndex();
 
 			//create popover to add new hiearchy item
-			var oHierarchyItemAddPopover = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyItemAdd", this);
-			oHierarchyItemAddPopover.attachAfterClose(function() {
-				oHierarchyItemAddPopover.destroy();
+			var oHierarchyItemAddDialog = sap.ui.xmlfragment("pnp.hierarchyeditor.fragment.HierarchyItemAdd", this);
+			oHierarchyItemAddDialog.attachAfterClose(function() {
+				oHierarchyItemAddDialog.destroy();
 			});
-			this.getView().addDependent(oHierarchyItemAddPopover);
+			this.getView().addDependent(oHierarchyItemAddDialog);
 
 			//set popover to not busy
 			this.getModel("HierarchyViewModel").setProperty("/isHierarchyItemAddPopoverBusy", false);
@@ -1014,7 +1012,7 @@ sap.ui.define([
 			this.oViewModel.setProperty("/NewItem", oHierarchyItem);
 
 			//bind popover to view model instance 
-			oHierarchyItemAddPopover.bindElement({
+			oHierarchyItemAddDialog.bindElement({
 				model: "HierarchyViewModel",
 				path: "/NewItem"
 			});
@@ -1031,11 +1029,8 @@ sap.ui.define([
 			//set applicable hierarchy metadata filters
 			this.setApplicableHierarchyMetaDataFilter(oHierarchyItem, "HierarchyLevel");
 
-			// delay because addDependent will do a async rerendering 
-			var oButtonHierarchyItemAdd = this.getView().byId("butHierarchyItemAdd");
-			jQuery.sap.delayedCall(0, this, function() {
-				oHierarchyItemAddPopover.openBy(oButtonHierarchyItemAdd);
-			});
+			//open hierarchy item add dialog
+			oHierarchyItemAddDialog.open();
 
 		},
 
@@ -1059,7 +1054,7 @@ sap.ui.define([
 		onCloseHierarchyItemAddPopover: function() {
 
 			//close hierarchy item add popover
-			sap.ui.getCore().byId("popHierarchyItemAdd").close();
+			sap.ui.getCore().byId("dialogHierarchyItemAdd").close();
 
 		},
 
@@ -1147,13 +1142,11 @@ sap.ui.define([
 				//node of type root or inner node
 				case "0":
 				case "1":
-					delete oHierarchyItem.HierarchyMemberID;
 					delete oHierarchyItem.MemberTypeID;
 					break;
 
 					//node of type leaf
 				case "2":
-					oHierarchyItem.HierarchyMemberID = this.getGUID();
 					delete oHierarchyItem.NodeTypeID;
 					break;
 			}
@@ -1167,7 +1160,7 @@ sap.ui.define([
 			delete oHierarchyItem.aStable;
 
 			//close hierarchy item add popover
-			sap.ui.getCore().byId("popHierarchyItemAdd").close();
+			sap.ui.getCore().byId("dialogHierarchyItemAdd").close();
 
 			//get current tree state of expanded and collapsed nodes
 			var oBinding = oHierarchyTable.getBinding();
@@ -1643,7 +1636,7 @@ sap.ui.define([
 				error: function(oError) {
 
 					//close hierarchy item add popover
-					sap.ui.getCore().byId("popHierarchyItemAdd").close();
+					sap.ui.getCore().byId("dialogHierarchyItemAdd").close();
 
 					//render OData error response
 					this.renderODataErrorResponseToMessagePopoverButton(oError);
@@ -1651,6 +1644,45 @@ sap.ui.define([
 				}.bind(this)
 
 			});
+
+		},
+		
+		/**
+		 * Send message using message strip
+		 * @private
+		 */
+		sendStripMessage: function(sText, sType, oMessageStrip) {
+			
+			//deliver as message box where header expanded
+			if(this.getView().byId("pageHierarchy").getHeaderExpanded()){
+				
+				//depending on message type to issue
+				switch(sType){
+					case "Error":
+						MessageBox.error(sText);
+						break;
+					case "Information":
+						MessageBox.information(sText);
+						break;
+					case "Success":
+						MessageBox.success(sText);
+						break;
+				}
+				
+				//no further processing here
+				return;
+				
+			}
+
+			//adopt message strip for issuing message
+			if (!oMessageStrip) {
+				oMessageStrip = this.oMessageStrip;
+			}
+
+			//message handling: send message
+			oMessageStrip.setText(sText);
+			oMessageStrip.setType(sType);
+			oMessageStrip.setVisible(true);
 
 		}
 

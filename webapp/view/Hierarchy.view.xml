@@ -2,7 +2,7 @@
 	xmlns:dnd="sap.ui.core.dnd" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable"
 	xmlns:sv="sap.ui.comp.smartvariants" xmlns:u="sap.ui.unified" controllerName="pnp.hierarchyeditor.controller.Hierarchy"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:layout="sap.ui.layout" busy="{HierarchyViewModel>/isViewBusy}" busyIndicatorDelay="0">
-	<DynamicPage id="pageHierarchy" showFooter="true" headerExpanded="false">
+	<DynamicPage id="pageHierarchy" showFooter="true" headerExpanded="{HierarchyViewModel>/isPageHeaderExpanded}">
 		<title>
 			<DynamicPageTitle>
 				<heading width="100%">
@@ -14,7 +14,7 @@
 			<DynamicPageHeader backgroundDesign="Translucent" pinnable="false">
 				<content>
 					<m:FacetFilter id="idFacetFilter" type="Light" showPersonalization="true" showReset="true" reset="handleFacetFilterReset"
-						lists="{HierarchyFilterModel>/Filters}" visible="{HierarchyViewModel>/isFacetFilterVisible}">
+						lists="{HierarchyFilterModel>/Filters}">
 						<m:lists>
 							<m:FacetFilterList title="{HierarchyFilterModel>FilterText}" key="{HierarchyFilterModel>FilterID}" mode="MultiSelect"
 								listClose="handleFacetFilterListClose" items="{path: 'HierarchyFilterModel>toFilterOptions', templateShareable: 'true'}">
@@ -32,21 +32,8 @@
 				<m:items>
 					<table:TreeTable id="TreeTable" selectionMode="Single" selectionBehavior="RowOnly" enableSelectAll="false" ariaLabelledBy="title"
 						busy="{HierarchyViewModel>/isHierarchyBusy}" busyIndicatorDelay="0" rowSelectionChange="onHierarchyRowSelectionChange"
-						visibleRowCountMode="Auto" minAutoRowCount="13" cellClick="onHierarchyCellClick" useGroupMode="false"
+						visibleRowCountMode="Auto" minAutoRowCount="14" cellClick="onHierarchyCellClick" useGroupMode="false"
 						toggleOpenState="onNodeToggleOpenState" rowActionCount="1">
-						<table:extension>
-							<m:Toolbar>
-								<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
-								<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
-								<m:Button id="butHierarchyItemDelete" text="Delete" icon="sap-icon://delete" press="onDeleteHierarchyItem"
-									enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
-								<m:ToolbarSpacer/>
-								<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes" type="Transparent"/>
-								<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel" type="Transparent"/>
-							</m:Toolbar>
-						</table:extension>
 						<table:dragDropConfig>
 							<dnd:DragDropInfo enabled="true" sourceAggregation="rows" targetAggregation="rows" dragStart="onDragStart" drop="onDrop"/>
 						</table:dragDropConfig>
@@ -75,6 +62,16 @@
 				<m:Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" press="onMessagesButtonPress"
 					text="{=${MessageModel>/}.length}" visible="{=!!${MessageModel>/}.length &amp;&amp; ${HierarchyViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes" type="Transparent"
+					enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+				<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel" type="Transparent"
+					enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+				<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"
+					enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
+				<m:Button id="butHierarchyItemDelete" text="Delete" icon="sap-icon://delete" press="onDeleteHierarchyItem"
+					enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
+				<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"
+					enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 			</m:Toolbar>
 		</footer>
 	</DynamicPage>

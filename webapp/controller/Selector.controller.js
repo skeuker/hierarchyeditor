@@ -509,9 +509,6 @@ sap.ui.define([
 								//set hierarchy edit button visibile
 								this.getModel("SelectorViewModel").setProperty("/btnHierarchyEditVisible", false);
 
-								//set facet filter to invisible
-								this.getModel("HierarchyViewModel").setProperty("/isFacetFilterVisible", false);
-
 								//post processing after successful updating in the backend
 								this.getModel("HierarchyViewModel").setProperty("/isViewBusy", false);
 

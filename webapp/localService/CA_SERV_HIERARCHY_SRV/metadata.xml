@@ -10,9 +10,9 @@
                     <PropertyRef Name="SolutionAreaID"/>
                 </Key>
                 <Property Name="SolutionAreaText" Type="Edm.String" Nullable="false" sap:unicode="false"/>
-                <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="SolutionAreaID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="SolutionAreaArchitectID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"/>
                 <NavigationProperty Name="toSolutionAreaArchitect" Relationship="pnp.servicehierarchy.SolutionAreaToArchitectPerson" FromRole="FromRole_SolutionAreaToArchitectPerson" ToRole="ToRole_SolutionAreaToArchitectPerson"/>
             </EntityType>
             <EntityType Name="Person" sap:content-version="1">
@@ -23,13 +23,30 @@
                 <Property Name="FirstName" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="LastName" Type="Edm.String" Nullable="false" sap:unicode="false"/>
             </EntityType>
+            <EntityType Name="Filter" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="FilterID"/>
+                </Key>
+                <Property Name="FilterID" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false"/>
+                <Property Name="FilterText" Type="Edm.String" Nullable="false" sap:unicode="false"/>
+                <NavigationProperty Name="toFilterOptions" Relationship="pnp.servicehierarchy.FilterToFilterOption" FromRole="FromRole_FilterToFilterOption" ToRole="ToRole_FilterToFilterOption"/>
+            </EntityType>
+            <EntityType Name="FilterOption" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="FilterID"/>
+                    <PropertyRef Name="FilterOptionID"/>
+                </Key>
+                <Property Name="FilterID" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="FilterOptionID" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false"/>
+                <Property Name="FilterOptionText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="FilterOptionValue" Type="Edm.String" sap:unicode="false"/>
+            </EntityType>
             <EntityType Name="SolutionAreaComponent" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="SolutionAreaComponentID"/>
                 </Key>
                 <Property Name="SolutionAreaComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="SolutionAreaComponentText" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
             </EntityType>
             <EntityType Name="Application" sap:content-version="1">
                 <Key>
@@ -37,10 +54,10 @@
                 </Key>
                 <Property Name="ApplicationID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="ApplicationText" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="ApplicationArchitectID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="BusinessDivision" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="BusinessOwnerID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"/>
             </EntityType>
             <EntityType Name="ApplicationComponent" sap:content-version="1">
                 <Key>
@@ -48,8 +65,7 @@
                 </Key>
                 <Property Name="ApplicationComponentID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="ApplicationComponentText" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyNodeID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="AnnualGrowthFactor" Type="Edm.Decimal" Precision="31" Scale="0" sap:unicode="false"/>
+                <Property Name="AnnualGrowthFactor" Type="Edm.Decimal" Precision="31" Scale="3" sap:unicode="false"/>
                 <Property Name="StartDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
                 <Property Name="EndDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Time Stamp"/>
             </EntityType>
@@ -63,7 +79,6 @@
                 <Property Name="ResourceTypeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="ResourceText" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="ResourceLocationID" Type="Edm.String" sap:unicode="false"/>
-                <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="ResourceCategoryID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="SerialNumber" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="Manufacturer" Type="Edm.String" sap:unicode="false"/>
@@ -72,6 +87,7 @@
                 <Property Name="HostingPartner" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="Platform" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="CreatedBy" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"/>
             </EntityType>
             <EntityType Name="Location" sap:content-version="1">
                 <Key>
@@ -80,6 +96,18 @@
                 <Property Name="LocationID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="LocationText" Type="Edm.String" Nullable="false" sap:unicode="false"/>
             </EntityType>
+            <Association Name="FilterToFilterOption" sap:content-version="1">
+                <End Type="pnp.servicehierarchy.Filter" Multiplicity="1" Role="FromRole_FilterToFilterOption"/>
+                <End Type="pnp.servicehierarchy.FilterOption" Multiplicity="*" Role="ToRole_FilterToFilterOption"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_FilterToFilterOption">
+                        <PropertyRef Name="FilterID"/>
+                    </Principal>
+                    <Dependent Role="ToRole_FilterToFilterOption">
+                        <PropertyRef Name="FilterID"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
             <Association Name="SolutionAreaToArchitectPerson" sap:content-version="1">
                 <End Type="pnp.servicehierarchy.SolutionArea" Multiplicity="1" Role="FromRole_SolutionAreaToArchitectPerson"/>
                 <End Type="pnp.servicehierarchy.Person" Multiplicity="0..1" Role="ToRole_SolutionAreaToArchitectPerson"/>
@@ -87,6 +115,8 @@
             <EntityContainer Name="pnp.servicehierarchy_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="SolutionAreas" EntityType="pnp.servicehierarchy.SolutionArea" sap:content-version="1"/>
                 <EntitySet Name="People" EntityType="pnp.servicehierarchy.Person" sap:content-version="1"/>
+                <EntitySet Name="Filters" EntityType="pnp.servicehierarchy.Filter" sap:content-version="1"/>
+                <EntitySet Name="FilterOptions" EntityType="pnp.servicehierarchy.FilterOption" sap:content-version="1"/>
                 <EntitySet Name="SolutionAreaComponents" EntityType="pnp.servicehierarchy.SolutionAreaComponent" sap:content-version="1"/>
                 <EntitySet Name="Applications" EntityType="pnp.servicehierarchy.Application" sap:content-version="1"/>
                 <EntitySet Name="ApplicationComponents" EntityType="pnp.servicehierarchy.ApplicationComponent" sap:content-version="1"/>
@@ -95,6 +125,10 @@
                 <AssociationSet Name="SolutionAreaToArchitectPerson_AssocSet" Association="pnp.servicehierarchy.SolutionAreaToArchitectPerson" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="SolutionAreas" Role="FromRole_SolutionAreaToArchitectPerson"/>
                     <End EntitySet="People" Role="ToRole_SolutionAreaToArchitectPerson"/>
+                </AssociationSet>
+                <AssociationSet Name="FilterToFilterOptionSet" Association="pnp.servicehierarchy.FilterToFilterOption" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Filters" Role="FromRole_FilterToFilterOption"/>
+                    <End EntitySet="FilterOptions" Role="ToRole_FilterToFilterOption"/>
                 </AssociationSet>
             </EntityContainer>
             <atom:link

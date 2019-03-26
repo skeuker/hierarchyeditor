@@ -13,8 +13,8 @@
                 <Property Name="HierarchyTypeText" Type="Edm.String" sap:unicode="false"/>
                 <NavigationProperty Name="toMemberTypes" Relationship="pnp.hierarchyeditor.HierarchyTypeToMemberTypes" FromRole="FromRole_HierarchyTypeToMemberTypes" ToRole="ToRole_HierarchyTypeToMemberTypes"/>
                 <NavigationProperty Name="toNodeTypes" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeTypes" FromRole="FromRole_HierarchyTypeToNodeTypes" ToRole="ToRole_HierarchyTypeToNodeTypes"/>
-                <NavigationProperty Name="toNodeDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeDefinitions" FromRole="FromRole_HierarchyTypeToNodeDefinitions" ToRole="ToRole_HierarchyTypeToNodeDefinitions"/>
                 <NavigationProperty Name="toNodeMemberDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeMemberDefinitions" FromRole="FromRole_HierarchyTypeToNodeMemberDefinitions" ToRole="ToRole_HierarchyTypeToNodeMemberDefinitions"/>
+                <NavigationProperty Name="toNodeDefinitions" Relationship="pnp.hierarchyeditor.HierarchyTypeToNodeDefinitions" FromRole="FromRole_HierarchyTypeToNodeDefinitions" ToRole="ToRole_HierarchyTypeToNodeDefinitions"/>
             </EntityType>
             <EntityType Name="Hierarchy" sap:content-version="1">
                 <Key>
@@ -33,7 +33,6 @@
                     <PropertyRef Name="HierarchyNodeID"/>
                 </Key>
                 <Property Name="ChildCount" Type="Edm.Int16" sap:unicode="false" sap:label="Signed INT2 / int16"/>
-                <Property Name="HierarchyMemberID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="MemberTypeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="NodeCategoryID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
@@ -44,7 +43,9 @@
                 <Property Name="ParentNodeID" Type="Edm.String" sap:unicode="false"/>
                 <Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="true"/>
                 <Property Name="LastChanged" Type="Edm.DateTime" Precision="0" ConcurrencyMode="Fixed" sap:unicode="false" sap:label="Time Stamp"/>
-            	<Property Name="NodeFilter" Type="Edm.String" Nullable="true" sap:unicode="true"/>
+                <Property Name="NodeFilter1" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="NodeFilter2" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ExternalEntityID" Type="Edm.String" sap:unicode="false"/>
             </EntityType>
             <EntityType Name="HierarchyNodeType" sap:content-version="1">
                 <Key>
@@ -79,6 +80,18 @@
                 <Property Name="NodeTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
                 <Property Name="MemberTypeID" Type="Edm.String" Nullable="false" sap:unicode="false"/>
             </EntityType>
+            <EntityType Name="HierarchyMember" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="HierarchyID"/>
+                    <PropertyRef Name="HierarchyMemberID"/>
+                </Key>
+                <Property Name="HierarchyID" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false"/>
+                <Property Name="HierarchyMemberID" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false"/>
+                <Property Name="MemberTypeID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="MemberText" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="ExternalEntityID" Type="Edm.String" sap:unicode="false"/>
+                <Property Name="Unassigned" Type="Edm.Boolean" sap:unicode="false" sap:label="Indicator"/>
+            </EntityType>
             <Association Name="HierarchyTypeToMetadata" sap:content-version="1">
                 <End Type="pnp.hierarchyeditor.Hierarchy" Multiplicity="1" Role="FromRole_HierarchyTypeToMetadata"/>
                 <End Type="pnp.hierarchyeditor.HierarchyType" Multiplicity="1" Role="ToRole_HierarchyTypeToMetadata"/>
@@ -111,6 +124,7 @@
                 <EntitySet Name="HierarchyMemberTypes" EntityType="pnp.hierarchyeditor.HierarchyMemberType" sap:content-version="1"/>
                 <EntitySet Name="HierarchyNodeDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeDefinition" sap:content-version="1"/>
                 <EntitySet Name="HierarchyNodeMemberDefinitions" EntityType="pnp.hierarchyeditor.HierarchyNodeMemberDefinition" sap:content-version="1"/>
+                <EntitySet Name="HierarchyMembers" EntityType="pnp.hierarchyeditor.HierarchyMember" sap:addressable="false" sap:content-version="1"/>
                 <AssociationSet Name="HierarchyTypeToMetadata_AssocSet" Association="pnp.hierarchyeditor.HierarchyTypeToMetadata" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="Hierarchies" Role="FromRole_HierarchyTypeToMetadata"/>
                     <End EntitySet="HierarchyTypes" Role="ToRole_HierarchyTypeToMetadata"/>
