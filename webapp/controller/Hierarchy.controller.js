@@ -133,9 +133,6 @@ sap.ui.define([
 						//set tree table to no longer busy
 						this.oViewModel.setProperty("/isHierarchyBusy", false);
 
-						//keep track of count of rows received
-						this.oViewModel.setProperty("/iHierarchyRowCount", oEvent.getParameter("data").results.length);
-
 					}.bind(this)
 
 				}
@@ -281,22 +278,6 @@ sap.ui.define([
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
-			//keep track of contexts of dragged row(s) where several are being dragged
-			if (aSelectedIndices.length > 0) {
-
-				//do not allow to start dragging from a row which is not selected
-				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
-					oEvent.preventDefault();
-					return;
-				}
-
-				//keep track of context of raws being dragged
-				aSelectedIndices.forEach(function(iSelectedIndex) {
-					aDraggedRowContexts.push(oTreeTable.getContextByIndex(iSelectedIndex));
-				});
-
-			}
-
 			//keep track of context of the one dragged row
 			if (iDraggedRowIndex >= 0) {
 				aDraggedRowContexts.push(oTreeTable.getContextByIndex(iDraggedRowIndex));
@@ -349,8 +330,24 @@ sap.ui.define([
 
 				}
 
-				//Set new parent ID property
-				this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
+				//Update parent ID property where existing node
+				if (!oDraggedNode.Unassigned) {
+					this.getModel("HierarchyModel").setProperty(oDraggedRowContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
+				}
+
+				//Create new hierarchy node where unassigned node
+				if (oDraggedNode.Unassigned) {
+
+					//indicate that new hierarchy item to be added as child
+					oDraggedNode.RelationshipTypeID = "2"; //Child
+
+					//indicate the parent to this new hierarchy item
+					oDraggedNode.oRelatedItem = oNewParentNode;
+
+					//create new hierarchy item 
+					this.createHierarchyItem(oDraggedNode);
+
+				}
 
 			}.bind(this));
 
@@ -1175,8 +1172,11 @@ sap.ui.define([
 			delete oHierarchyItem.oRelatedItem;
 			delete oHierarchyItem.aStable;
 
-			//close hierarchy item add popover
-			sap.ui.getCore().byId("dialogHierarchyItemAdd").close();
+			//close hierarchy item add popover where it is open
+			var oHierarchyItemAddDialog = sap.ui.getCore().byId("dialogHierarchyItemAdd");
+			if (oHierarchyItemAddDialog) {
+				oHierarchyItemAddDialog.close();
+			}
 
 			//get current tree state of expanded and collapsed nodes
 			var oBinding = oHierarchyTable.getBinding();
@@ -1307,7 +1307,7 @@ sap.ui.define([
 
 						//remove this node from the backend
 						this.getModel("HierarchyModel").remove(sNodePath, {
-							
+
 							//url parameters
 							urlParameters: oUrlParameters,
 
@@ -1620,11 +1620,8 @@ sap.ui.define([
 					aFilters.push({
 						"FilterID": "Unassigned",
 						"FilterText": "Status",
-						"FilterOptions": [{
-							"FilterOptionID": false,
-							"FilterOptionText": "Assigned"
-						}, {
-							"FilterOptionID": true,
+						"toFilterOptions": [{
+							"FilterOptionValue": true,
 							"FilterOptionText": "Unassigned"
 						}]
 					});
