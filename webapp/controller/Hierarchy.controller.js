@@ -141,6 +141,17 @@ sap.ui.define([
 
 		},
 
+		//prepare view for next action
+		prepareViewForNextAction: function() {
+
+			//remove all messages from the message manager
+			this.oMessageManager.removeAllMessages();
+
+			//set current view as leading view
+			this.setAsLeadingView();
+
+		},
+
 		//prepare for display
 		prepareViewForDisplay: function(oEvent) {
 
@@ -323,7 +334,7 @@ sap.ui.define([
 				if (!this.isAllowableNodeDropLocation(oDraggedNode, oNewParentNode)) {
 
 					//message handling: not an allowable drop location
-					this.sendStripMessage(this.getResourceBundle().getText("msgNotAnAllowableDropLocation"), sap.ui.core.MessageType.Error);
+					this.sendBoxMessage(this.getResourceBundle().getText("msgNotAnAllowableDropLocation"), sap.ui.core.MessageType.Error);
 
 					//no further processing
 					return;
@@ -1195,7 +1206,7 @@ sap.ui.define([
 					oBinding.setTreeState(oCurrentTreeState);
 
 					//message handling: successfully created
-					this.sendStripMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"), "Success");
+					this.sendToastMessage(this.getResourceBundle().getText("msgNodeCreatedSuccessfully"));
 
 				}.bind(this),
 
@@ -1232,7 +1243,7 @@ sap.ui.define([
 			if (iSelectedIndex === -1) {
 
 				//message handling: select a row
-				this.sendStripMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
+				this.sendBoxMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
 
 				//no further processing
 				return;
@@ -1317,8 +1328,8 @@ sap.ui.define([
 								//reapply previous tree state as otherwise all nodes will be collapsed after refresh
 								oBinding.setTreeState(oCurrentTreeState);
 
-								//message handling: successfully updated
-								this.sendStripMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"), "Success");
+								//message handling: successfully deleted
+								this.sendToastMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"));
 
 								//unbind attributes view in connected hierarchy component
 								this.getOwnerComponent().unbindAttributesView();
@@ -1466,10 +1477,10 @@ sap.ui.define([
 		},
 
 		//handle facet filter list close event
-		handleFacetFilterListClose: function(oEvent) {
+		handleFacetFilterClose: function(oEvent) {
 
 			//Get access to facet filter 
-			var oFacetFilter = oEvent.getSource().getParent();
+			var oFacetFilter = this.getView().byId("idFacetFilter");
 
 			//Apply facet filter to hierarchy model
 			this.filterHierarchyModel(oFacetFilter);
@@ -1714,45 +1725,6 @@ sap.ui.define([
 				}.bind(this)
 
 			});
-
-		},
-
-		/**
-		 * Send message using message strip
-		 * @private
-		 */
-		sendStripMessage: function(sText, sType, oMessageStrip) {
-
-			//deliver as message box where header expanded
-			if (this.getView().byId("pageHierarchy").getHeaderExpanded()) {
-
-				//depending on message type to issue
-				switch (sType) {
-					case "Error":
-						MessageBox.error(sText);
-						break;
-					case "Information":
-						MessageBox.information(sText);
-						break;
-					case "Success":
-						MessageBox.success(sText);
-						break;
-				}
-
-				//no further processing here
-				return;
-
-			}
-
-			//adopt message strip for issuing message
-			if (!oMessageStrip) {
-				oMessageStrip = this.oMessageStrip;
-			}
-
-			//message handling: send message
-			oMessageStrip.setText(sText);
-			oMessageStrip.setType(sType);
-			oMessageStrip.setVisible(true);
 
 		}
 

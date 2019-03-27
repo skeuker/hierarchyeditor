@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"pnp/hierarchyeditor/util/ErrorHandler",
-	"pnp/hierarchyeditor/util/uuid"
-], function(Controller, History, ErrorHandler, uuid) {
+	"pnp/hierarchyeditor/util/uuid",
+	'sap/m/MessageToast',
+	'sap/m/MessageBox'
+], function(Controller, History, ErrorHandler, uuid, MessageToast, MessageBox) {
 	"use strict";
 
 	return Controller.extend("pnp.blockandreplace.controller.Base", {
@@ -86,6 +88,41 @@ sap.ui.define([
 			/*return version1 UUID, removing formatting hyphens, 
 			converting to upper case to match a SAP GUID*/
 			return window.uuid.v1().replace(/-/g, "").toUpperCase();
+
+		},
+
+		/**
+		 * Send message using message box
+		 * @private
+		 */
+		sendBoxMessage: function(sText, sType) {
+
+			//depending on message type to issue
+			switch (sType) {
+				case "Error":
+					MessageBox.error(sText);
+					break;
+				case "Information":
+					MessageBox.information(sText);
+					break;
+				case "Warning":
+					MessageBox.warning(sText);
+					break;
+				case "Success":
+					MessageBox.success(sText);
+					break;
+			}
+
+		},
+
+		/**
+		 * Send message using message toast
+		 * @private
+		 */
+		sendToastMessage: function(sText) {
+
+			//send toast message
+			MessageToast.show(sText);
 
 		},
 
@@ -248,7 +285,7 @@ sap.ui.define([
 
 								//construct message
 								if (oResponseBody.error) {
-									
+
 									//default message text to what was returned by the server
 									sMessageText = oResponseBody.error.message.value;
 
@@ -257,7 +294,7 @@ sap.ui.define([
 
 										//set a user friendly message text to replace the 'Precondition failed' message
 										sMessageText = this.getResourceBundle().getText("messageEncounteredOptimisticLock");
-										
+
 									}
 
 									//adopt error attributes into message	
