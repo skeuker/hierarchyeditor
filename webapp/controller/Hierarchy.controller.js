@@ -635,13 +635,13 @@ sap.ui.define([
 				if (oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) { //Sibling
 					bApplicableMemberType = true;
 				}
-				
+
 				//applicable member type: adding sibling of same type as related node
-				if(oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.HierarchyLevel === oHierarchyItem.HierarchyLevel
-				   && oHierarchyItem.oRelatedItem.MemberTypeID === oNodeMemberDefinition.MemberTypeID){
-					bApplicableMemberType = true;	
+				if (oHierarchyItem.oRelatedItem && oHierarchyItem.oRelatedItem.HierarchyLevel === oHierarchyItem.HierarchyLevel &&
+					oHierarchyItem.oRelatedItem.MemberTypeID === oNodeMemberDefinition.MemberTypeID) {
+					bApplicableMemberType = true;
 				}
-				
+
 				//applicable member type: for oHierarchyItem as target drop location
 				if (oHierarchyItem.NodeTypeID === oNodeMemberDefinition.NodeTypeID) {
 					bApplicableMemberType = true;
@@ -1217,6 +1217,10 @@ sap.ui.define([
 		//on delete node
 		onDeleteHierarchyItem: function(oEvent) {
 
+			//local data declarations
+			var aActions = [];
+			var oUrlParameters = {};
+
 			//prepare view for next action
 			this.prepareViewForNextAction();
 
@@ -1241,21 +1245,44 @@ sap.ui.define([
 			//build confirmation text for hierarchy node deletion
 			var oNode = oNodeBindingContext.getObject();
 
-			//build confirmation text
-			var sConfirmationText = "Delete hierarchy node " + "'" + oNode.NodeText + "'?";
+			//set actions and confirmation text for root and branch node
+			if (oNode.NodeCategoryID === "0" || oNode.NodeCategoryID === "1") {
+
+				//allow 'delete' action only
+				aActions.push(this.getResourceBundle().getText("butTextDeleteHierarchyNode"));
+
+				//build confirmation text
+				var sConfirmationText = "Delete hierarchy node " + "'" + oNode.NodeText + "'?";
+
+			}
+
+			//set actions and confirmation text leaf node
+			if (oNode.NodeCategoryID === "2") {
+
+				//allow 'delete' and 'unassign' only actions
+				aActions.push(this.getResourceBundle().getText("butTextUnassignHierarchyNode"));
+				aActions.push(this.getResourceBundle().getText("butTextDeleteHierarchyNode"));
+
+				//build confirmation text
+				var sConfirmationText = "Delete or unassign member " + "'" + oNode.NodeText + "'?";
+
+			}
+
+			//'cancel' action is always available
+			aActions.push(sap.m.MessageBox.Action.CANCEL);
 
 			//confirmation dialog to delete this hierarchy
 			sap.m.MessageBox.confirm(sConfirmationText, {
-				actions: [
-					sap.m.MessageBox.Action.YES,
-					sap.m.MessageBox.Action.CANCEL
-				],
+
+				//actions offered
+				actions: aActions,
 
 				//on confirmation dialog close
-				onClose: (function(oAction) {
+				onClose: function(sAction) {
 
 					//user choice: proceed with deletion
-					if (oAction === sap.m.MessageBox.Action.YES) {
+					if (sAction === this.getResourceBundle().getText("butTextUnassignHierarchyNode") ||
+						sAction === this.getResourceBundle().getText("butTextDeleteHierarchyNode")) {
 
 						//get path to selected node in OData model
 						var sNodePath = oNodeBindingContext.getPath();
@@ -1264,8 +1291,25 @@ sap.ui.define([
 						var oBinding = oHierarchyTable.getBinding();
 						var oCurrentTreeState = oBinding.getCurrentTreeState();
 
+						//provide url parameter to disguish between unassign or delete
+						switch (sAction) {
+							case this.getResourceBundle().getText("butTextUnassignHierarchyNode"):
+								oUrlParameters = {
+									"Delete": false
+								};
+								break;
+							case this.getResourceBundle().getText("butTextDeleteHierarchyNode"):
+								oUrlParameters = {
+									"Delete": true
+								};
+								break;
+						}
+
 						//remove this node from the backend
 						this.getModel("HierarchyModel").remove(sNodePath, {
+							
+							//url parameters
+							urlParameters: oUrlParameters,
 
 							//success handler for delete
 							success: function() {
@@ -1299,7 +1343,7 @@ sap.ui.define([
 
 					}
 
-				}).bind(this)
+				}.bind(this)
 
 			});
 
@@ -1570,6 +1614,19 @@ sap.ui.define([
 						//keep track of this filter incl. filter option
 						aFilters.push(oFilter);
 
+					});
+
+					//add 'Status' filter
+					aFilters.push({
+						"FilterID": "Unassigned",
+						"FilterText": "Status",
+						"FilterOptions": [{
+							"FilterOptionID": false,
+							"FilterOptionText": "Assigned"
+						}, {
+							"FilterOptionID": true,
+							"FilterOptionText": "Unassigned"
+						}]
 					});
 
 					//create new JSON Model
