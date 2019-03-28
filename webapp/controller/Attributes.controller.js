@@ -50,6 +50,17 @@ sap.ui.define([
 			this.setModel(this.oServiceHierarchyModel, "ServiceHierarchyModel");
 
 		},
+		
+		//prepare view for next action
+		prepareViewForNextAction: function() {
+
+			//remove all messages from the message manager
+			this.oMessageManager.removeAllMessages();
+
+			//set current view as leading view
+			this.setAsLeadingView();
+
+		},
 
 		//prepare view for display
 		prepareViewForDisplay: function(oNavData) {
@@ -327,7 +338,7 @@ sap.ui.define([
 					this.oViewModel.setProperty("/isViewBusy", false);
 
 					//message handling: successfully created
-					this.sendStripMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"), "Success");
+					this.sendToastMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"));
 
 				}.bind(this),
 

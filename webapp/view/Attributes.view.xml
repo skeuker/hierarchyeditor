@@ -15,265 +15,258 @@
 			</DynamicPageHeader>
 		</header>
 		<content>
-			<m:FlexBox direction="Column" fitContainer="true" justifyContent="SpaceBetween">
-				<m:items>
-					<f:Form id="formServiceHierarchyItem" editable="true">
-						<f:layout>
-							<f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4"
-								emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
-						</f:layout>
-						<f:formContainers>
-							<f:FormContainer id="fcontSolutionArea" visible="false">
-								<f:formElements>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Solution Area Text"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>SolutionAreaText}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>SolutionAreaArchitectID}"
-												change="onInputChange">
-												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-							<f:FormContainer id="fcontSolutionAreaComponent" visible="false">
-								<f:formElements>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Solution Area Component Text"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>SolutionAreaComponentText}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-							<f:FormContainer id="fcontApplication" visible="false">
-								<f:formElements>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Application Text"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>ApplicationText}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Application Architect"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>ApplicationArchitectID}"
-												change="onInputChange">
-												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Business Division"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>BusinessDivision}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Business Owner"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>BusinessOwnerID}"
-												change="onInputChange">
-												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-							<f:FormContainer id="fcontApplicationComponent" visible="false">
-								<f:formElements>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Application Component Text"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Annual growth factor"/>
-										</f:label>
-										<f:fields>
-											<m:Input
-												value="{ path: 'ServiceHierarchyModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
-												type="Number" width="100%" change="onInputChange" description="%"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Start Date" width="100%"/>
-										</f:label>
-										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="End Date" width="100%"/>
-										</f:label>
-										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-							<f:FormContainer id="fcontResource" visible="false">
-								<f:formElements>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Resource Key"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>ExternalResourceID}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Resource Text"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>ResourceText}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Resource Type"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/ResourceTypes' }" selectedKey="{ServiceHierarchyModel>ResourceTypeID}"
-												change="onInputChange">
-												<core:Item key="{OptionsModel>ResourceTypeID}" text="{OptionsModel>ResourceTypeText}"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Resource Category"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/ResourceCategories' }" selectedKey="{ServiceHierarchyModel>ResourceCategoryID}"
-												change="onInputChange">
-												<core:Item key="{OptionsModel>ResourceCategoryID}" text="{OptionsModel>ResourceCategoryText}"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Landscape Tier"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceHierarchyModel>LandscapeTierID}"
-												change="onInputChange">
-												<core:Item key="{OptionsModel>LandscapeTierID}" text="{OptionsModel>LandscapeTierText}"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Resource Owner"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }" selectedKey="{ServiceHierarchyModel>ResourceOwnerID}"
-												change="onInputChange">
-												<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label xmlns:m="sap.m" text="Resource Location"/>
-										</f:label>
-										<f:fields>
-											<m:ComboBox items="{ path: 'ServiceHierarchyModel>/Locations', sorter: { path: 'LocationText' } }" selectedKey="{ServiceHierarchyModel>ResourceLocationID}"
-												change="onInputChange">
-												<core:Item key="{ServiceHierarchyModel>LocationID}" text="{ServiceHierarchyModel>LocationText}"/>
-											</m:ComboBox>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Serial Number"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>SerialNumber}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Manufacturer"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>Manufacturer}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Hosting Partner"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>HostingPartner}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Platform"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>Platform}" width="100%" change="onInputChange"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="Start Date" width="100%"/>
-										</f:label>
-										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement>
-										<f:label>
-											<m:Label text="End Date" width="100%"/>
-										</f:label>
-										<f:fields>
-											<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
-										</f:fields>
-									</f:FormElement>
-										<f:FormElement>
-										<f:label>
-											<m:Label text="Created By"/>
-										</f:label>
-										<f:fields>
-											<m:Input value="{ServiceHierarchyModel>CreatedBy}" width="100%" change="onInputChange" enabled="false"/>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-						</f:formContainers>
-					</f:Form>
-					<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text="" class="sapUiSmallMarginBottom sapUiSmallMarginTop"/>
-				</m:items>
-			</m:FlexBox>
+			<f:Form id="formServiceHierarchyItem" editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4"
+						emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer id="fcontSolutionArea" visible="false">
+						<f:formElements>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Solution Area Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>SolutionAreaText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+										selectedKey="{ServiceHierarchyModel>SolutionAreaArchitectID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+					<f:FormContainer id="fcontSolutionAreaComponent" visible="false">
+						<f:formElements>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Solution Area Component Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>SolutionAreaComponentText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+					<f:FormContainer id="fcontApplication" visible="false">
+						<f:formElements>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Application Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>ApplicationText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Application Architect"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+										selectedKey="{ServiceHierarchyModel>ApplicationArchitectID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Business Division"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>BusinessDivision}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Business Owner"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+										selectedKey="{ServiceHierarchyModel>BusinessOwnerID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+					<f:FormContainer id="fcontApplicationComponent" visible="false">
+						<f:formElements>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Application Component Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>ApplicationComponentText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Annual growth factor"/>
+								</f:label>
+								<f:fields>
+									<m:Input
+										value="{ path: 'ServiceHierarchyModel>AnnualGrowthFactor', formatOptions: { minIntegerDigits: 1, maxIntegerDigits: 3, minFractionDigits: 2, maxFractionDigits: 2 }, constraints: { maximum: 100 } }"
+										type="Number" width="100%" change="onInputChange" description="%"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Start Date" width="100%"/>
+								</f:label>
+								<f:fields>
+									<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="End Date" width="100%"/>
+								</f:label>
+								<f:fields>
+									<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+					<f:FormContainer id="fcontResource" visible="false">
+						<f:formElements>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Resource Key"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>ExternalResourceID}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Resource Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>ResourceText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Resource Type"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'OptionsModel>/ResourceTypes' }" selectedKey="{ServiceHierarchyModel>ResourceTypeID}" change="onInputChange">
+										<core:Item key="{OptionsModel>ResourceTypeID}" text="{OptionsModel>ResourceTypeText}"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Resource Category"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'OptionsModel>/ResourceCategories' }" selectedKey="{ServiceHierarchyModel>ResourceCategoryID}"
+										change="onInputChange">
+										<core:Item key="{OptionsModel>ResourceCategoryID}" text="{OptionsModel>ResourceCategoryText}"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Landscape Tier"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceHierarchyModel>LandscapeTierID}" change="onInputChange">
+										<core:Item key="{OptionsModel>LandscapeTierID}" text="{OptionsModel>LandscapeTierText}"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Resource Owner"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+										selectedKey="{ServiceHierarchyModel>ResourceOwnerID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Resource Location"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/Locations', sorter: { path: 'LocationText' } }"
+										selectedKey="{ServiceHierarchyModel>ResourceLocationID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>LocationID}" text="{ServiceHierarchyModel>LocationText}"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Serial Number"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>SerialNumber}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Manufacturer"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>Manufacturer}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Hosting Partner"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>HostingPartner}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Platform"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>Platform}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Start Date" width="100%"/>
+								</f:label>
+								<f:fields>
+									<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>StartDate}" change="onInputChange" width="100%"></m:DatePicker>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="End Date" width="100%"/>
+								</f:label>
+								<f:fields>
+									<m:DatePicker placeholder="Enter a date" dateValue="{ServiceHierarchyModel>EndDate}" change="onInputChange" width="100%"></m:DatePicker>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Created By"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>CreatedBy}" width="100%" change="onInputChange" enabled="false"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
 		</content>
 		<footer>
 			<m:Toolbar>

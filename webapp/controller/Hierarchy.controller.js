@@ -1230,7 +1230,8 @@ sap.ui.define([
 
 			//local data declarations
 			var aActions = [];
-			var oUrlParameters = {};
+			var bDelete = false;
+			var sConfirmationText;
 
 			//prepare view for next action
 			this.prepareViewForNextAction();
@@ -1255,7 +1256,7 @@ sap.ui.define([
 
 			//build confirmation text for hierarchy node deletion
 			var oNode = oNodeBindingContext.getObject();
-
+			
 			//set actions and confirmation text for root and branch node
 			if (oNode.NodeCategoryID === "0" || oNode.NodeCategoryID === "1") {
 
@@ -1263,7 +1264,7 @@ sap.ui.define([
 				aActions.push(this.getResourceBundle().getText("butTextDeleteHierarchyNode"));
 
 				//build confirmation text
-				var sConfirmationText = "Delete hierarchy node " + "'" + oNode.NodeText + "'?";
+				sConfirmationText = "Do you really want to delete '" + oNode.NodeText + "'?";
 
 			}
 
@@ -1271,11 +1272,22 @@ sap.ui.define([
 			if (oNode.NodeCategoryID === "2") {
 
 				//allow 'delete' and 'unassign' only actions
-				aActions.push(this.getResourceBundle().getText("butTextUnassignHierarchyNode"));
 				aActions.push(this.getResourceBundle().getText("butTextDeleteHierarchyNode"));
+				aActions.push(this.getResourceBundle().getText("butTextUnassignHierarchyNode"));
 
 				//build confirmation text
-				var sConfirmationText = "Delete or unassign member " + "'" + oNode.NodeText + "'?";
+				sConfirmationText = "Do you want to delete or just unassign " + "'" + oNode.NodeText + "'?";
+
+			}
+
+			//override action and confirmation text where node is unassigned
+			if (oNode.Unassigned) {
+
+				//allow 'delete' action only
+				aActions = [this.getResourceBundle().getText("butTextDeleteHierarchyNode")];
+
+				//build confirmation text
+				sConfirmationText = "Do you really want to delete '" + oNode.NodeText + "'?";
 
 			}
 
@@ -1305,22 +1317,23 @@ sap.ui.define([
 						//provide url parameter to disguish between unassign or delete
 						switch (sAction) {
 							case this.getResourceBundle().getText("butTextUnassignHierarchyNode"):
-								oUrlParameters = {
-									"Delete": false
-								};
+								bDelete = false;
 								break;
 							case this.getResourceBundle().getText("butTextDeleteHierarchyNode"):
-								oUrlParameters = {
-									"Delete": true
-								};
+								bDelete = true;
 								break;
 						}
-
+						
 						//remove this node from the backend
 						this.getModel("HierarchyModel").remove(sNodePath, {
 
-							//url parameters
-							urlParameters: oUrlParameters,
+							//pass node attributes as gateway only provides entity key for delete
+							headers: {
+								"externalentityid": oNode.ExternalEntityID,
+								"unassignednode": oNode.Unassigned,
+								"membertypeid": oNode.MemberTypeID,
+								"deletenode": bDelete
+							},
 
 							//success handler for delete
 							success: function() {
@@ -1329,7 +1342,7 @@ sap.ui.define([
 								oBinding.setTreeState(oCurrentTreeState);
 
 								//message handling: successfully deleted
-								this.sendToastMessage(this.getResourceBundle().getText("msgNodeDeletedSuccessfully"));
+								this.sendToastMessage(this.getResourceBundle().getText("msgNodeRemovedSuccessfully"));
 
 								//unbind attributes view in connected hierarchy component
 								this.getOwnerComponent().unbindAttributesView();
