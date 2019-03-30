@@ -60,8 +60,6 @@
 					enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
 				<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel" type="Transparent"
 					enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
-				<m:Button id="butRefresh" text="Refresh" icon="sap-icon://refresh" press="reapplyNodeState"
-					enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 				<m:Button id="butHierarchyItemDelete" text="Remove" press="onDeleteHierarchyItem"
 					enabled="{= ${HierarchyModel>HierarchyID}? true : false }" type="Transparent"/>
 				<m:Button id="butHierarchyItemAdd" text="Add" icon="sap-icon://add" press="onAddHierarchyItem"
