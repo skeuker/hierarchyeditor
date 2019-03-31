@@ -451,8 +451,7 @@ sap.ui.define([
 					this.getView().byId("butToggleDeleteMode").setIcon("sap-icon://alert");
 
 					//message handling: incomplete form input detected
-					this.sendStripMessage(this.getResourceBundle().getText("messageListSwitchedToDeleteMode"),
-						sap.ui.core.MessageType.Warning);
+					this.sendToastMessage(this.getResourceBundle().getText("messageListSwitchedToDeleteMode"));
 
 					//no further processing here
 					break;
@@ -496,7 +495,7 @@ sap.ui.define([
 							success: function() {
 
 								//message handling
-								this.sendStripMessage(this.getResourceBundle().getText("messageDeletedHierarchySuccessfully"));
+								this.sendToastMessage(this.getResourceBundle().getText("messageDeletedHierarchySuccessfully"));
 
 								//remove deleted hierarchy from display
 								this.getRouter().getTargets().display("Hierarchy", {
@@ -597,6 +596,9 @@ sap.ui.define([
 
 		//cancel hierarchy edit
 		onPressHierarchyEditCancelButton: function() {
+			
+			//reset changes to hierarchy
+			this.getModel("HierarchyModel").resetChanges();
 
 			//close dialog
 			this.oHierarchyEditDialog.close();
@@ -626,14 +628,14 @@ sap.ui.define([
 				return;
 			}
 
-			//create this node on the backend
+			//change this node on the backend
 			this.getModel("HierarchyModel").submitChanges({
 
-				//success handler for create response
+				//success handler for change response
 				success: function(oData) {
 
 					//message handling: successfully created
-					this.sendStripMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"), "Success");
+					this.sendToastMessage(this.getResourceBundle().getText("messageUpdatedSuccessfully"));
 
 				}.bind(this),
 
@@ -688,7 +690,7 @@ sap.ui.define([
 				success: function(oData) {
 
 					//message handling: successfully created
-					this.sendStripMessage(this.getResourceBundle().getText("msgHierarchyCreatedSuccessfully"), "Success");
+					this.sendToastMessage(this.getResourceBundle().getText("msgHierarchyCreatedSuccessfully"));
 
 				}.bind(this),
 
