@@ -217,9 +217,6 @@ sap.ui.define([
 		//render OData error response 
 		renderODataErrorResponse: function(oError, sStripMessageI18nID) {
 
-			//message handling: update failed
-			this.sendStripMessage(this.getResourceBundle().getText(sStripMessageI18nID), sap.ui.core.MessageType.Error);
-
 			//get message text
 			var sMessageText = ErrorHandler.prototype.getODataErrorResponseMessageText.call(this, oError);
 
