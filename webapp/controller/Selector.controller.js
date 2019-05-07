@@ -94,7 +94,7 @@ sap.ui.define([
 
 				//path to OData hierarchy entities
 				path: "HierarchyModel>/Hierarchies",
-				
+
 				//sorter
 				sorters: new Sorter("HierarchyText", false),
 
@@ -150,7 +150,10 @@ sap.ui.define([
 			this.getOwnerComponent().getModel("SelectorViewModel").setProperty("/isLeadingView", true);
 
 			//demote other views in this application
-			this.getOwnerComponent().getModel("HierarchyViewModel").setProperty("/isLeadingView", false);
+			var oHierarchyViewModel = this.getOwnerComponent().getModel("HierarchyViewModel");
+			if (oHierarchyViewModel) {
+				oHierarchyViewModel.setProperty("/isLeadingView", false);
+			}
 
 			//where attributes model is already instantiated
 			var oAttributesViewModel = this.getOwnerComponent().getModel("AttributesViewModel");
@@ -216,7 +219,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onSearch: function(oEvent) {
-			
+
 			//local data declaration
 			var aFilters = [];
 
@@ -232,15 +235,15 @@ sap.ui.define([
 			//construct filter to filter 'items' aggregation binding
 			if (sQuery) {
 				aFilters = [new Filter("HierarchyText", FilterOperator.Contains, sQuery)];
-			} 
-			
+			}
+
 			//reset the no data text to default when no filter provided
 			this.getModel("SelectorViewModel").setProperty("/noDataText", this.getResourceBundle().getText("selectorListNoDataText"));
 
 			//amend 'no data text' to point to the fact that list is now filtered
 			if (aFilters.length !== 0) {
 				this.getModel("SelectorViewModel").setProperty("/noDataText", this.getResourceBundle().getText("selectorListNoDataWithFilterText"));
-			} 
+			}
 
 			//apply filters to selector list
 			this.getView().byId("SelectorList").getBinding("items").filter(aFilters);
@@ -268,18 +271,18 @@ sap.ui.define([
 		 * @public
 		 */
 		onSort: function(oEvent) {
-			
+
 			//local data declaration
 			var bDescending = this.getView().getModel("SelectorViewModel").getProperty("/descendingSelectorListSort");
 			var aSorters = [];
-			
+
 			//Apply sort direction opposite to current
 			aSorters.push(new Sorter('HierarchyText', !bDescending));
 			this.getView().byId("SelectorList").getBinding("items").sort(aSorters);
-			
+
 			//keep track of the new sort order
 			this.getView().getModel("SelectorViewModel").setProperty("/descendingSelectorListSort", !bDescending);
-			
+
 		},
 
 		/**
@@ -596,7 +599,7 @@ sap.ui.define([
 
 		//cancel hierarchy edit
 		onPressHierarchyEditCancelButton: function() {
-			
+
 			//reset changes to hierarchy
 			this.getModel("HierarchyModel").resetChanges();
 

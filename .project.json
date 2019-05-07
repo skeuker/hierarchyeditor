@@ -1,4 +1,14 @@
 {
+  "projectType": [
+    "sap.watt.uitools.ide.fiori",
+    "com.watt.common.builder.sapui5clientbuild"
+  ],
+  "build": {
+    "targetFolder": "dist",
+    "sourceFolder": "webapp",
+    "buildRequired": false,
+    "lastBuildDateTime": "Tue, 23 Apr 2019 08:38:09 GMT"
+  },
   "generation": [
     {
       "templateId": "ui5template.basicSAPUI5ApplicationComponent",
