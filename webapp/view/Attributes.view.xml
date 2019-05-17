@@ -33,6 +33,14 @@
 							</f:FormElement>
 							<f:FormElement>
 								<f:label>
+									<m:Label text="Solution Area Short Text"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>SolutionAreaShortText}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
 									<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 								</f:label>
 								<f:fields>
