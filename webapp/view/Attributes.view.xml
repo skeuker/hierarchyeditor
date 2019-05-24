@@ -236,7 +236,10 @@
 									<m:Label text="Hosting Partner"/>
 								</f:label>
 								<f:fields>
-									<m:Input value="{ServiceHierarchyModel>HostingPartner}" width="100%" change="onInputChange"/>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/HostingPartners', sorter: { path: 'HostingPartnerText' } }"
+										selectedKey="{ServiceHierarchyModel>HostingPartnerID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>HostingPartnerID}" text="{ServiceHierarchyModel>HostingPartnerText}"/>
+									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
