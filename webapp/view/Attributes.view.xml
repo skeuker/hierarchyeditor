@@ -44,9 +44,9 @@
 									<m:Label xmlns:m="sap.m" text="Solution Area Architect"/>
 								</f:label>
 								<f:fields>
-									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'PersonText' } }"
 										selectedKey="{ServiceHierarchyModel>SolutionAreaArchitectID}" change="onInputChange">
-										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>PersonText} }"/>
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
@@ -79,9 +79,9 @@
 									<m:Label xmlns:m="sap.m" text="Application Architect"/>
 								</f:label>
 								<f:fields>
-									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'PersonText' } }"
 										selectedKey="{ServiceHierarchyModel>ApplicationArchitectID}" change="onInputChange">
-										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>PersonText} }"/>
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
@@ -98,9 +98,9 @@
 									<m:Label xmlns:m="sap.m" text="Business Owner"/>
 								</f:label>
 								<f:fields>
-									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'PersonText' } }"
 										selectedKey="{ServiceHierarchyModel>BusinessOwnerID}" change="onInputChange">
-										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>PersonText} }"/>
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
@@ -198,9 +198,9 @@
 									<m:Label xmlns:m="sap.m" text="Resource Owner"/>
 								</f:label>
 								<f:fields>
-									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'FirstName' } }"
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/People', sorter: { path: 'PersonText' } }"
 										selectedKey="{ServiceHierarchyModel>ResourceOwnerID}" change="onInputChange">
-										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>FirstName} + ' ' + ${ServiceHierarchyModel>LastName} }"/>
+										<core:Item key="{ServiceHierarchyModel>PersonID}" text="{= ${ServiceHierarchyModel>PersonText} }"/>
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
