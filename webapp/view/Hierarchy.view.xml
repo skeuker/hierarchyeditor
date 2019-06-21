@@ -56,6 +56,8 @@
 				<m:Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" press="onMessagesButtonPress"
 					text="{=${MessageModel>/}.length}" visible="{=!!${MessageModel>/}.length &amp;&amp; ${HierarchyViewModel>/isLeadingView} }"/>
 				<m:ToolbarSpacer/>
+				<m:Button id="btnCutHierarchyItem" text="{HierarchyViewModel>/btnLabelCutHierarchyItem}" icon="sap-icon://scissors" type="Transparent" press="onCutHierarchyItem" enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
+				<m:Button id="btnPasteHierarchyItem" text="Paste" icon="sap-icon://paste" type="Transparent" press="onPasteHierarchyItem" visible="{HierarchyViewModel>/isItemPasteButtonVisible}"/>
 				<m:Button icon="sap-icon://collapse-all" press="onCollapseAllNodes" type="Transparent"
 					enabled="{= ${HierarchyModel>HierarchyID}? true : false }"/>
 				<m:Button icon="sap-icon://expand-all" press="onExpandAllNodesToLevel" type="Transparent"

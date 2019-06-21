@@ -18,6 +18,8 @@ sap.ui.define([
 			//instantiate view model and set to view
 			this.oViewModel = new JSONModel({
 				viewTitle: this.getResourceBundle().getText("titleHierarchyView"),
+				btnLabelCutHierarchyItem: "Cut",
+				isItemPasteButtonVisible: false,
 				isPageHeaderExpanded: false,
 				isLeadingView: false,
 				busyDelay: 0,
@@ -36,6 +38,9 @@ sap.ui.define([
 			if (this.oMessageStrip) {
 				this.oMessageStrip.setVisible(false);
 			}
+
+			//cater for a hiearchyitem clipboard for cut and paste
+			this.aHierarchyItemClipboard = [];
 
 			//attach to display event for survey detail
 			this.getRouter().getTarget("Hierarchy").attachDisplay(this.onDisplay, this);
@@ -280,6 +285,9 @@ sap.ui.define([
 			var iDraggedRowIndex = oDraggedRow.getIndex();
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
 			var aDraggedRowContexts = [];
+			
+			//initialize the hierarchy item clipboard
+			this.clearHierarchyItemClipboard();
 
 			//no further processing where applicable
 			if (iDraggedRowIndex === -1 && aSelectedIndices.length === 0) {
@@ -1256,7 +1264,7 @@ sap.ui.define([
 
 			//build confirmation text for hierarchy node deletion
 			var oNode = oNodeBindingContext.getObject();
-			
+
 			//set actions and confirmation text for root and branch node
 			if (oNode.NodeCategoryID === "0" || oNode.NodeCategoryID === "1") {
 
@@ -1323,7 +1331,7 @@ sap.ui.define([
 								bDelete = true;
 								break;
 						}
-						
+
 						//remove this node from the backend
 						this.getModel("HierarchyModel").remove(sNodePath, {
 
@@ -1739,6 +1747,156 @@ sap.ui.define([
 
 			});
 
+		},
+
+		//on cut hierarchy item
+		onCutHierarchyItem: function(oEvent) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get node instance being cut
+			var oHierarchyTable = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTable.getSelectedIndex();
+
+			//message handling: no row selected
+			if (iSelectedIndex === -1) {
+
+				//message handling: select a row
+				this.sendBoxMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+
+			}
+
+			//get binding context of node to be deleted
+			var oNodeBindingContext = oHierarchyTable.getContextByIndex(iSelectedIndex);
+
+			//cut the selected hierarchy item and insert to clipboard
+			this.aHierarchyItemClipboard.push(oNodeBindingContext);
+
+			//amend label of 'cut' button to show number of hierarchy items contained
+			this.getModel("HierarchyViewModel").setProperty("/btnLabelCutHierarchyItem", "Cut (" + this.aHierarchyItemClipboard.length + ")");
+
+			//show hierarchy item paste button
+			this.getModel("HierarchyViewModel").setProperty("/isItemPasteButtonVisible", true);
+
+		},
+
+		//on paste hierarchy item
+		onPasteHierarchyItem: function(oEvent) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get node instance where paste is meant to be done
+			var oHierarchyTable = this.getView().byId("TreeTable");
+			var iSelectedIndex = oHierarchyTable.getSelectedIndex();
+
+			//message handling: no row selected
+			if (iSelectedIndex === -1) {
+
+				//message handling: select a row
+				this.sendBoxMessage(this.getResourceBundle().getText("msgSelectARowFirst"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+
+			}
+
+			//get context of parent to be node
+			var oNewParentContext = oHierarchyTable.getContextByIndex(iSelectedIndex);
+
+			//get new parent where node is to be dropped
+			var oNewParentNode = oNewParentContext.getProperty();
+
+			//for each node having been cut
+			this.aHierarchyItemClipboard.forEach(function(oHierarchyItemContext) {
+
+				//get hierarchy node for this context
+				var oHierarchyNode = oHierarchyItemContext.getObject();
+
+				//verify whether this node is an allowable paste location
+				if (!this.isAllowableNodeDropLocation(oHierarchyNode, oNewParentNode)) {
+
+					//message handling: not an allowable drop location
+					this.sendBoxMessage(this.getResourceBundle().getText("msgNotAnAllowableDropLocation"), sap.ui.core.MessageType.Error);
+
+					//no further processing
+					return;
+
+				}
+
+				//Update parent ID property where existing node
+				if (!oHierarchyNode.Unassigned) {
+					this.getModel("HierarchyModel").setProperty(oHierarchyItemContext.getPath() + "/ParentNodeID", oNewParentNode.HierarchyNodeID);
+				}
+
+				//Create new hierarchy node where unassigned node
+				if (oHierarchyNode.Unassigned) {
+
+					//indicate that new hierarchy item to be added as child
+					oHierarchyNode.RelationshipTypeID = "2"; //Child
+
+					//indicate the parent to this new hierarchy item
+					oHierarchyNode.oRelatedItem = oNewParentNode;
+
+					//create new hierarchy item 
+					this.createHierarchyItem(oHierarchyNode);
+
+				}
+
+			}.bind(this));
+
+			//get current tree state of expanded and collapsed nodes
+			var oBinding = oHierarchyTable.getBinding();
+			var oCurrentTreeState = oBinding.getCurrentTreeState();
+
+			//submit changes
+			this.getModel("HierarchyModel").submitChanges({
+
+				//success callback function
+				success: function(oData) {
+
+					//reapply previous tree state after refresh
+					oBinding.setTreeState(oCurrentTreeState);
+
+					//inspect batchResponses for errors and visualize
+					if (this.hasODataBatchErrorResponse(oData.__batchResponses)) {
+						return;
+					}
+
+				}.bind(this),
+
+				//success callback function
+				error: function(oError) {
+
+					//render OData error response
+					this.renderODataErrorResponseToMessagePopoverButton(oError);
+
+				}.bind(this)
+
+			});
+			
+			//best-effor paste: clearing clipboard before paste result is known
+			this.clearHierarchyItemClipboard();
+
+		},
+		
+		//initialize hierarchy item clipboard
+		clearHierarchyItemClipboard: function(){
+
+			//initialize the hierarchy item clipboard
+			this.aHierarchyItemClipboard = [];
+
+			//amend label of 'cut' button indicate no hierarchy items contained
+			this.getModel("HierarchyViewModel").setProperty("/btnLabelCutHierarchyItem", "Cut");
+
+			//hide hierarchy item paste button
+			this.getModel("HierarchyViewModel").setProperty("/isItemPasteButtonVisible", false);
+
+			
 		}
 
 	});
