@@ -168,6 +168,9 @@ sap.ui.define([
 
 			//get access to hierarchy tree table instance
 			var oHierarchyTable = this.getView().byId("TreeTable");
+			
+			//initialize the hierarchy item clipboard
+			this.clearHierarchyItemClipboard();
 
 			//special use case: hierarchy deleted from selector list
 			if (oNavData && oNavData.HierarchyID === null) {
