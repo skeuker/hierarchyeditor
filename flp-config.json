@@ -1,0 +1,35 @@
+{
+    "application": {
+        "id": "",
+        "title": "HierarchyEditor",
+        "description": "Hierarchy maintenance",
+        "type": "SAP_UI5_Component",
+        "componentUrl": "/",
+        "appUrl": "#hierarchyeditor-Display",
+        "navigationComponentName": "pnp.hierarchyeditor",
+        "intentSemanticObject": "hierarchyeditor",
+        "intentAction": "Display",
+        "html5ApplicationName": "hierarchyeditor",
+        "HCPParentApplicationName": ""
+    },
+    "assignment": {
+        "groups": [
+            "cf89e71c-81a9-4f6c-aa8f-4593d824e87d"
+        ],
+        "contentPackages": [
+            "d6e2c367-315a-415a-a0aa-33077fa5fd71"
+        ],
+        "categories": []
+    },
+    "tile": {
+        "type": "StaticTile",
+        "title": "IT Services Hierarchy",
+        "subtitle": "of Resources",
+        "searchKeywords": "IT Services Hierarchy,of Resources",
+        "displayIconUrl": "sap-icon://tree",
+        "displayInfoText": "",
+        "size": "1x1",
+        "serviceURL": "",
+        "refreshInterval": ""
+    }
+}

@@ -23,10 +23,10 @@
       "path": "/sap/opu/odata",
       "target": {
         "type": "destination",
-        "name": "SMD100",
+        "name": "smdev100",
         "entryPath": "/sap/opu/odata"
       },
-      "description": "SMD100 "
+      "description": "smdev100"
     }
   ],
   "sendWelcomeFileRedirect": true
