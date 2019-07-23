@@ -104,6 +104,17 @@
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Cloud Migration Phase"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/CloudMigrationPhases', sorter: { path: 'CloudMigrationPhaseID' } }"
+										selectedKey="{ServiceHierarchyModel>CloudMigrationPhaseID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>CloudMigrationPhaseID}" text="{= ${ServiceHierarchyModel>CloudMigrationPhaseText} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
 						</f:formElements>
 					</f:FormContainer>
 					<f:FormContainer id="fcontApplicationComponent" visible="false">
