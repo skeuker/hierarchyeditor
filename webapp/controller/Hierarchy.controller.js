@@ -168,7 +168,7 @@ sap.ui.define([
 
 			//get access to hierarchy tree table instance
 			var oHierarchyTable = this.getView().byId("TreeTable");
-
+			
 			//initialize the hierarchy item clipboard
 			this.clearHierarchyItemClipboard();
 
@@ -1524,7 +1524,7 @@ sap.ui.define([
 
 		//reset facet filter
 		resetFacetFilter: function (oFacetFilter) {
-
+			
 			//get filter criteria contained in facet filter
 			var aFacetFilterLists = oFacetFilter.getLists();
 
@@ -1650,17 +1650,7 @@ sap.ui.define([
 						aFilters.push(oFilter);
 
 					});
-
-					//add 'Status' filter
-					aFilters.push({
-						"FilterID": "Unassigned",
-						"FilterText": "Status",
-						"toFilterOptions": [{
-							"FilterOptionValue": true,
-							"FilterOptionText": "Unassigned"
-						}]
-					});
-
+					
 					//create new JSON Model
 					var oHierarchyFilterModel = new JSONModel({
 						Filters: aFilters

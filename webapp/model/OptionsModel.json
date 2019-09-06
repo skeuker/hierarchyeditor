@@ -48,39 +48,5 @@
 	},	{
 		"ResourceCategoryID": "2",
 		"ResourceCategoryText": "Hardware"
-	}],
-	"LandscapeTiers": [{
-		"LandscapeTierID": "0STIE",
-		"LandscapeTierText": "0 - Single Tier"
-	}, {
-		"LandscapeTierID": "0PROD",
-		"LandscapeTierText": "0 - Production"
-	}, {
-		"LandscapeTierID": "1HSB",
-		"LandscapeTierText": "1 - Hot Standby"
-	}, {
-		"LandscapeTierID": "1DRE",
-		"LandscapeTierText": "1 - Disaster Recovery"
-	}, {
-		"LandscapeTierID": "2REG",
-		"LandscapeTierText": "2 - Regression"
-	}, {
-		"LandscapeTierID": "3QAS",
-		"LandscapeTierText": "3 - Quality Assurance"
-	}, {
-		"LandscapeTierID": "4DEV",
-		"LandscapeTierText": "4 - Development"
-	}, {
-		"LandscapeTierID": "4SDQ",
-		"LandscapeTierText": "4 - Shared Dev and QA"
-	}, {
-		"LandscapeTierID": "5SND",
-		"LandscapeTierText": "5 - Sandbox"
-	}, {
-		"LandscapeTierID": "6PRF",
-		"LandscapeTierText": "6 - Proof of Concept"
-	}, {
-		"LandscapeTierID": "8TRA",
-		"LandscapeTierText": "8 - Training"
 	}]
 }
