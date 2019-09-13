@@ -1585,7 +1585,7 @@ sap.ui.define([
 			//get hierarchy currently displayed
 			var oHierarchy = this.getView().getBindingContext("HierarchyModel").getObject();
 
-			//componse hierarchy ID filter
+			//compose hierarchy ID filter
 			var oHierarchyIDFilter = new Filter({
 				path: "HierarchyID",
 				operator: "EQ",
@@ -1901,7 +1901,7 @@ sap.ui.define([
 			this.getModel("HierarchyViewModel").setProperty("/isItemPasteButtonVisible", false);
 
 		}
-
+		
 	});
 
 });

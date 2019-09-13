@@ -115,6 +115,33 @@
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Disaster Recovery Tier"/>
+								</f:label>
+								<f:fields>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/DisasterRecoveryTiers', sorter: { path: 'DRTierID' } }"
+										selectedKey="{ServiceHierarchyModel>DRTierID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>DRTierID}" text="{= ${ServiceHierarchyModel>DRTierText} }"/>
+									</m:ComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="High Availability"/>
+								</f:label>
+								<f:fields>
+									<m:Switch state="{ServiceHierarchyModel>isHighlyAvailable}" customTextOn="Yes" customTextOff="No" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Notes"/>
+								</f:label>
+								<f:fields>
+									<m:TextArea value="{ServiceHierarchyModel>ApplicationNote}" valueLiveUpdate="false" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
 						</f:formElements>
 					</f:FormContainer>
 					<f:FormContainer id="fcontApplicationComponent" visible="false">
@@ -259,6 +286,30 @@
 								</f:label>
 								<f:fields>
 									<m:Input value="{ServiceHierarchyModel>Platform}" width="100%" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label xmlns:m="sap.m" text="Notes"/>
+								</f:label>
+								<f:fields>
+									<m:TextArea value="{ServiceHierarchyModel>ResourceNote}" valueLiveUpdate="false" change="onInputChange"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Last billed in period"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>LastBilledPeriod}" width="100%" change="onInputChange" enabled="false"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<m:Label text="Last billed amount"/>
+								</f:label>
+								<f:fields>
+									<m:Input value="{ServiceHierarchyModel>LastBilledAmount}" width="100%" change="onInputChange" enabled="false"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
