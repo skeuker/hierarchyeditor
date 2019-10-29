@@ -226,8 +226,8 @@
 									<m:Label xmlns:m="sap.m" text="Landscape Tier"/>
 								</f:label>
 								<f:fields>
-									<m:ComboBox items="{ path: 'OptionsModel>/LandscapeTiers' }" selectedKey="{ServiceHierarchyModel>LandscapeTierID}" change="onInputChange">
-										<core:Item key="{OptionsModel>LandscapeTierID}" text="{OptionsModel>LandscapeTierText}"/>
+									<m:ComboBox items="{ path: 'ServiceHierarchyModel>/LandscapeTiers' }" selectedKey="{ServiceHierarchyModel>LandscapeTierID}" change="onInputChange">
+										<core:Item key="{ServiceHierarchyModel>LandscapeTierID}" text="{ServiceHierarchyModel>LandscapeTierText}"/>
 									</m:ComboBox>
 								</f:fields>
 							</f:FormElement>

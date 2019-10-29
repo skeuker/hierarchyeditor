@@ -82,7 +82,14 @@ sap.ui.define([
 			  to update related hierarchy node text. Explicitly no exception handling 
 			  as failure here is not critical*/
 			if (!oHierarchyItem.Unassigned) {
-				this.getModel("HierarchyModel").read(sHierarchyItemODataPath, {});
+				this.getModel("HierarchyModel").read(sHierarchyItemODataPath, {
+					
+					/*restrict to only read and receive the node text. With
+					  this other attributes remain unchanged on the client.*/
+					urlParameters: {
+						"$select": "NodeText"
+					}
+				});
 			}
 
 		},
